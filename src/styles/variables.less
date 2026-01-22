@@ -1,81 +1,169 @@
-// Gura 红蓝主题色
-@primary-color: #ff6b6b; // Gura 红色
-@primary-hover: #ff5252;
-@secondary-color: #4ecdc4; // Gura 青色
-@secondary-hover: #26a69a;
+// ============================================
+// 摇光流梦 - 双主题色彩系统
+// 巧克力色（深色主题）+ Gura 蓝（浅色主题）
+// ============================================
 
-@text-primary: #1e293b;
-@text-secondary: #64748b;
-@text-muted: #94a3b8;
+// ============================================
+// 主题色定义
+// ============================================
 
-@background-primary: #ffffff;
-@background-secondary: #f8fafc;
-@background-dark: #1e293b;
+// Gura 蓝主题（浅色/科技感）
+@gura-primary: #39c5bb;           // Gura 经典蓝绿色
+@gura-primary-light: #5dd9d0;     // 浅色变体
+@gura-primary-dark: #2ba39a;      // 深色变体
+@gura-accent: #00d4ff;            // 科技感亮蓝
+@gura-accent-secondary: #7c3aed;  // 紫色点缀
+@gura-gradient: linear-gradient(135deg, @gura-primary 0%, @gura-accent 100%);
+@gura-gradient-accent: linear-gradient(135deg, @gura-primary 0%, @gura-accent 50%, @gura-accent-secondary 100%);
 
-@border-color: #e2e8f0;
-@border-dark: #334155;
+// 巧克力主题（深色/温暖高端）
+@chocolate-primary: #d4a574;      // 巧克力金色
+@chocolate-primary-light: #e8c9a8;// 浅巧克力色
+@chocolate-primary-dark: #8b5e3c; // 深巧克力棕
+@chocolate-accent: #f4a460;       // 橙金色点缀
+@chocolate-accent-secondary: #cd853f; // 秘鲁棕
+@chocolate-gradient: linear-gradient(135deg, @chocolate-primary 0%, @chocolate-accent 100%);
+@chocolate-gradient-accent: linear-gradient(135deg, @chocolate-primary-dark 0%, @chocolate-primary 50%, @chocolate-accent 100%);
 
-// Gura 主题渐变色
-@gradient-primary: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%);
-@gradient-secondary: linear-gradient(135deg, #4ecdc4 0%, #45b7aa 100%);
-@gradient-accent: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 50%, #4ecdc4 100%);
+// ============================================
+// CSS 变量（用于主题切换）
+// ============================================
 
+// 在 :root 中定义的变量会被 global.less 使用
+// 这里定义 LESS 变量作为默认值
+
+// 默认使用 Gura 蓝主题
+@primary-color: var(--primary-color, @gura-primary);
+@primary-light: var(--primary-light, @gura-primary-light);
+@primary-dark: var(--primary-dark, @gura-primary-dark);
+@primary-hover: var(--primary-hover, @gura-primary-dark);
+@accent-color: var(--accent-color, @gura-accent);
+@accent-secondary: var(--accent-secondary, @gura-accent-secondary);
+
+@secondary-color: var(--secondary-color, @gura-primary);
+@secondary-hover: var(--secondary-hover, @gura-primary-dark);
+
+// ============================================
+// 文字颜色
+// ============================================
+@text-primary: var(--text-primary, #1e293b);
+@text-secondary: var(--text-secondary, #64748b);
+@text-muted: var(--text-muted, #94a3b8);
+@text-inverse: var(--text-inverse, #ffffff);
+
+// ============================================
+// 背景颜色
+// ============================================
+@background-primary: var(--background-primary, #ffffff);
+@background-secondary: var(--background-secondary, #f8fafc);
+@background-tertiary: var(--background-tertiary, #f1f5f9);
+@background-dark: var(--background-dark, #1e293b);
+@background-darker: var(--background-darker, #0f172a);
+
+// ============================================
+// 边框颜色
+// ============================================
+@border-color: var(--border-color, #e2e8f0);
+@border-light: var(--border-light, #f1f5f9);
+@border-dark: var(--border-dark, #334155);
+
+// ============================================
+// 渐变色
+// ============================================
+@gradient-primary: var(--gradient-primary, linear-gradient(135deg, #39c5bb 0%, #00d4ff 100%));
+@gradient-secondary: var(--gradient-secondary, linear-gradient(135deg, #39c5bb 0%, #2ba39a 100%));
+@gradient-accent: var(--gradient-accent, linear-gradient(135deg, #39c5bb 0%, #00d4ff 50%, #7c3aed 100%));
+@gradient-glow: var(--gradient-glow, radial-gradient(circle, rgba(57, 197, 187, 0.15) 0%, transparent 70%));
+
+// ============================================
 // 阴影
-@shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-@shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+// ============================================
+@shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+@shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
 @shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+@shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+@shadow-glow: var(--shadow-glow, 0 0 30px rgba(57, 197, 187, 0.3));
+@shadow-glow-strong: var(--shadow-glow-strong, 0 0 60px rgba(57, 197, 187, 0.4));
 
+// ============================================
 // 圆角
+// ============================================
+@border-radius-xs: 4px;
 @border-radius-sm: 8px;
 @border-radius-md: 12px;
 @border-radius-lg: 16px;
+@border-radius-xl: 24px;
+@border-radius-full: 9999px;
 
-// 间距
-@spacing-xs: 0.5rem;
-@spacing-sm: 1rem;
-@spacing-md: 1.5rem;
-@spacing-lg: 2rem;
-@spacing-xl: 3rem;
-@spacing-2xl: 4rem;
+// ============================================
+// 间距系统
+// ============================================
+@spacing-xs: 0.5rem;    // 8px
+@spacing-sm: 1rem;      // 16px
+@spacing-md: 1.5rem;    // 24px
+@spacing-lg: 2rem;      // 32px
+@spacing-xl: 3rem;      // 48px
+@spacing-2xl: 4rem;     // 64px
+@spacing-3xl: 6rem;     // 96px
 
+// ============================================
 // 字体大小
-@font-size-xs: 0.75rem;
-@font-size-sm: 0.875rem;
-@font-size-base: 1rem;
-@font-size-lg: 1.125rem;
-@font-size-xl: 1.25rem;
-@font-size-2xl: 1.5rem;
-@font-size-3xl: 2rem;
-@font-size-4xl: 2.5rem;
-@font-size-5xl: 3rem;
+// ============================================
+@font-size-xs: 0.75rem;   // 12px
+@font-size-sm: 0.875rem;  // 14px
+@font-size-base: 1rem;    // 16px
+@font-size-lg: 1.125rem;  // 18px
+@font-size-xl: 1.25rem;   // 20px
+@font-size-2xl: 1.5rem;   // 24px
+@font-size-3xl: 2rem;     // 32px
+@font-size-4xl: 2.5rem;   // 40px
+@font-size-5xl: 3rem;     // 48px
+@font-size-6xl: 3.75rem;  // 60px
 
+// ============================================
 // 字体权重
+// ============================================
 @font-weight-normal: 400;
 @font-weight-medium: 500;
 @font-weight-semibold: 600;
 @font-weight-bold: 700;
+@font-weight-extrabold: 800;
 
+// ============================================
 // 行高
+// ============================================
 @line-height-tight: 1.25;
 @line-height-normal: 1.5;
 @line-height-relaxed: 1.75;
+@line-height-loose: 2;
 
-// 断点
+// ============================================
+// 响应式断点
+// ============================================
+@breakpoint-xs: 480px;
 @breakpoint-sm: 640px;
 @breakpoint-md: 768px;
 @breakpoint-lg: 1024px;
 @breakpoint-xl: 1280px;
 @breakpoint-2xl: 1536px;
 
-// 容器最大宽度
+// ============================================
+// 容器宽度
+// ============================================
 @container-max-width: 1200px;
+@container-wide: 1400px;
 
+// ============================================
 // 过渡动画
-@transition-fast: 0.15s;
-@transition-normal: 0.3s;
-@transition-slow: 0.5s;
+// ============================================
+@transition-fast: 0.15s ease;
+@transition-normal: 0.3s ease;
+@transition-slow: 0.5s ease;
+@transition-bounce: 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-// Z-index
+// ============================================
+// Z-index 层级
+// ============================================
 @z-dropdown: 1000;
 @z-sticky: 1020;
 @z-fixed: 1030;
@@ -83,3 +171,10 @@
 @z-modal: 1050;
 @z-popover: 1060;
 @z-tooltip: 1070;
+
+// ============================================
+// 科技感装饰元素
+// ============================================
+@tech-line-color: var(--tech-line-color, rgba(57, 197, 187, 0.3));
+@tech-dot-color: var(--tech-dot-color, rgba(57, 197, 187, 0.5));
+@tech-grid-color: var(--tech-grid-color, rgba(57, 197, 187, 0.1));

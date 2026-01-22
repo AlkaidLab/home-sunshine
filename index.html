@@ -1,20 +1,111 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="gura">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sunshine 基地版 - 让游戏串流更优雅</title>
-    <meta name="description" content="Sunshine 基地版是基于官方分支修改的游戏串流解决方案，提供HDR支持、虚拟显示器、远程麦克风等高级功能。">
-    <meta name="keywords" content="Sunshine,游戏串流,Moonlight,HDR,虚拟显示器,游戏流媒体">
+    <title>摇光流梦 - 让游戏串流更优雅</title>
+    <meta name="description" content="摇光流梦是基于官方分支修改的游戏串流解决方案，提供HDR支持、虚拟显示器、远程麦克风等高级功能。">
+    <meta name="keywords" content="SDream,摇光流梦,游戏串流,Moonlight,HDR,虚拟显示器,游戏流媒体">
+    
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
     <link rel="shortcut icon" href="/favicon.ico">
-    <meta name="theme-color" content="#ff6b6b">
+    
+    <!-- Theme Color - Gura Blue -->
+    <meta name="theme-color" content="#39c5bb">
+    
+    <!-- Google Fonts - Inter for modern look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Preload critical styles -->
+    <style>
+      /* Critical CSS for initial render - prevent flash */
+      :root,
+      [data-theme="gura"] {
+        --primary-color: #39c5bb;
+        --background-primary: #ffffff;
+        --background-secondary: #f8fafc;
+        --text-primary: #1e293b;
+      }
+      
+      [data-theme="chocolate"] {
+        --primary-color: #d4a574;
+        --background-primary: #1a1410;
+        --background-secondary: #231c16;
+        --text-primary: #f5f0eb;
+      }
+      
+      * {
+        box-sizing: border-box;
+      }
+      
+      html {
+        scroll-behavior: smooth;
+      }
+      
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: var(--background-primary);
+        color: var(--text-primary);
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+      
+      #app {
+        min-height: 100vh;
+      }
+      
+      /* Loading state */
+      .app-loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: var(--background-primary);
+      }
+      
+      .loading-spinner {
+        width: 48px;
+        height: 48px;
+        border: 3px solid var(--background-secondary);
+        border-top-color: var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+    </style>
+    
+    <script>
+      // Apply saved theme immediately to prevent flash
+      (function() {
+        const savedTheme = localStorage.getItem('theme') || 'gura';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        
+        // Update theme-color meta tag
+        const themeColor = savedTheme === 'chocolate' ? '#d4a574' : '#39c5bb';
+        const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+        if (metaThemeColor) {
+          metaThemeColor.setAttribute('content', themeColor);
+        }
+      })();
+    </script>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <!-- Loading state while Vue app initializes -->
+      <div class="app-loading">
+        <div class="loading-spinner"></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
