@@ -10,17 +10,19 @@ const currentTheme = ref(localStorage.getItem('theme') || 'gura')
 
 // 切换语言
 const toggleLanguage = () => {
-  currentLang.value = currentLang.value === 'zh' ? 'en' : 'zh'
-  localStorage.setItem('language', currentLang.value)
-  document.documentElement.lang = currentLang.value === 'zh' ? 'zh-CN' : 'en'
+  const newLang = currentLang.value === 'zh' ? 'en' : 'zh'
+  currentLang.value = newLang
+  localStorage.setItem('language', newLang)
+  document.documentElement.lang = newLang === 'zh' ? 'zh-CN' : 'en'
   updatePageTitle()
 }
 
 // 切换主题
 const toggleTheme = () => {
-  currentTheme.value = currentTheme.value === 'gura' ? 'chocolate' : 'gura'
-  localStorage.setItem('theme', currentTheme.value)
-  document.documentElement.setAttribute('data-theme', currentTheme.value)
+  const newTheme = currentTheme.value === 'gura' ? 'chocolate' : 'gura'
+  currentTheme.value = newTheme
+  localStorage.setItem('theme', newTheme)
+  document.documentElement.setAttribute('data-theme', newTheme)
 }
 
 // 监听主题变化
@@ -29,21 +31,21 @@ watch(currentTheme, (newTheme) => {
 })
 
 // 主题图标
-const themeIcon = computed(() => {
-  return currentTheme.value === 'gura' ? '🌊' : '🍫'
-})
+const themeIcon = computed(() => currentTheme.value === 'gura' ? '🌊' : '🍫')
 
 // 主题名称
 const themeName = computed(() => {
-  if (currentLang.value === 'zh') {
-    return currentTheme.value === 'gura' ? 'Gura 蓝' : '巧克力'
-  }
-  return currentTheme.value === 'gura' ? 'Gura Blue' : 'Chocolate'
+  const isGura = currentTheme.value === 'gura'
+  return currentLang.value === 'zh'
+    ? (isGura ? 'Gura 蓝' : '巧克力')
+    : (isGura ? 'Gura Blue' : 'Chocolate')
 })
 
 // 更新页面标题
 const updatePageTitle = () => {
-  document.title = currentLang.value === 'zh' ? '摇光流梦 - 让游戏串流更优雅' : 'SDream - Make Game Streaming Greater'
+  document.title = currentLang.value === 'zh' 
+    ? '摇光流梦 - 让游戏串流更优雅' 
+    : 'SDream - Make Game Streaming Greater'
 }
 
 // 当前语言的翻译内容
@@ -62,27 +64,40 @@ const versionInfo = ref({
   error: null,
 })
 
+// 下载链接
+const downloadLinks = ref({
+  windows: 'https://ghfast.top/https://github.com/qiin2333/Sunshine/releases/download/foundation/sunshine-windows-installer.exe',
+  github: 'https://github.com/qiin2333/Sunshine-Foundation/releases/',
+  mirror: 'https://ghfast.top/https://github.com/qiin2333/Sunshine/releases/download/foundation/sunshine-windows-installer.exe',
+  latest: null,
+})
+
+// 提取资源下载链接
+const extractDownloadUrl = (assets, filename) => 
+  assets.find(asset => asset.name.includes(filename))?.browser_download_url
+
 // 检查最新版本
 const checkLatestVersion = async () => {
   try {
     versionInfo.value.loading = true
     versionInfo.value.error = null
 
-    // 获取最新稳定版
-    const latestResponse = await fetch('https://api.github.com/repos/qiin2333/Sunshine/releases/latest')
-    const latestRelease = await latestResponse.json()
+    const [latestResponse, allReleasesResponse] = await Promise.all([
+      fetch('https://api.github.com/repos/qiin2333/Sunshine/releases/latest'),
+      fetch('https://api.github.com/repos/qiin2333/Sunshine/releases')
+    ])
 
-    // 获取所有发布版本
-    const allReleasesResponse = await fetch('https://api.github.com/repos/qiin2333/Sunshine/releases')
-    const allReleases = await allReleasesResponse.json()
+    const [latestRelease, allReleases] = await Promise.all([
+      latestResponse.json(),
+      allReleasesResponse.json()
+    ])
 
-    // 查找预发布版本
-    const preRelease = allReleases.find((release) => release.prerelease)
+    const preRelease = allReleases.find(release => release.prerelease)
+    const installerFilename = 'sunshine-windows-installer.exe'
 
     versionInfo.value.latest = {
       version: latestRelease.tag_name,
-      downloadUrl: latestRelease.assets.find((asset) => asset.name.includes('sunshine-windows-installer.exe'))
-        ?.browser_download_url,
+      downloadUrl: extractDownloadUrl(latestRelease.assets, installerFilename),
       releaseUrl: latestRelease.html_url,
       body: latestRelease.body,
     }
@@ -90,56 +105,30 @@ const checkLatestVersion = async () => {
     if (preRelease) {
       versionInfo.value.preRelease = {
         version: preRelease.tag_name,
-        downloadUrl: preRelease.assets.find((asset) => asset.name.includes('sunshine-windows-installer.exe'))
-          ?.browser_download_url,
+        downloadUrl: extractDownloadUrl(preRelease.assets, installerFilename),
         releaseUrl: preRelease.html_url,
         body: preRelease.body,
       }
     }
 
     // 更新下载链接
-    if (versionInfo.value.latest.downloadUrl) {
-      downloadLinks.value.latest = versionInfo.value.latest.downloadUrl
-      downloadLinks.value.windows = versionInfo.value.latest.downloadUrl
-      downloadLinks.value.mirror = `https://ghfast.top/${versionInfo.value.latest.downloadUrl}`
+    const latestDownloadUrl = versionInfo.value.latest.downloadUrl
+    if (latestDownloadUrl) {
+      downloadLinks.value.latest = latestDownloadUrl
+      downloadLinks.value.windows = latestDownloadUrl
+      downloadLinks.value.mirror = `https://ghfast.top/${latestDownloadUrl}`
     }
   } catch (error) {
     console.error('版本检查失败:', error)
     versionInfo.value.error = error.message
     // 使用默认下载地址
-    downloadLinks.value.windows = 'https://vip.123pan.cn/1813496318/26878949'
-    downloadLinks.value.mirror = 'https://vip.123pan.cn/1813496318/26878949'
+    const fallbackUrl = 'https://vip.123pan.cn/1813496318/26878949'
+    downloadLinks.value.windows = fallbackUrl
+    downloadLinks.value.mirror = fallbackUrl
   } finally {
     versionInfo.value.loading = false
   }
 }
-
-onMounted(() => {
-  // 设置初始主题
-  document.documentElement.setAttribute('data-theme', currentTheme.value)
-  
-  // 设置初始语言
-  document.documentElement.lang = currentLang.value === 'zh' ? 'zh-CN' : 'en'
-  updatePageTitle()
-
-  // 预加载 Star History 图表
-  const img = new Image()
-  img.onload = () => {
-    starHistoryLoaded.value = true
-  }
-  img.onerror = () => {
-    starHistoryError.value = true
-  }
-  img.src = 'https://api.star-history.com/svg?repos=qiin2333/Sunshine-Foundation&type=Date&width=800&height=400'
-
-  // 检查最新版本
-  checkLatestVersion()
-
-  // 设置特性区域的滚动动画
-  setTimeout(() => {
-    setupFeatureAnimations()
-  }, 100)
-})
 
 // 设置特性滚动动画
 const setupFeatureAnimations = () => {
@@ -147,24 +136,27 @@ const setupFeatureAnimations = () => {
   
   // 第一个特性立即触发动画
   if (featureSections[0]) {
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       featureSections[0].classList.add('is-visible')
-    }, 300)
+    })
   }
   
+  // 使用 requestAnimationFrame 优化回调性能
+  let rafId = null
   const observer = new IntersectionObserver(
     (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible')
-          observer.unobserve(entry.target)
-        }
+      if (rafId) cancelAnimationFrame(rafId)
+      
+      rafId = requestAnimationFrame(() => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible')
+            observer.unobserve(entry.target)
+          }
+        })
       })
     },
-    {
-      threshold: 0.2,
-      rootMargin: '0px 0px -100px 0px',
-    }
+    { threshold: 0.15, rootMargin: '0px 0px -50px 0px' }
   )
 
   // 从第二个特性开始观察
@@ -173,12 +165,23 @@ const setupFeatureAnimations = () => {
   }
 }
 
-// 下载链接
-const downloadLinks = ref({
-  windows: 'https://ghfast.top/https://github.com/qiin2333/Sunshine/releases/download/foundation/sunshine-windows-installer.exe',
-  github: 'https://github.com/qiin2333/Sunshine-Foundation/releases/',
-  mirror: 'https://ghfast.top/https://github.com/qiin2333/Sunshine/releases/download/foundation/sunshine-windows-installer.exe',
-  latest: null,
+onMounted(() => {
+  // 设置初始主题和语言
+  document.documentElement.setAttribute('data-theme', currentTheme.value)
+  document.documentElement.lang = currentLang.value === 'zh' ? 'zh-CN' : 'en'
+  updatePageTitle()
+
+  // 预加载 Star History 图表
+  const img = new Image()
+  img.onload = () => { starHistoryLoaded.value = true }
+  img.onerror = () => { starHistoryError.value = true }
+  img.src = 'https://api.star-history.com/svg?repos=qiin2333/Sunshine-Foundation&type=Date&width=800&height=400'
+
+  // 检查最新版本
+  checkLatestVersion()
+
+  // 设置特性区域的滚动动画
+  setTimeout(setupFeatureAnimations, 100)
 })
 
 // 客户端推荐
@@ -290,7 +293,12 @@ const clients = [
     <!-- 核心特性 -->
     <section id="features" class="features">
       <div class="features-container">
-        <div v-for="(feature, index) in t.features.items" :key="feature.title" class="feature-section" :data-index="index">
+        <div 
+          v-for="(feature, index) in t.features.items" 
+          :key="feature.title" 
+          class="feature-section" 
+          :data-index="index"
+        >
           <div class="feature-content">
             <div class="feature-number">{{ String(index + 1).padStart(2, '0') }}</div>
             <div class="feature-main">
@@ -314,14 +322,18 @@ const clients = [
         </div>
 
         <!-- 版本信息 -->
-        <div class="version-info" v-if="versionInfo.latest">
+        <div v-if="versionInfo.latest" class="version-info">
           <div class="version-badge">
             <span class="version-pulse"></span>
             <span class="version-label">{{ t.download.latestVersion }}</span>
             <span class="version-number">{{ versionInfo.latest.version }}</span>
           </div>
           <div class="version-actions">
-            <button @click="checkLatestVersion" class="btn-refresh" :disabled="versionInfo.loading">
+            <button 
+              @click="checkLatestVersion" 
+              class="btn-refresh" 
+              :disabled="versionInfo.loading"
+            >
               {{ t.download.checkUpdate }}
             </button>
           </div>
@@ -336,22 +348,27 @@ const clients = [
         <!-- 错误状态 -->
         <div v-if="versionInfo.error" class="error-state">
           <p>{{ t.download.error }}</p>
-          <button @click="checkLatestVersion" class="btn btn-secondary">{{ t.download.retry }}</button>
+          <button @click="checkLatestVersion" class="btn btn-secondary">
+            {{ t.download.retry }}
+          </button>
         </div>
 
         <div class="download-content">
           <div class="download-info">
             <h3>{{ t.download.requirements }}</h3>
             <ul class="requirements-list">
-              <li v-for="(req, index) in t.download.requirementsList" :key="index" v-html="req"></li>
+              <li 
+                v-for="(req, index) in t.download.requirementsList" 
+                :key="index" 
+                v-html="req"
+              ></li>
             </ul>
           </div>
           <div class="download-actions">
             <a :href="downloadLinks.windows" class="download-btn primary">
               <span class="download-text">
                 <strong>{{ t.download.windowsLatest }}</strong>
-                <small v-if="versionInfo.latest">{{ versionInfo.latest.version }}</small>
-                <small v-else>{{ t.download.recommended }}</small>
+                <small>{{ versionInfo.latest?.version || t.download.recommended }}</small>
               </span>
               <span class="download-arrow">→</span>
             </a>
@@ -381,7 +398,13 @@ const clients = [
               <strong>{{ versionInfo.preRelease.version }}</strong>
             </p>
           </div>
-          <a :href="versionInfo.preRelease.releaseUrl" class="btn btn-warning" target="_blank">{{ t.download.viewPrerelease }}</a>
+          <a 
+            :href="versionInfo.preRelease.releaseUrl" 
+            class="btn btn-warning" 
+            target="_blank"
+          >
+            {{ t.download.viewPrerelease }}
+          </a>
         </div>
       </div>
     </section>
@@ -423,7 +446,11 @@ const clients = [
           </div>
           <div v-else-if="starHistoryError" class="error-state">
             <p>{{ t.stats.error }}</p>
-            <a href="https://star-history.com/#qiin2333/Sunshine-Foundation&Date" target="_blank" class="btn btn-secondary">
+            <a 
+              href="https://star-history.com/#qiin2333/Sunshine-Foundation&Date" 
+              target="_blank" 
+              class="btn btn-secondary"
+            >
               {{ t.stats.viewManually }}
             </a>
           </div>
@@ -436,10 +463,18 @@ const clients = [
           />
         </div>
         <div class="stats-actions">
-          <a href="https://github.com/qiin2333/Sunshine-Foundation" class="btn btn-primary" target="_blank">
+          <a 
+            href="https://github.com/qiin2333/Sunshine-Foundation" 
+            class="btn btn-primary" 
+            target="_blank"
+          >
             {{ t.stats.giveStar }}
           </a>
-          <a href="https://star-history.com/#qiin2333/Sunshine-Foundation&Date" class="btn btn-secondary" target="_blank">
+          <a 
+            href="https://star-history.com/#qiin2333/Sunshine-Foundation&Date" 
+            class="btn btn-secondary" 
+            target="_blank"
+          >
             {{ t.stats.viewStats }}
           </a>
         </div>
@@ -462,7 +497,11 @@ const clients = [
             <h3>{{ t.docs.userGuide }}</h3>
             <p>{{ t.docs.userGuideDesc }}</p>
           </a>
-          <a href="https://docs.lizardbyte.dev/projects/sunshine/latest/" class="doc-card" target="_blank">
+          <a 
+            href="https://docs.lizardbyte.dev/projects/sunshine/latest/" 
+            class="doc-card" 
+            target="_blank"
+          >
             <h3>{{ t.docs.officialDocs }}</h3>
             <p>{{ t.docs.officialDocsDesc }}</p>
           </a>
@@ -491,8 +530,14 @@ const clients = [
           <div class="footer-section">
             <h4>{{ t.footer.links }}</h4>
             <ul>
-              <li><a href="https://github.com/qiin2333/Sunshine" target="_blank">GitHub</a></li>
-              <li><a href="https://github.com/LizardByte/awesome-sunshine" target="_blank">awesome-sunshine</a></li>
+              <li>
+                <a href="https://github.com/qiin2333/Sunshine" target="_blank">GitHub</a>
+              </li>
+              <li>
+                <a href="https://github.com/LizardByte/awesome-sunshine" target="_blank">
+                  awesome-sunshine
+                </a>
+              </li>
             </ul>
           </div>
         </div>
@@ -520,6 +565,9 @@ const clients = [
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
+  transform: translateZ(0);
+  will-change: scroll-position;
+  contain: layout style paint;
 }
 
 .container {
@@ -532,21 +580,18 @@ const clients = [
 
 .tech-background {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
+  transform: translateZ(0);
+  will-change: transform;
+  contain: layout style paint;
 }
 
 .tech-grid {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background-image: 
     linear-gradient(var(--tech-grid-color) 1px, transparent 1px),
     linear-gradient(90deg, var(--tech-grid-color) 1px, transparent 1px);
@@ -557,20 +602,22 @@ const clients = [
 .tech-glow {
   position: absolute;
   border-radius: 50%;
-  filter: blur(100px);
+  filter: blur(60px);
   opacity: 0.3;
   animation: pulse-glow 8s ease-in-out infinite;
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  contain: layout style paint;
 
-  &.tech-glow-1 {
+  &-1 {
     width: 600px;
     height: 600px;
     background: var(--primary-color);
     top: -200px;
     right: -200px;
-    animation-delay: 0s;
   }
 
-  &.tech-glow-2 {
+  &-2 {
     width: 400px;
     height: 400px;
     background: var(--accent-color);
@@ -579,7 +626,7 @@ const clients = [
     animation-delay: 2s;
   }
 
-  &.tech-glow-3 {
+  &-3 {
     width: 500px;
     height: 500px;
     background: var(--accent-secondary);
@@ -593,11 +640,11 @@ const clients = [
 @keyframes pulse-glow {
   0%, 100% {
     opacity: 0.2;
-    transform: scale(1);
+    transform: translateZ(0) scale(1);
   }
   50% {
     opacity: 0.4;
-    transform: scale(1.1);
+    transform: translateZ(0) scale(1.1);
   }
 }
 
@@ -607,12 +654,14 @@ const clients = [
 
 .header {
   background: rgba(var(--background-primary), 0.8);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 0;
   z-index: 1000;
   transition: all 0.3s ease;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .nav {
@@ -625,7 +674,7 @@ const clients = [
   align-items: center;
   gap: @spacing-sm;
 
-  .logo-icon {
+  &-icon {
     font-size: @font-size-3xl;
     filter: drop-shadow(0 0 10px var(--primary-color));
   }
@@ -730,68 +779,112 @@ const clients = [
   overflow: hidden;
   min-height: 80vh;
   .flex-center();
-}
 
-.hero-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
-
-  .hero-particles {
+  &-bg {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  &-particles {
+    position: absolute;
+    inset: 0;
     background-image: radial-gradient(var(--tech-dot-color) 1px, transparent 1px);
     background-size: 30px 30px;
     opacity: 0.5;
   }
 
-  .hero-lines {
+  &-lines {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background: 
       linear-gradient(90deg, transparent 49%, var(--tech-line-color) 50%, transparent 51%),
       linear-gradient(transparent 49%, var(--tech-line-color) 50%, transparent 51%);
     background-size: 100px 100px;
     opacity: 0.3;
   }
-}
 
-.hero-content {
-  text-align: center;
-  position: relative;
-  z-index: 2;
-  max-width: 900px;
-  margin: 0 auto;
-}
+  &-content {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    margin: 0 auto;
+  }
 
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: @spacing-sm;
-  background: rgba(var(--primary-color), 0.1);
-  border: 1px solid var(--primary-color);
-  padding: @spacing-xs @spacing-md;
-  border-radius: @border-radius-full;
-  margin-bottom: @spacing-lg;
-  color: var(--primary-color);
-  font-size: @font-size-sm;
-  font-weight: @font-weight-medium;
+  &-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: @spacing-sm;
+    background: rgba(var(--primary-color), 0.1);
+    border: 1px solid var(--primary-color);
+    padding: @spacing-xs @spacing-md;
+    border-radius: @border-radius-full;
+    margin-bottom: @spacing-lg;
+    color: var(--primary-color);
+    font-size: @font-size-sm;
+    font-weight: @font-weight-medium;
 
-  .badge-dot {
-    width: 8px;
-    height: 8px;
-    background: var(--primary-color);
-    border-radius: 50%;
-    animation: pulse 2s ease-in-out infinite;
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--primary-color);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+  }
+
+  &-title {
+    font-size: @font-size-6xl;
+    margin-bottom: @spacing-md;
+    font-weight: @font-weight-extrabold;
+    line-height: 1.1;
+
+    .title-main {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  }
+
+  &-subtitle {
+    font-size: @font-size-lg;
+    margin-bottom: @spacing-xl;
+    color: var(--text-secondary);
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.8;
+  }
+
+  &-actions {
+    .flex-center();
+    gap: @spacing-md;
+    flex-wrap: wrap;
+    margin-bottom: @spacing-xl;
+  }
+
+  &-stats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: @spacing-lg;
+    flex-wrap: wrap;
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: @spacing-xs;
+      color: var(--text-secondary);
+      font-size: @font-size-sm;
+    }
+
+    .stat-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--border-color);
+    }
   }
 }
 
@@ -806,37 +899,9 @@ const clients = [
   }
 }
 
-.hero-title {
-  font-size: @font-size-6xl;
-  margin-bottom: @spacing-md;
-  font-weight: @font-weight-extrabold;
-  line-height: 1.1;
-
-  .title-main {
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: none;
-  }
-}
-
-.hero-subtitle {
-  font-size: @font-size-lg;
-  margin-bottom: @spacing-xl;
-  color: var(--text-secondary);
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
-  line-height: 1.8;
-}
-
-.hero-actions {
-  .flex-center();
-  gap: @spacing-md;
-  flex-wrap: wrap;
-  margin-bottom: @spacing-xl;
-}
+// ============================================
+// 按钮样式
+// ============================================
 
 .btn {
   display: inline-flex;
@@ -868,7 +933,7 @@ const clients = [
     left: 100%;
   }
 
-  &.btn-primary {
+  &-primary {
     background: var(--gradient-primary);
     color: var(--text-inverse);
     box-shadow: var(--shadow-glow-subtle);
@@ -879,7 +944,7 @@ const clients = [
     }
   }
 
-  &.btn-secondary {
+  &-secondary {
     background: transparent;
     color: var(--primary-color);
     border: 2px solid var(--primary-color);
@@ -890,7 +955,7 @@ const clients = [
     }
   }
 
-  &.btn-ghost {
+  &-ghost {
     background: rgba(255, 255, 255, 0.1);
     color: var(--text-primary);
     border: 1px solid var(--border-color);
@@ -903,7 +968,7 @@ const clients = [
     }
   }
 
-  &.btn-warning {
+  &-warning {
     background: var(--gradient-accent);
     color: var(--text-inverse);
 
@@ -911,28 +976,6 @@ const clients = [
       transform: translateY(-2px);
       box-shadow: var(--shadow-glow);
     }
-  }
-}
-
-.hero-stats {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: @spacing-lg;
-  flex-wrap: wrap;
-
-  .stat-item {
-    display: flex;
-    align-items: center;
-    gap: @spacing-xs;
-    color: var(--text-secondary);
-    font-size: @font-size-sm;
-  }
-
-  .stat-divider {
-    width: 1px;
-    height: 20px;
-    background: var(--border-color);
   }
 }
 
@@ -967,7 +1010,7 @@ const clients = [
 }
 
 // ============================================
-// 特性区域 - ZeroTier 风格大标题动画
+// 特性区域
 // ============================================
 
 .features {
@@ -976,11 +1019,11 @@ const clients = [
   position: relative;
   z-index: 1;
   overflow: hidden;
-}
 
-.features-container {
-  display: flex;
-  flex-direction: column;
+  &-container {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .feature-section {
@@ -991,6 +1034,9 @@ const clients = [
   position: relative;
   padding: @spacing-3xl 0;
   overflow: hidden;
+  transform: translateZ(0);
+  will-change: transform;
+  contain: layout style paint;
 
   &:nth-child(even) {
     background: var(--background-secondary);
@@ -998,6 +1044,27 @@ const clients = [
 
   &:nth-child(odd) {
     background: var(--background-primary);
+  }
+
+  .feature-number,
+  .feature-headline,
+  .feature-description {
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+
+  &.is-visible {
+    .feature-number {
+      animation: fadeInScale 0.8s ease forwards 0.2s;
+    }
+
+    .feature-headline {
+      animation: slideUpFadeIn 1s ease forwards 0.3s;
+    }
+
+    .feature-description {
+      animation: slideUpFadeIn 1s ease forwards 0.5s;
+    }
   }
 }
 
@@ -1021,31 +1088,6 @@ const clients = [
   @media (max-width: @breakpoint-md) {
     padding: 0 @spacing-sm;
     gap: @spacing-lg;
-  }
-}
-
-.feature-section {
-  .feature-number,
-  .feature-headline,
-  .feature-description {
-    opacity: 0;
-  }
-
-  &.is-visible {
-    .feature-number {
-      animation: fadeInScale 0.8s ease forwards;
-      animation-delay: 0.2s;
-    }
-
-    .feature-headline {
-      animation: slideUpFadeIn 1s ease forwards;
-      animation-delay: 0.3s;
-    }
-
-    .feature-description {
-      animation: slideUpFadeIn 1s ease forwards;
-      animation-delay: 0.5s;
-    }
   }
 }
 
@@ -1079,7 +1121,7 @@ const clients = [
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  transform: translateY(50px);
+  transform: translateZ(0) translateY(50px);
 
   @media (max-width: @breakpoint-lg) {
     font-size: @font-size-4xl;
@@ -1096,7 +1138,7 @@ const clients = [
   color: var(--text-secondary);
   margin: 0;
   max-width: 700px;
-  transform: translateY(30px);
+  transform: translateZ(0) translateY(30px);
 
   @media (max-width: @breakpoint-lg) {
     font-size: @font-size-lg;
@@ -1110,10 +1152,7 @@ const clients = [
 
 .feature-visual {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   pointer-events: none;
   z-index: 1;
   overflow: hidden;
@@ -1125,10 +1164,13 @@ const clients = [
   height: 600px;
   background: var(--gradient-glow);
   border-radius: 50%;
-  filter: blur(100px);
+  filter: blur(60px);
   opacity: 0.3;
   animation: float 8s ease-in-out infinite;
   pointer-events: none;
+  transform: translateZ(0);
+  will-change: transform;
+  contain: layout style paint;
 
   &::before {
     content: '';
@@ -1140,6 +1182,7 @@ const clients = [
     background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
     opacity: 0.2;
     animation: pulse 4s ease-in-out infinite;
+    will-change: transform, opacity;
   }
 }
 
@@ -1147,80 +1190,46 @@ const clients = [
 @keyframes fadeInScale {
   from {
     opacity: 0;
-    transform: scale(0.8);
+    transform: translateZ(0) scale(0.8);
   }
   to {
     opacity: 0.3;
-    transform: scale(1);
+    transform: translateZ(0) scale(1);
   }
 }
 
 @keyframes slideUpFadeIn {
   from {
     opacity: 0;
-    transform: translateY(50px);
+    transform: translateZ(0) translateY(50px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateZ(0) translateY(0);
   }
 }
 
 @keyframes float {
   0%, 100% {
-    transform: translate(0, 0) scale(1);
+    transform: translateZ(0) translate(0, 0) scale(1);
   }
   33% {
-    transform: translate(30px, -30px) scale(1.1);
+    transform: translateZ(0) translate(30px, -30px) scale(1.1);
   }
   66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 0.2;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.4;
-    transform: scale(1.2);
+    transform: translateZ(0) translate(-20px, 20px) scale(0.9);
   }
 }
 
 // 滚动视差效果
 @media (prefers-reduced-motion: no-preference) {
   .feature-section {
-    &:nth-child(1) .feature-glow-effect {
-      top: 10%;
-      right: 10%;
-    }
-
-    &:nth-child(2) .feature-glow-effect {
-      bottom: 20%;
-      left: 15%;
-    }
-
-    &:nth-child(3) .feature-glow-effect {
-      top: 30%;
-      left: 20%;
-    }
-
-    &:nth-child(4) .feature-glow-effect {
-      bottom: 15%;
-      right: 25%;
-    }
-
-    &:nth-child(5) .feature-glow-effect {
-      top: 25%;
-      right: 15%;
-    }
-
-    &:nth-child(6) .feature-glow-effect {
-      bottom: 30%;
-      left: 10%;
-    }
+    &:nth-child(1) .feature-glow-effect { top: 10%; right: 10%; }
+    &:nth-child(2) .feature-glow-effect { bottom: 20%; left: 15%; }
+    &:nth-child(3) .feature-glow-effect { top: 30%; left: 20%; }
+    &:nth-child(4) .feature-glow-effect { bottom: 15%; right: 25%; }
+    &:nth-child(5) .feature-glow-effect { top: 25%; right: 15%; }
+    &:nth-child(6) .feature-glow-effect { bottom: 30%; left: 10%; }
   }
 }
 
@@ -1247,10 +1256,7 @@ const clients = [
   &::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background: var(--gradient-glow);
     opacity: 0.5;
     pointer-events: none;
@@ -1457,12 +1463,12 @@ const clients = [
   background: var(--background-secondary);
   position: relative;
   z-index: 1;
-}
 
-.clients-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: @spacing-lg;
+  &-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: @spacing-lg;
+  }
 }
 
 .client-card {
@@ -1523,6 +1529,12 @@ const clients = [
   padding: @spacing-3xl 0;
   position: relative;
   z-index: 1;
+
+  &-actions {
+    .flex-center();
+    gap: @spacing-md;
+    flex-wrap: wrap;
+  }
 }
 
 .star-history-container {
@@ -1556,12 +1568,6 @@ const clients = [
   border-radius: @border-radius-md;
 }
 
-.stats-actions {
-  .flex-center();
-  gap: @spacing-md;
-  flex-wrap: wrap;
-}
-
 .loading-state,
 .error-state {
   .flex-center();
@@ -1589,12 +1595,12 @@ const clients = [
   background: var(--background-secondary);
   position: relative;
   z-index: 1;
-}
 
-.docs-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: @spacing-lg;
+  &-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: @spacing-lg;
+  }
 }
 
 .doc-card {
@@ -1653,74 +1659,74 @@ const clients = [
   padding: @spacing-xl 0 @spacing-md;
   position: relative;
   z-index: 1;
-}
 
-.footer-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: @spacing-xl;
-  margin-bottom: @spacing-xl;
-}
-
-.footer-section {
-  h4 {
-    margin: 0 0 @spacing-md 0;
-    color: var(--text-inverse);
-    font-weight: @font-weight-semibold;
+  &-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: @spacing-xl;
+    margin-bottom: @spacing-xl;
   }
 
-  p {
-    margin: 0;
-    color: var(--text-muted);
-  }
-
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  li {
-    margin-bottom: @spacing-xs;
-  }
-
-  a {
-    color: var(--text-muted);
-    text-decoration: none;
-    transition: color 0.3s ease;
-
-    &:hover {
-      color: var(--primary-color);
-    }
-  }
-}
-
-.footer-brand {
-  .footer-logo {
-    display: flex;
-    align-items: center;
-    gap: @spacing-sm;
-    margin-bottom: @spacing-sm;
-
+  &-section {
     h4 {
+      margin: 0 0 @spacing-md 0;
+      color: var(--text-inverse);
+      font-weight: @font-weight-semibold;
+    }
+
+    p {
       margin: 0;
-      background: var(--gradient-primary);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--text-muted);
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      margin-bottom: @spacing-xs;
+    }
+
+    a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: var(--primary-color);
+      }
     }
   }
-}
 
-.footer-bottom {
-  border-top: 1px solid var(--border-dark);
-  padding-top: @spacing-md;
-  text-align: center;
+  &-brand {
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: @spacing-sm;
+      margin-bottom: @spacing-sm;
 
-  p {
-    margin: 0;
-    color: var(--text-muted);
-    font-size: @font-size-sm;
+      h4 {
+        margin: 0;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+    }
+  }
+
+  &-bottom {
+    border-top: 1px solid var(--border-dark);
+    padding-top: @spacing-md;
+    text-align: center;
+
+    p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: @font-size-sm;
+    }
   }
 }
 

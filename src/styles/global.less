@@ -125,7 +125,8 @@
 html {
   font-size: 16px;
   line-height: 1.5;
-  scroll-behavior: smooth;
+  /* 移除 scroll-behavior: smooth 以提升滚动性能 */
+  /* scroll-behavior: smooth; */
 }
 
 body {
@@ -136,7 +137,10 @@ body {
   background-color: var(--background-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* 优化 transition，避免影响滚动性能 */
   transition: background-color 0.3s ease, color 0.3s ease;
+  /* 启用硬件加速 */
+  transform: translateZ(0);
 }
 
 // ============================================
