@@ -225,27 +225,38 @@ const clients = [
     <!-- 头部导航 -->
     <header class="header">
       <div class="container">
-        <div class="nav">
-          <div class="logo">
-            <div class="logo-icon">☀️</div>
-            <h1>{{ t.title }}</h1>
-          </div>
-          <nav class="nav-links">
-            <a href="#features">{{ t.nav.features }}</a>
-            <a href="#download">{{ t.nav.download }}</a>
-            <a href="#clients">{{ t.nav.clients }}</a>
-            <a href="#stats">{{ t.nav.stats }}</a>
-            <a href="#docs">{{ t.nav.docs }}</a>
-            <div class="nav-controls">
-              <button @click="toggleTheme" class="theme-toggle" :title="themeName">
-                <span class="theme-icon">{{ themeIcon }}</span>
-              </button>
-              <button @click="toggleLanguage" class="lang-toggle">
-                {{ currentLang === 'zh' ? 'EN' : '中文' }}
-              </button>
+        <nav class="nav">
+          <!-- Logo 区域 -->
+          <a href="#" class="logo">
+            <div class="logo-icon">
+              <span class="logo-emoji">☀️</span>
+              <span class="logo-glow"></span>
             </div>
-          </nav>
-        </div>
+            <div class="logo-text">
+              <span class="logo-name">{{ t.title }}</span>
+              <span class="logo-badge">Beta</span>
+            </div>
+          </a>
+          
+          <!-- 导航链接 -->
+          <div class="nav-center">
+            <a href="#features" class="nav-link">{{ t.nav.features }}</a>
+            <a href="#download" class="nav-link">{{ t.nav.download }}</a>
+            <a href="#clients" class="nav-link">{{ t.nav.clients }}</a>
+            <a href="#stats" class="nav-link">{{ t.nav.stats }}</a>
+            <a href="#docs" class="nav-link">{{ t.nav.docs }}</a>
+          </div>
+          
+          <!-- 控制按钮 -->
+          <div class="nav-controls">
+            <button @click="toggleTheme" class="theme-toggle" :title="themeName">
+              <span class="theme-icon">{{ themeIcon }}</span>
+            </button>
+            <button @click="toggleLanguage" class="lang-toggle">
+              {{ currentLang === 'zh' ? 'EN' : '中文' }}
+            </button>
+          </div>
+        </nav>
       </div>
     </header>
 
@@ -688,102 +699,194 @@ const clients = [
 // 头部导航
 // ============================================
 
+// ============================================
+// Header 导航栏
+// ============================================
+
 .header {
-  background: rgba(var(--background-primary), 0.8);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   position: sticky;
   top: 0;
   z-index: 1000;
   transition: all 0.3s ease;
   transform: translateZ(0);
   will-change: transform;
+  
+  [data-theme="gura"] & {
+    background: rgba(255, 255, 255, 0.8);
+    border-bottom-color: var(--border-color);
+  }
 }
 
 .nav {
-  .flex-between();
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: @spacing-sm 0;
+  gap: @spacing-lg;
 }
 
+// ========== Logo 区域 ==========
 .logo {
   display: flex;
   align-items: center;
   gap: @spacing-sm;
-
+  text-decoration: none;
+  flex-shrink: 0;
+  
   &-icon {
-    font-size: @font-size-3xl;
-    filter: drop-shadow(0 0 10px var(--primary-color));
+    position: relative;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    .logo-emoji {
+      font-size: @font-size-2xl;
+      position: relative;
+      z-index: 1;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    }
+    
+    .logo-glow {
+      position: absolute;
+      inset: -4px;
+      background: var(--gradient-primary);
+      border-radius: 50%;
+      opacity: 0.2;
+      filter: blur(8px);
+      animation: logo-pulse 3s ease-in-out infinite;
+    }
   }
-
-  h1 {
-    margin: 0;
+  
+  &-text {
+    display: flex;
+    align-items: center;
+    gap: @spacing-xs;
+  }
+  
+  &-name {
+    font-size: @font-size-lg;
+    font-weight: @font-weight-bold;
     background: var(--gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    font-size: @font-size-xl;
-    font-weight: @font-weight-bold;
+    letter-spacing: -0.02em;
+  }
+  
+  &-badge {
+    font-size: 10px;
+    font-weight: @font-weight-semibold;
+    background: var(--gradient-primary);
+    color: var(--text-inverse);
+    padding: 2px 6px;
+    border-radius: @border-radius-sm;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  &:hover {
+    .logo-glow {
+      opacity: 0.4;
+    }
+    
+    .logo-name {
+      filter: drop-shadow(0 0 8px var(--primary-color));
+    }
   }
 }
 
-.nav-links {
+@keyframes logo-pulse {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(1.1);
+  }
+}
+
+// ========== 导航链接 ==========
+.nav-center {
   display: flex;
-  gap: @spacing-lg;
   align-items: center;
-
-  a {
-    text-decoration: none;
-    color: var(--text-secondary);
-    font-weight: @font-weight-medium;
-    transition: all 0.3s ease;
-    position: relative;
-    padding: @spacing-xs 0;
-
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: var(--gradient-primary);
-      transition: width 0.3s ease;
-    }
-
-    &:hover {
-      color: var(--primary-color);
-
-      &::after {
-        width: 100%;
-      }
-    }
+  gap: @spacing-xs;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px;
+  border-radius: @border-radius-lg;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  
+  [data-theme="gura"] & {
+    background: var(--background-secondary);
+    border-color: var(--border-color);
   }
 }
 
+.nav-link {
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-weight: @font-weight-medium;
+  font-size: @font-size-sm;
+  padding: @spacing-xs @spacing-md;
+  border-radius: @border-radius-md;
+  transition: all 0.25s ease;
+  position: relative;
+  white-space: nowrap;
+
+  &:hover {
+    color: var(--primary-color);
+    background: rgba(57, 197, 187, 0.1);
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// ========== 控制按钮 ==========
 .nav-controls {
   display: flex;
   gap: @spacing-sm;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .theme-toggle {
-  background: var(--background-secondary);
-  border: 2px solid var(--border-color);
-  border-radius: @border-radius-full;
-  width: 44px;
-  height: 44px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: @border-radius-md;
+  width: 40px;
+  height: 40px;
   .flex-center();
   cursor: pointer;
   transition: all 0.3s ease;
+  
+  [data-theme="gura"] & {
+    background: var(--background-secondary);
+    border-color: var(--border-color);
+  }
 
   .theme-icon {
-    font-size: @font-size-xl;
+    font-size: @font-size-lg;
+    transition: transform 0.3s ease;
   }
 
   &:hover {
     border-color: var(--primary-color);
-    box-shadow: var(--shadow-glow-subtle);
-    transform: rotate(15deg);
+    background: rgba(57, 197, 187, 0.1);
+    
+    .theme-icon {
+      transform: rotate(20deg) scale(1.1);
+    }
+  }
+  
+  &:active {
+    transform: scale(0.95);
   }
 }
 
@@ -791,16 +894,21 @@ const clients = [
   background: var(--gradient-primary);
   color: var(--text-inverse);
   border: none;
-  padding: @spacing-xs @spacing-md;
-  border-radius: @border-radius-full;
+  padding: 10px 18px;
+  border-radius: @border-radius-md;
   font-weight: @font-weight-semibold;
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: @font-size-sm;
+  box-shadow: 0 2px 8px rgba(57, 197, 187, 0.25);
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-glow);
+    box-shadow: 0 4px 16px rgba(57, 197, 187, 0.35);
+  }
+  
+  &:active {
+    transform: translateY(0);
   }
 }
 
@@ -1008,6 +1116,9 @@ const clients = [
     z-index: 2;
     max-width: 950px;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   // ========== 徽章 ==========
@@ -1020,7 +1131,7 @@ const clients = [
     border: 1px solid rgba(255, 255, 255, 0.1);
     padding: @spacing-xs @spacing-lg;
     border-radius: @border-radius-full;
-    margin-bottom: @spacing-xl;
+    margin-bottom: @spacing-lg;
     color: var(--primary-color);
     font-size: @font-size-sm;
     font-weight: @font-weight-medium;
@@ -1058,7 +1169,8 @@ const clients = [
     font-weight: @font-weight-extrabold;
     line-height: 1.1;
     position: relative;
-    display: inline-block;
+    display: block;
+    width: 100%;
 
     .title-main {
       background: linear-gradient(135deg, 
@@ -2150,6 +2262,65 @@ const clients = [
 // ============================================
 
 @media (max-width: @breakpoint-md) {
+  // Header 响应式
+  .nav {
+    flex-wrap: wrap;
+    padding: @spacing-xs 0;
+    gap: @spacing-sm;
+  }
+  
+  .logo {
+    &-badge {
+      display: none;
+    }
+    
+    &-name {
+      font-size: @font-size-base;
+    }
+    
+    &-icon {
+      width: 36px;
+      height: 36px;
+      
+      .logo-emoji {
+        font-size: @font-size-xl;
+      }
+    }
+  }
+  
+  .nav-center {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding: 3px;
+    margin-top: @spacing-xs;
+  }
+  
+  .nav-link {
+    font-size: @font-size-xs;
+    padding: 6px 10px;
+  }
+  
+  .nav-controls {
+    gap: @spacing-xs;
+  }
+  
+  .theme-toggle {
+    width: 36px;
+    height: 36px;
+    
+    .theme-icon {
+      font-size: @font-size-base;
+    }
+  }
+  
+  .lang-toggle {
+    padding: 8px 12px;
+    font-size: @font-size-xs;
+  }
+
   // Hero 响应式优化
   .hero {
     min-height: 85vh;
