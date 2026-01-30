@@ -64,11 +64,14 @@ const versionInfo = ref({
   error: null,
 })
 
-// 下载链接
+// 国内镜像前缀（若失效可换：ghfast.top / cf.ghproxy.cc / gh.ddlc.top 等，见 https://ghproxy.link）
+const MIRROR_PREFIX = 'https://mirror.ghproxy.com/'
+
+// 下载链接（仓库为 qiin2333/Sunshine-Foundation）
 const downloadLinks = ref({
-  windows: 'https://ghfast.top/https://github.com/qiin2333/Sunshine/releases/download/foundation/sunshine-windows-installer.exe',
+  windows: 'https://github.com/qiin2333/Sunshine-Foundation/releases/latest',
   github: 'https://github.com/qiin2333/Sunshine-Foundation/releases/',
-  mirror: 'https://ghfast.top/https://github.com/qiin2333/Sunshine/releases/download/foundation/sunshine-windows-installer.exe',
+  mirror: 'https://github.com/qiin2333/Sunshine-Foundation/releases/latest',
   latest: null,
 })
 
@@ -83,8 +86,8 @@ const checkLatestVersion = async () => {
     versionInfo.value.error = null
 
     const [latestResponse, allReleasesResponse] = await Promise.all([
-      fetch('https://api.github.com/repos/qiin2333/Sunshine/releases/latest'),
-      fetch('https://api.github.com/repos/qiin2333/Sunshine/releases')
+      fetch('https://api.github.com/repos/qiin2333/Sunshine-Foundation/releases/latest'),
+      fetch('https://api.github.com/repos/qiin2333/Sunshine-Foundation/releases')
     ])
 
     const [latestRelease, allReleases] = await Promise.all([
@@ -116,7 +119,7 @@ const checkLatestVersion = async () => {
     if (latestDownloadUrl) {
       downloadLinks.value.latest = latestDownloadUrl
       downloadLinks.value.windows = latestDownloadUrl
-      downloadLinks.value.mirror = `https://ghfast.top/${latestDownloadUrl}`
+      downloadLinks.value.mirror = `${MIRROR_PREFIX}${latestDownloadUrl}`
     }
   } catch (error) {
     console.error('版本检查失败:', error)
@@ -246,25 +249,55 @@ const clients = [
       </div>
     </header>
 
-    <!-- 主横幅 -->
+    <!-- 主横幅 - 梦幻/丝滑/极速 视觉 -->
     <section class="hero">
+      <!-- 多层背景效果 -->
       <div class="hero-bg">
-        <div class="hero-particles"></div>
-        <div class="hero-lines"></div>
+        <!-- 梦幻渐变光晕 -->
+        <div class="hero-aurora">
+          <div class="aurora-layer aurora-1"></div>
+          <div class="aurora-layer aurora-2"></div>
+          <div class="aurora-layer aurora-3"></div>
+        </div>
+        <!-- 极速光线 -->
+        <div class="hero-speed-lines">
+          <div class="speed-line" v-for="n in 8" :key="n" :style="{ '--i': n }"></div>
+        </div>
+        <!-- 丝滑波浪 -->
+        <div class="hero-waves">
+          <svg class="wave-svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <path class="wave wave-1" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,138.7C672,128,768,160,864,181.3C960,203,1056,213,1152,197.3C1248,181,1344,139,1392,117.3L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            <path class="wave wave-2" d="M0,256L48,240C96,224,192,192,288,181.3C384,171,480,181,576,197.3C672,213,768,235,864,224C960,213,1056,171,1152,165.3C1248,160,1344,192,1392,208L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+          </svg>
+        </div>
+        <!-- 星光粒子 -->
+        <div class="hero-stars">
+          <div class="star" v-for="n in 20" :key="n" :style="{ '--x': Math.random() * 100, '--y': Math.random() * 100, '--d': Math.random() * 3 + 1, '--s': Math.random() * 0.5 + 0.5 }"></div>
+        </div>
+        <!-- 流光效果 -->
+        <div class="hero-glow-orbs">
+          <div class="glow-orb orb-1"></div>
+          <div class="glow-orb orb-2"></div>
+          <div class="glow-orb orb-3"></div>
+        </div>
       </div>
+      
       <div class="container">
         <div class="hero-content">
           <div class="hero-badge">
+            <span class="badge-glow"></span>
             <span class="badge-dot"></span>
             <span>Game Streaming Platform</span>
           </div>
           <h1 class="hero-title">
             <span class="title-main">{{ t.tagline }}</span>
+            <span class="title-shimmer"></span>
           </h1>
           <p class="hero-subtitle">{{ t.subtitle }}</p>
           <div class="hero-actions">
-            <a :href="downloadLinks.windows" class="btn btn-primary">
+            <a :href="downloadLinks.windows" class="btn btn-primary btn-glow">
               <span class="btn-text">{{ t.hero.download }}</span>
+              <span class="btn-shine"></span>
             </a>
             <a :href="downloadLinks.github" class="btn btn-ghost">
               <span class="btn-text">{{ t.hero.github }}</span>
@@ -275,14 +308,17 @@ const clients = [
           </div>
           <div class="hero-stats">
             <div class="stat-item">
+              <span class="stat-icon">⚡</span>
               <span class="stat-text">Low Latency</span>
             </div>
             <div class="stat-divider"></div>
             <div class="stat-item">
+              <span class="stat-icon">🎨</span>
               <span class="stat-text">HDR Support</span>
             </div>
             <div class="stat-divider"></div>
             <div class="stat-item">
+              <span class="stat-icon">🖥️</span>
               <span class="stat-text">Virtual Display</span>
             </div>
           </div>
@@ -531,7 +567,7 @@ const clients = [
             <h4>{{ t.footer.links }}</h4>
             <ul>
               <li>
-                <a href="https://github.com/qiin2333/Sunshine" target="_blank">GitHub</a>
+                <a href="https://github.com/qiin2333/Sunshine-Foundation" target="_blank">GitHub</a>
               </li>
               <li>
                 <a href="https://github.com/LizardByte/awesome-sunshine" target="_blank">
@@ -772,130 +808,479 @@ const clients = [
 // 主横幅
 // ============================================
 
+// ============================================
+// Hero 区域 - 梦幻/丝滑/极速 视觉效果
+// ============================================
+
 .hero {
   position: relative;
-  padding: @spacing-3xl 0;
+  padding: @spacing-6xl 0 @spacing-3xl;
   background: var(--background-hero);
   overflow: hidden;
-  min-height: 80vh;
+  min-height: 90vh;
   .flex-center();
 
+  // 背景容器
   &-bg {
     position: absolute;
     inset: 0;
     overflow: hidden;
+    z-index: 0;
   }
 
-  &-particles {
+  // ========== 梦幻极光效果 ==========
+  &-aurora {
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(var(--tech-dot-color) 1px, transparent 1px);
-    background-size: 30px 30px;
-    opacity: 0.5;
+    overflow: hidden;
+    
+    .aurora-layer {
+      position: absolute;
+      width: 150%;
+      height: 150%;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.4;
+      animation: aurora-float 15s ease-in-out infinite;
+      will-change: transform;
+      
+      &.aurora-1 {
+        background: linear-gradient(135deg, var(--primary-color) 0%, transparent 60%);
+        top: -50%;
+        left: -25%;
+        animation-delay: 0s;
+      }
+      
+      &.aurora-2 {
+        background: linear-gradient(225deg, var(--accent-color) 0%, transparent 60%);
+        top: -30%;
+        right: -25%;
+        animation-delay: -5s;
+        animation-duration: 18s;
+      }
+      
+      &.aurora-3 {
+        background: linear-gradient(315deg, var(--accent-secondary) 0%, transparent 60%);
+        bottom: -40%;
+        left: 20%;
+        animation-delay: -10s;
+        animation-duration: 20s;
+        opacity: 0.3;
+      }
+    }
   }
 
-  &-lines {
+  // ========== 极速光线效果 ==========
+  &-speed-lines {
     position: absolute;
     inset: 0;
-    background: 
-      linear-gradient(90deg, transparent 49%, var(--tech-line-color) 50%, transparent 51%),
-      linear-gradient(transparent 49%, var(--tech-line-color) 50%, transparent 51%);
-    background-size: 100px 100px;
-    opacity: 0.3;
+    overflow: hidden;
+    
+    .speed-line {
+      position: absolute;
+      width: 2px;
+      height: 80px;
+      background: linear-gradient(to bottom, transparent, var(--primary-color), transparent);
+      opacity: 0;
+      animation: speed-dash 3s ease-in-out infinite;
+      animation-delay: calc(var(--i) * 0.4s);
+      left: calc(var(--i) * 12.5%);
+      top: -100px;
+      transform: rotate(15deg);
+      will-change: transform, opacity;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -1px;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(to bottom, transparent, var(--primary-color), transparent);
+        filter: blur(4px);
+      }
+    }
   }
 
+  // ========== 丝滑波浪效果 ==========
+  &-waves {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    overflow: hidden;
+    
+    .wave-svg {
+      position: absolute;
+      bottom: 0;
+      width: 200%;
+      height: 100%;
+      animation: wave-drift 25s linear infinite;
+      will-change: transform;
+    }
+    
+    .wave {
+      fill: var(--primary-color);
+      
+      &.wave-1 {
+        opacity: 0.08;
+        animation: wave-morph 8s ease-in-out infinite;
+      }
+      
+      &.wave-2 {
+        opacity: 0.05;
+        animation: wave-morph 10s ease-in-out infinite reverse;
+      }
+    }
+  }
+
+  // ========== 星光粒子 ==========
+  &-stars {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    
+    .star {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--primary-color);
+      border-radius: 50%;
+      left: calc(var(--x) * 1%);
+      top: calc(var(--y) * 1%);
+      opacity: 0;
+      transform: scale(calc(var(--s)));
+      animation: star-twinkle calc(var(--d) * 1s) ease-in-out infinite;
+      box-shadow: 0 0 6px var(--primary-color), 0 0 12px var(--primary-color);
+      will-change: opacity, transform;
+    }
+  }
+
+  // ========== 流光球效果 ==========
+  &-glow-orbs {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    
+    .glow-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.5;
+      animation: orb-float 12s ease-in-out infinite;
+      will-change: transform;
+      
+      &.orb-1 {
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+        top: 10%;
+        right: 15%;
+        animation-delay: 0s;
+      }
+      
+      &.orb-2 {
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
+        bottom: 20%;
+        left: 10%;
+        animation-delay: -4s;
+      }
+      
+      &.orb-3 {
+        width: 250px;
+        height: 250px;
+        background: radial-gradient(circle, var(--accent-secondary) 0%, transparent 70%);
+        top: 40%;
+        left: 50%;
+        animation-delay: -8s;
+        opacity: 0.3;
+      }
+    }
+  }
+
+  // ========== 内容区域 ==========
   &-content {
     text-align: center;
     position: relative;
     z-index: 2;
-    max-width: 900px;
+    max-width: 950px;
     margin: 0 auto;
   }
 
+  // ========== 徽章 ==========
   &-badge {
     display: inline-flex;
     align-items: center;
     gap: @spacing-sm;
-    background: rgba(var(--primary-color), 0.1);
-    border: 1px solid var(--primary-color);
-    padding: @spacing-xs @spacing-md;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: @spacing-xs @spacing-lg;
     border-radius: @border-radius-full;
-    margin-bottom: @spacing-lg;
+    margin-bottom: @spacing-xl;
     color: var(--primary-color);
     font-size: @font-size-sm;
     font-weight: @font-weight-medium;
+    position: relative;
+    overflow: hidden;
+
+    .badge-glow {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      animation: shimmer 3s ease-in-out infinite;
+    }
 
     .badge-dot {
       width: 8px;
       height: 8px;
       background: var(--primary-color);
       border-radius: 50%;
-      animation: pulse 2s ease-in-out infinite;
+      animation: pulse-glow 2s ease-in-out infinite;
+      box-shadow: 0 0 10px var(--primary-color);
+      position: relative;
+      z-index: 1;
+    }
+    
+    span:last-child {
+      position: relative;
+      z-index: 1;
     }
   }
 
+  // ========== 标题 ==========
   &-title {
-    font-size: @font-size-6xl;
-    margin-bottom: @spacing-md;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    margin-bottom: @spacing-lg;
     font-weight: @font-weight-extrabold;
     line-height: 1.1;
+    position: relative;
+    display: inline-block;
 
     .title-main {
-      background: var(--gradient-primary);
+      background: linear-gradient(135deg, 
+        var(--primary-color) 0%, 
+        var(--accent-color) 25%,
+        var(--primary-color) 50%, 
+        var(--accent-secondary) 75%,
+        var(--primary-color) 100%
+      );
+      background-size: 200% auto;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      animation: gradient-flow 4s linear infinite;
+      filter: drop-shadow(0 0 30px rgba(var(--primary-color), 0.3));
+    }
+    
+    .title-shimmer {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      animation: title-shine 4s ease-in-out infinite;
     }
   }
 
+  // ========== 副标题 ==========
   &-subtitle {
     font-size: @font-size-lg;
-    margin-bottom: @spacing-xl;
+    margin-bottom: @spacing-2xl;
     color: var(--text-secondary);
     max-width: 700px;
     margin-left: auto;
     margin-right: auto;
     line-height: 1.8;
+    opacity: 0.9;
   }
 
+  // ========== 操作按钮 ==========
   &-actions {
     .flex-center();
     gap: @spacing-md;
     flex-wrap: wrap;
-    margin-bottom: @spacing-xl;
+    margin-bottom: @spacing-2xl;
   }
 
+  // ========== 统计信息 ==========
   &-stats {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: @spacing-lg;
+    gap: @spacing-xl;
     flex-wrap: wrap;
+    padding: @spacing-md @spacing-xl;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border-radius: @border-radius-lg;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 
     .stat-item {
       display: flex;
       align-items: center;
-      gap: @spacing-xs;
+      gap: @spacing-sm;
       color: var(--text-secondary);
       font-size: @font-size-sm;
+      font-weight: @font-weight-medium;
+      
+      .stat-icon {
+        font-size: @font-size-base;
+      }
     }
 
     .stat-divider {
       width: 1px;
-      height: 20px;
-      background: var(--border-color);
+      height: 24px;
+      background: linear-gradient(to bottom, transparent, var(--border-color), transparent);
     }
   }
 }
 
-@keyframes pulse {
+// ============================================
+// Hero 动画关键帧
+// ============================================
+
+@keyframes aurora-float {
+  0%, 100% {
+    transform: translateZ(0) translate(0, 0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateZ(0) translate(30px, -20px) rotate(5deg) scale(1.05);
+  }
+  50% {
+    transform: translateZ(0) translate(-20px, 30px) rotate(-5deg) scale(0.95);
+  }
+  75% {
+    transform: translateZ(0) translate(-30px, -10px) rotate(3deg) scale(1.02);
+  }
+}
+
+@keyframes speed-dash {
+  0% {
+    transform: translateY(-100px) rotate(15deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(calc(100vh + 100px)) rotate(15deg);
+    opacity: 0;
+  }
+}
+
+@keyframes wave-drift {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes wave-morph {
+  0%, 100% {
+    d: path("M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,138.7C672,128,768,160,864,181.3C960,203,1056,213,1152,197.3C1248,181,1344,139,1392,117.3L1440,96L1440,320L0,320Z");
+  }
+  50% {
+    d: path("M0,192L48,181.3C96,171,192,149,288,160C384,171,480,213,576,224C672,235,768,213,864,192C960,171,1056,149,1152,154.7C1248,160,1344,192,1392,208L1440,224L1440,320L0,320Z");
+  }
+}
+
+@keyframes star-twinkle {
+  0%, 100% {
+    opacity: 0;
+    transform: translateZ(0) scale(calc(var(--s) * 0.5));
+  }
+  50% {
+    opacity: 1;
+    transform: translateZ(0) scale(calc(var(--s)));
+  }
+}
+
+@keyframes orb-float {
+  0%, 100% {
+    transform: translateZ(0) translate(0, 0);
+  }
+  25% {
+    transform: translateZ(0) translate(40px, -30px);
+  }
+  50% {
+    transform: translateZ(0) translate(-30px, 40px);
+  }
+  75% {
+    transform: translateZ(0) translate(20px, 20px);
+  }
+}
+
+@keyframes gradient-flow {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes title-shine {
+  0% {
+    left: -100%;
+  }
+  20%, 100% {
+    left: 150%;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes pulse-glow {
   0%, 100% {
     opacity: 1;
     transform: scale(1);
+    box-shadow: 0 0 10px var(--primary-color);
   }
   50% {
-    opacity: 0.5;
+    opacity: 0.7;
     transform: scale(1.2);
+    box-shadow: 0 0 20px var(--primary-color), 0 0 40px var(--primary-color);
+  }
+}
+
+@keyframes btn-pulse {
+  0%, 100% {
+    box-shadow: 
+      0 4px 15px rgba(57, 197, 187, 0.3),
+      0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  }
+  50% {
+    box-shadow: 
+      0 4px 20px rgba(57, 197, 187, 0.5),
+      0 0 0 1px rgba(255, 255, 255, 0.15) inset,
+      0 0 30px rgba(57, 197, 187, 0.2);
+  }
+}
+
+@keyframes shine-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 
@@ -907,12 +1292,12 @@ const clients = [
   display: inline-flex;
   align-items: center;
   gap: @spacing-sm;
-  padding: 14px 28px;
-  border-radius: @border-radius-md;
+  padding: 14px 32px;
+  border-radius: @border-radius-lg;
   text-decoration: none;
   font-weight: @font-weight-semibold;
   font-size: @font-size-base;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   border: none;
   cursor: pointer;
   position: relative;
@@ -925,8 +1310,8 @@ const clients = [
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s ease;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+    transition: left 0.6s ease;
   }
 
   &:hover::before {
@@ -934,13 +1319,43 @@ const clients = [
   }
 
   &-primary {
-    background: var(--gradient-primary);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
     color: var(--text-inverse);
-    box-shadow: var(--shadow-glow-subtle);
+    box-shadow: 
+      0 4px 15px rgba(57, 197, 187, 0.3),
+      0 0 0 1px rgba(255, 255, 255, 0.1) inset;
 
     &:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-glow);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 
+        0 8px 30px rgba(57, 197, 187, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.2) inset,
+        0 0 40px rgba(57, 197, 187, 0.2);
+    }
+    
+    &:active {
+      transform: translateY(-2px) scale(1);
+    }
+    
+    // 发光按钮额外效果
+    &.btn-glow {
+      animation: btn-pulse 3s ease-in-out infinite;
+      
+      .btn-shine {
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 60%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      
+      &:hover .btn-shine {
+        opacity: 1;
+        animation: shine-rotate 3s linear infinite;
+      }
     }
   }
 
@@ -1735,17 +2150,67 @@ const clients = [
 // ============================================
 
 @media (max-width: @breakpoint-md) {
+  // Hero 响应式优化
+  .hero {
+    min-height: 85vh;
+    padding: @spacing-3xl 0 @spacing-xl;
+    
+    &-aurora .aurora-layer {
+      filter: blur(60px);
+      opacity: 0.3;
+    }
+    
+    &-speed-lines {
+      display: none; // 移动端隐藏极速线条
+    }
+    
+    &-waves {
+      height: 120px;
+    }
+    
+    &-glow-orbs .glow-orb {
+      filter: blur(40px);
+      opacity: 0.3;
+      
+      &.orb-1 { width: 200px; height: 200px; }
+      &.orb-2 { width: 150px; height: 150px; }
+      &.orb-3 { display: none; }
+    }
+    
+    &-stars .star {
+      width: 3px;
+      height: 3px;
+    }
+  }
+
   .hero-title {
     font-size: @font-size-4xl;
+    
+    .title-shimmer {
+      display: none;
+    }
   }
 
   .hero-subtitle {
     font-size: @font-size-base;
+    padding: 0 @spacing-sm;
   }
 
   .hero-actions {
     flex-direction: column;
     align-items: center;
+    gap: @spacing-sm;
+    
+    .btn {
+      width: 100%;
+      max-width: 280px;
+      justify-content: center;
+    }
+  }
+
+  .hero-badge {
+    font-size: @font-size-xs;
+    padding: @spacing-xs @spacing-md;
   }
 
   .nav {
@@ -1772,6 +2237,7 @@ const clients = [
   .hero-stats {
     flex-direction: column;
     gap: @spacing-sm;
+    padding: @spacing-sm @spacing-md;
 
     .stat-divider {
       display: none;
