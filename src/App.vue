@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed, watch, markRaw } from 'vue'
 import { translations } from './i18n.js'
 import sponsorsData from './sponsors.json'
+import { DEFAULT_EGG_CLICKS, getEggEntry, getRandomEggEntry } from './eggs/index.js'
 
 // 语言状态管理
 const currentLang = ref(localStorage.getItem('language') || 'zh')
@@ -175,6 +176,111 @@ const openWechatSponsorModal = () => {
 
 const closeWechatSponsorModal = () => {
   wechatSponsorModalOpen.value = false
+}
+
+// 彩蛋
+const eggClicks = ref({})
+const eggLastClickTimes = ref({})
+const eggRipples = ref({})
+const eggLoading = ref(false)
+const activeEgg = ref({
+  open: false,
+  key: null,
+  sponsorId: null,
+  revealName: '',
+  component: null,
+  props: null,
+})
+
+const isDefaultEggSponsor = sponsor => sponsorsData.users.gold[0] === sponsor
+const getSponsorEggId = sponsor => `${sponsor.special || 'random'}:${sponsor.name}`
+const getSponsorEggEntry = sponsor => {
+  if (!sponsor) return null
+  if (sponsor.special) return getEggEntry(sponsor.special)
+  return isDefaultEggSponsor(sponsor) ? getRandomEggEntry() : null
+}
+const getSponsorEggClicks = sponsor =>
+  sponsor?.special ? (getEggEntry(sponsor.special)?.clicks || DEFAULT_EGG_CLICKS) : DEFAULT_EGG_CLICKS
+const isEggSponsor = sponsor =>
+  Boolean(sponsor?.special ? getEggEntry(sponsor.special) : isDefaultEggSponsor(sponsor))
+const getEggRipples = sponsor => eggRipples.value[getSponsorEggId(sponsor)] || []
+const isActiveEggSponsor = sponsor =>
+  activeEgg.value.open && activeEgg.value.sponsorId === getSponsorEggId(sponsor)
+
+const getSponsorDisplayName = sponsor =>
+  isActiveEggSponsor(sponsor) ? (activeEgg.value.revealName || sponsor.name) : sponsor.name
+
+const addEggRipple = (event, sponsor) => {
+  const sponsorId = getSponsorEggId(sponsor)
+  const rect = event.currentTarget.getBoundingClientRect()
+  const ripple = { id: Date.now(), x: event.clientX - rect.left, y: event.clientY - rect.top }
+  eggRipples.value = {
+    ...eggRipples.value,
+    [sponsorId]: [...(eggRipples.value[sponsorId] || []), ripple],
+  }
+  setTimeout(() => {
+    eggRipples.value = {
+      ...eggRipples.value,
+      [sponsorId]: (eggRipples.value[sponsorId] || []).filter(r => r.id !== ripple.id),
+    }
+  }, 600)
+}
+
+const openEggRoom = async (sponsor) => {
+  const entry = getSponsorEggEntry(sponsor)
+  if (!entry || eggLoading.value) return
+
+  eggLoading.value = true
+  try {
+    const mod = await entry.load()
+    const createEgg = mod.createEgg || mod.default?.createEgg
+    if (!createEgg) throw new Error(`Missing egg factory: ${entry.key}`)
+    const egg = createEgg({ sponsor })
+
+    activeEgg.value = {
+      open: true,
+      key: entry.key,
+      sponsorId: getSponsorEggId(sponsor),
+      revealName: egg.revealName || sponsor.name,
+      component: markRaw(egg.component),
+      props: egg.props || {},
+    }
+  } catch (error) {
+    console.error('彩蛋加载失败:', error)
+  } finally {
+    eggLoading.value = false
+  }
+}
+
+const handleEggClick = (event, sponsor) => {
+  if (!isEggSponsor(sponsor)) return
+
+  addEggRipple(event, sponsor)
+
+  const now = Date.now()
+  const sponsorId = getSponsorEggId(sponsor)
+  if (now - (eggLastClickTimes.value[sponsorId] || 0) > 3000) {
+    eggClicks.value = { ...eggClicks.value, [sponsorId]: 0 }
+  }
+  eggLastClickTimes.value = { ...eggLastClickTimes.value, [sponsorId]: now }
+  const nextCount = (eggClicks.value[sponsorId] || 0) + 1
+  eggClicks.value = { ...eggClicks.value, [sponsorId]: nextCount }
+
+  if (nextCount >= getSponsorEggClicks(sponsor)) {
+    eggClicks.value = { ...eggClicks.value, [sponsorId]: 0 }
+    openEggRoom(sponsor)
+  }
+}
+
+const closeEggRoom = () => {
+  activeEgg.value = {
+    open: false,
+    key: null,
+    sponsorId: null,
+    revealName: '',
+    component: null,
+    props: null,
+  }
 }
 </script>
 
@@ -508,20 +614,51 @@ const closeWechatSponsorModal = () => {
         <div class="sponsors-tier">
           <h3 class="tier-label tier-gold">{{ t.sponsors.gold }}</h3>
           <div v-if="sponsorsData.users.gold.length" class="sponsors-avatar-grid">
-            <component
-              v-for="s in sponsorsData.users.gold"
-              :key="s.name"
-              :is="s.url ? 'a' : 'span'"
-              :href="s.url || undefined"
-              class="sponsor-avatar-item sponsor-avatar-item--gold"
-              :target="s.url ? '_blank' : undefined"
-              :rel="s.url ? 'noopener' : undefined"
-              :title="s.name"
-            >
-              <img v-if="s.avatar" :src="s.avatar" :alt="s.name" class="sponsor-avatar sponsor-avatar--gold" />
-              <span v-else class="sponsor-avatar-placeholder">{{ s.name.charAt(0) }}</span>
-              <span class="sponsor-avatar-name">{{ s.name }}</span>
-            </component>
+            <template v-for="s in sponsorsData.users.gold" :key="s.name">
+              <!-- 彩蛋 -->
+              <span
+                v-if="isEggSponsor(s)"
+                class="sponsor-avatar-item sponsor-avatar-item--gold sponsor-avatar-item--egg"
+                :class="{
+                  'egg-active': isActiveEggSponsor(s),
+                  'egg-loading': eggLoading && activeEgg.sponsorId === getSponsorEggId(s),
+                }"
+                :title="s.name"
+                @click="handleEggClick($event, s)"
+              >
+                <span class="egg-avatar-wrap">
+                  <img :src="s.avatar" :alt="s.name" class="sponsor-avatar sponsor-avatar--gold" />
+                  <span
+                    v-for="ripple in getEggRipples(s)"
+                    :key="ripple.id"
+                    class="egg-ripple"
+                    :style="{ left: ripple.x + 'px', top: ripple.y + 'px' }"
+                  ></span>
+                </span>
+                <span class="sponsor-avatar-name">
+                  <transition name="egg-name" mode="out-in">
+                    <span
+                      :key="isActiveEggSponsor(s) ? 'full' : 'masked'"
+                      :class="{ 'egg-full-name': isActiveEggSponsor(s) }"
+                    >{{ getSponsorDisplayName(s) }}</span>
+                  </transition>
+                </span>
+              </span>
+
+              <component
+                v-else
+                :is="s.url ? 'a' : 'span'"
+                :href="s.url || undefined"
+                class="sponsor-avatar-item sponsor-avatar-item--gold"
+                :target="s.url ? '_blank' : undefined"
+                :rel="s.url ? 'noopener' : undefined"
+                :title="s.name"
+              >
+                <img v-if="s.avatar" :src="s.avatar" :alt="s.name" class="sponsor-avatar sponsor-avatar--gold" />
+                <span v-else class="sponsor-avatar-placeholder">{{ s.name.charAt(0) }}</span>
+                <span class="sponsor-avatar-name">{{ s.name }}</span>
+              </component>
+            </template>
           </div>
           <div v-else class="sponsors-empty gold-empty">
             <div class="empty-slot">
@@ -529,6 +666,15 @@ const closeWechatSponsorModal = () => {
               <p>{{ t.sponsors.emptyGold }}</p>
             </div>
           </div>
+
+          <!-- 彩蛋 -->
+          <component
+            :is="activeEgg.component"
+            v-if="activeEgg.open && activeEgg.component"
+            :key="activeEgg.props?.room?.instanceId || activeEgg.key"
+            v-bind="activeEgg.props"
+            @close="closeEggRoom"
+          />
         </div>
 
         <!-- 银牌赞助者 -->
