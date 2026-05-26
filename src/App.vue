@@ -65,70 +65,151 @@ const versionInfo = ref({
 
 // 国内镜像前缀
 const MIRROR_PREFIX = 'https://mirror.ghproxy.com/'
+const GITHUB_REPO = 'qiin2333/Sunshine-Foundation'
+const GITHUB_RELEASES_URL = `https://github.com/${GITHUB_REPO}/releases`
+const GITHUB_LATEST_RELEASE_URL = `${GITHUB_RELEASES_URL}/latest`
+const INSTALLER_FILENAME = 'sunshine-windows-installer.exe'
+const LATEST_INSTALLER_URL = `${GITHUB_LATEST_RELEASE_URL}/download/${INSTALLER_FILENAME}`
+const RELEASES_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases?per_page=20`
+const VERSION_CACHE_KEY = 'sunshine-release-version-info'
+const VERSION_CACHE_TTL_MS = 30 * 60 * 1000
+const PAN_FALLBACK_URL = 'https://vip.123pan.cn/1813496318/26878949'
 
 // 下载链接
 const downloadLinks = ref({
-  windows: 'https://github.com/qiin2333/Sunshine-Foundation/releases/latest',
-  github: 'https://github.com/qiin2333/Sunshine-Foundation/releases/',
-  mirror: 'https://github.com/qiin2333/Sunshine-Foundation/releases/latest',
-  latest: null,
+  windows: LATEST_INSTALLER_URL,
+  github: `${GITHUB_RELEASES_URL}/`,
+  mirror: `${MIRROR_PREFIX}${LATEST_INSTALLER_URL}`,
+  latest: LATEST_INSTALLER_URL,
 })
 
 // 提取资源下载链接
-const extractDownloadUrl = (assets, filename) =>
-  assets.find(asset => asset.name.includes(filename))?.browser_download_url
+const extractDownloadUrl = (assets = [], filename) =>
+  Array.isArray(assets)
+    ? assets.find(asset => asset.name?.includes(filename))?.browser_download_url
+    : undefined
+
+const fetchGithubJson = async (url) => {
+  const response = await fetch(url, {
+    headers: { Accept: 'application/vnd.github+json' },
+  })
+  const data = await response.json().catch(() => null)
+
+  if (!response.ok) {
+    const message = data?.message || response.statusText || 'request failed'
+    throw new Error(`GitHub API ${response.status}: ${message}`)
+  }
+
+  return data
+}
+
+const isGithubRateLimitError = error =>
+  /GitHub API 403:.*rate limit/i.test(error?.message || '')
+
+const readCachedVersionInfo = () => {
+  try {
+    const cached = JSON.parse(localStorage.getItem(VERSION_CACHE_KEY) || 'null')
+    return cached?.latest?.version ? cached : null
+  } catch {
+    return null
+  }
+}
+
+const writeCachedVersionInfo = (releaseInfo) => {
+  try {
+    localStorage.setItem(VERSION_CACHE_KEY, JSON.stringify({
+      ...releaseInfo,
+      timestamp: Date.now(),
+    }))
+  } catch {
+    // Ignore storage failures; the direct download fallback still works.
+  }
+}
+
+const isFreshCachedVersionInfo = cached =>
+  cached?.timestamp && Date.now() - cached.timestamp < VERSION_CACHE_TTL_MS
+
+const getMirrorUrl = url =>
+  url?.startsWith('https://github.com/') ? `${MIRROR_PREFIX}${url}` : url
+
+const applyReleaseInfo = ({ latest, preRelease }) => {
+  versionInfo.value.latest = latest
+  versionInfo.value.preRelease = preRelease || null
+
+  const latestDownloadUrl = latest.downloadUrl || LATEST_INSTALLER_URL
+  downloadLinks.value.latest = latestDownloadUrl
+  downloadLinks.value.windows = latestDownloadUrl
+  downloadLinks.value.mirror = getMirrorUrl(latestDownloadUrl)
+}
+
+const fetchReleaseInfo = async () => {
+  const releases = await fetchGithubJson(RELEASES_API_URL)
+  if (!Array.isArray(releases)) {
+    throw new Error('GitHub API returned invalid release data')
+  }
+
+  const latestRelease = releases.find(release => !release.draft && !release.prerelease)
+  const preRelease = releases.find(release => !release.draft && release.prerelease)
+
+  if (!latestRelease?.tag_name) {
+    throw new Error('GitHub API returned invalid latest release data')
+  }
+
+  return {
+    latest: {
+      version: latestRelease.tag_name,
+      downloadUrl: extractDownloadUrl(latestRelease.assets, INSTALLER_FILENAME) || LATEST_INSTALLER_URL,
+      releaseUrl: latestRelease.html_url || GITHUB_LATEST_RELEASE_URL,
+      body: latestRelease.body,
+    },
+    preRelease: preRelease ? {
+      version: preRelease.tag_name,
+      downloadUrl: extractDownloadUrl(preRelease.assets, INSTALLER_FILENAME),
+      releaseUrl: preRelease.html_url,
+      body: preRelease.body,
+    } : null,
+  }
+}
 
 // 检查最新版本
-const checkLatestVersion = async () => {
+const checkLatestVersion = async ({ force = false } = {}) => {
+  const cachedReleaseInfo = readCachedVersionInfo()
+
+  if (!force && isFreshCachedVersionInfo(cachedReleaseInfo)) {
+    applyReleaseInfo(cachedReleaseInfo)
+    versionInfo.value.loading = false
+    versionInfo.value.error = null
+    return
+  }
+
   try {
     versionInfo.value.loading = true
     versionInfo.value.error = null
 
-    const [latestResponse, allReleasesResponse] = await Promise.all([
-      fetch('https://api.github.com/repos/qiin2333/Sunshine-Foundation/releases/latest'),
-      fetch('https://api.github.com/repos/qiin2333/Sunshine-Foundation/releases')
-    ])
-
-    const [latestRelease, allReleases] = await Promise.all([
-      latestResponse.json(),
-      allReleasesResponse.json()
-    ])
-
-    const preRelease = allReleases.find(release => release.prerelease)
-    const installerFilename = 'sunshine-windows-installer.exe'
-
-    versionInfo.value.latest = {
-      version: latestRelease.tag_name,
-      downloadUrl: extractDownloadUrl(latestRelease.assets, installerFilename),
-      releaseUrl: latestRelease.html_url,
-      body: latestRelease.body,
-    }
-
-    if (preRelease) {
-      versionInfo.value.preRelease = {
-        version: preRelease.tag_name,
-        downloadUrl: extractDownloadUrl(preRelease.assets, installerFilename),
-        releaseUrl: preRelease.html_url,
-        body: preRelease.body,
-      }
-    }
-
-    const latestDownloadUrl = versionInfo.value.latest.downloadUrl
-    if (latestDownloadUrl) {
-      downloadLinks.value.latest = latestDownloadUrl
-      downloadLinks.value.windows = latestDownloadUrl
-      downloadLinks.value.mirror = `${MIRROR_PREFIX}${latestDownloadUrl}`
-    }
+    const releaseInfo = await fetchReleaseInfo()
+    applyReleaseInfo(releaseInfo)
+    writeCachedVersionInfo(releaseInfo)
   } catch (error) {
-    console.error('版本检查失败:', error)
+    if (cachedReleaseInfo) {
+      applyReleaseInfo(cachedReleaseInfo)
+      versionInfo.value.error = null
+      return
+    }
+
+    if (!isGithubRateLimitError(error)) {
+      console.warn('版本检查失败:', error)
+    }
+
     versionInfo.value.error = error.message
-    const fallbackUrl = 'https://vip.123pan.cn/1813496318/26878949'
-    downloadLinks.value.windows = fallbackUrl
-    downloadLinks.value.mirror = fallbackUrl
+    downloadLinks.value.latest = LATEST_INSTALLER_URL
+    downloadLinks.value.windows = PAN_FALLBACK_URL
+    downloadLinks.value.mirror = PAN_FALLBACK_URL
   } finally {
     versionInfo.value.loading = false
   }
 }
+
+const refreshLatestVersion = () => checkLatestVersion({ force: true })
 
 onMounted(() => {
   document.documentElement.setAttribute('data-theme', currentTheme.value)
@@ -383,7 +464,7 @@ const closeEggRoom = () => {
             <span class="version-number">{{ versionInfo.latest.version }}</span>
           </div>
           <button
-            @click="checkLatestVersion"
+            @click="refreshLatestVersion"
             class="btn-text"
             :disabled="versionInfo.loading"
           >
@@ -400,7 +481,7 @@ const closeEggRoom = () => {
         <!-- 错误状态 -->
         <div v-if="versionInfo.error" class="error-state">
           <p>{{ t.download.error }}</p>
-          <button @click="checkLatestVersion" class="btn btn-outline">
+          <button @click="refreshLatestVersion" class="btn btn-outline">
             {{ t.download.retry }}
           </button>
         </div>
