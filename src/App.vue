@@ -65,15 +65,20 @@ const versionInfo = ref({
 
 // 国内镜像前缀
 const MIRROR_PREFIX = 'https://mirror.ghproxy.com/'
-const GITHUB_REPO = 'qiin2333/Sunshine-Foundation'
-const GITHUB_RELEASES_URL = `https://github.com/${GITHUB_REPO}/releases`
+const GITHUB_REPO = 'AlkaidLab/foundation-sunshine'
+const GITHUB_REPO_URL = `https://github.com/${GITHUB_REPO}`
+const GITHUB_RELEASES_URL = `${GITHUB_REPO_URL}/releases`
 const GITHUB_LATEST_RELEASE_URL = `${GITHUB_RELEASES_URL}/latest`
 const INSTALLER_FILENAME = 'sunshine-windows-installer.exe'
 const LATEST_INSTALLER_URL = `${GITHUB_LATEST_RELEASE_URL}/download/${INSTALLER_FILENAME}`
 const RELEASES_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases?per_page=20`
-const VERSION_CACHE_KEY = 'sunshine-release-version-info'
+const VERSION_CACHE_KEY = 'foundation-sunshine-release-version-info'
 const VERSION_CACHE_TTL_MS = 30 * 60 * 1000
 const PAN_FALLBACK_URL = 'https://vip.123pan.cn/1813496318/26878949'
+const STAR_REPO_URL = 'https://github.com/AlkaidLab/foundation-sunshine'
+const STAR_HISTORY_REPO = 'AlkaidLab/foundation-sunshine'
+const STAR_HISTORY_URL = `https://www.star-history.com/?type=date&repos=${encodeURIComponent(STAR_HISTORY_REPO)}`
+const STAR_HISTORY_IMAGE_URL = 'https://star.alkaidlab.com/starhistory/AlkaidLab/foundation-sunshine'
 
 // 下载链接
 const downloadLinks = ref({
@@ -219,7 +224,7 @@ onMounted(() => {
   const img = new Image()
   img.onload = () => { starHistoryLoaded.value = true }
   img.onerror = () => { starHistoryError.value = true }
-  img.src = 'https://api.star-history.com/svg?repos=qiin2333/Sunshine-Foundation&type=Date&width=800&height=400'
+  img.src = STAR_HISTORY_IMAGE_URL
 
   checkLatestVersion()
 })
@@ -227,24 +232,74 @@ onMounted(() => {
 // 客户端推荐
 const clients = [
   {
-    name: 'Moonlight-PC',
-    platform: 'Windows/macOS/Linux',
-    link: 'https://github.com/qiin2333/moonlight-qt',
-  },
-  {
-    name: 'VPLUS Moonlight-Android',
-    platform: 'Android',
+    id: 'android-vplus',
+    name: {
+      zh: '安卓 Moonlight V+',
+      en: 'Android Moonlight V+',
+    },
+    platform: {
+      zh: 'Android / Android TV',
+      en: 'Android / Android TV',
+    },
     link: 'https://github.com/qiin2333/moonlight-vplus',
+    icon: 'android',
+    type: 'android',
   },
   {
-    name: '王冠版 Moonlight-Android',
-    platform: 'Android',
-    link: 'https://github.com/WACrown/moonlight-android',
+    id: 'harmonyos-vplus',
+    name: {
+      zh: '鸿蒙 Moonlight V+',
+      en: 'HarmonyOS Moonlight V+',
+    },
+    platform: {
+      zh: 'HarmonyOS NEXT',
+      en: 'HarmonyOS NEXT',
+    },
+    link: 'https://appgallery.huawei.com/app/detail?id=com.alkaidlab.sdream',
+    icon: 'phone',
+    type: 'harmony',
   },
   {
-    name: 'VoidLink (Moonlight-iOS)',
-    platform: 'iOS',
+    id: 'moonlight-pc',
+    name: {
+      zh: 'Moonlight PC',
+      en: 'Moonlight PC',
+    },
+    platform: {
+      zh: 'Windows / macOS / Linux',
+      en: 'Windows / macOS / Linux',
+    },
+    link: 'https://github.com/qiin2333/moonlight-qt',
+    icon: 'monitor',
+    type: 'desktop',
+  },
+  {
+    id: 'macos-enhanced',
+    name: {
+      zh: 'macOS 增强版',
+      en: 'macOS Enhanced',
+    },
+    platform: {
+      zh: 'skyhua0224 · macOS 增强版',
+      en: 'skyhua0224 · macOS Enhanced',
+    },
+    link: 'https://github.com/skyhua0224/moonlight-macos-enhanced',
+    icon: 'apple',
+    type: 'apple',
+  },
+  {
+    id: 'voidlink',
+    name: {
+      zh: '虚空终端 (VoidLink)',
+      en: 'VoidLink',
+    },
+    platform: {
+      zh: 'iOS / iPadOS',
+      en: 'iOS / iPadOS',
+    },
     link: 'https://apps.apple.com/cn/app/voidlink/id6747717070',
+    icon: 'apple',
+    type: 'apple',
   },
 ]
 
@@ -406,14 +461,32 @@ const closeEggRoom = () => {
           <h1 class="hero-title">{{ t.tagline }}</h1>
           <p class="hero-subtitle">{{ t.subtitle }}</p>
           <div class="hero-actions">
-            <a :href="downloadLinks.windows" class="btn btn-primary">
+            <a
+              :href="downloadLinks.windows"
+              class="btn btn-primary"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {{ t.hero.download }}
             </a>
-            <a :href="downloadLinks.github" class="btn btn-outline">
+            <a
+              :href="downloadLinks.github"
+              class="btn btn-outline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {{ t.hero.github }}
             </a>
-            <a :href="downloadLinks.mirror" class="btn btn-outline">
+            <a
+              :href="downloadLinks.mirror"
+              class="btn btn-outline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {{ t.hero.mirror }}
+            </a>
+            <a href="#clients" class="btn btn-outline">
+              {{ t.hero.moonlightClient }}
             </a>
           </div>
           <div class="hero-stats">
@@ -498,24 +571,53 @@ const closeEggRoom = () => {
             </ul>
           </div>
           <div class="download-actions">
-            <a :href="downloadLinks.windows" class="download-btn primary">
+            <a
+              :href="downloadLinks.windows"
+              class="download-btn primary"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <span class="download-text">
                 <strong>{{ t.download.windowsLatest }}</strong>
                 <small>{{ versionInfo.latest?.version || t.download.recommended }}</small>
               </span>
               <span class="download-arrow">&rarr;</span>
             </a>
-            <a :href="downloadLinks.github" class="download-btn">
+            <a
+              :href="downloadLinks.github"
+              class="download-btn"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <span class="download-text">
                 <strong>{{ t.download.allVersions }}</strong>
                 <small>{{ t.download.githubReleases }}</small>
               </span>
               <span class="download-arrow">&rarr;</span>
             </a>
-            <a :href="downloadLinks.mirror" class="download-btn">
+            <a
+              :href="downloadLinks.mirror"
+              class="download-btn"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <span class="download-text">
                 <strong>{{ t.download.mirrorDownload }}</strong>
                 <small>{{ t.download.domesticSpeed }}</small>
+              </span>
+              <span class="download-arrow">&rarr;</span>
+            </a>
+            <a href="#clients" class="download-btn client-jump-btn">
+              <span class="download-icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 3v12"/>
+                  <path d="m7 10 5 5 5-5"/>
+                  <path d="M5 21h14"/>
+                </svg>
+              </span>
+              <span class="download-text">
+                <strong>{{ t.download.moonlightClient }}</strong>
+                <small>{{ t.download.moonlightClientDesc }}</small>
               </span>
               <span class="download-arrow">&rarr;</span>
             </a>
@@ -535,6 +637,7 @@ const closeEggRoom = () => {
             :href="versionInfo.preRelease.releaseUrl"
             class="btn btn-outline"
             target="_blank"
+            rel="noopener noreferrer"
           >
             {{ t.download.viewPrerelease }}
           </a>
@@ -551,15 +654,50 @@ const closeEggRoom = () => {
           <div class="section-line"></div>
         </div>
         <div class="clients-grid">
-          <div v-for="client in clients" :key="client.name" class="client-card">
+          <component
+            v-for="client in clients"
+            :key="client.id"
+            :is="client.link ? 'a' : 'span'"
+            :href="client.link || undefined"
+            class="client-card"
+            :class="[`client-card--${client.type}`, { 'client-card--disabled': !client.link }]"
+            :target="client.link ? '_blank' : undefined"
+            :rel="client.link ? 'noopener noreferrer' : undefined"
+            :aria-label="client.link ? `${t.clients.downloadBtn} ${client.name[currentLang]}` : `${client.name[currentLang]} ${t.clients.comingSoon}`"
+          >
+            <span class="client-icon" aria-hidden="true">
+              <svg v-if="client.icon === 'android'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M7.2 9.2h9.6a2 2 0 0 1 2 2v5.6a2 2 0 0 1-2 2H7.2a2 2 0 0 1-2-2v-5.6a2 2 0 0 1 2-2Z"/>
+                <path d="M8 9.2 6.4 6.5M16 9.2l1.6-2.7"/>
+                <path d="M8.6 13h.01M15.4 13h.01"/>
+                <path d="M3.5 11.2v5M20.5 11.2v5"/>
+              </svg>
+              <svg v-else-if="client.icon === 'phone'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <rect x="7" y="3" width="10" height="18" rx="2"/>
+                <path d="M11 18h2"/>
+              </svg>
+              <svg v-else-if="client.icon === 'monitor'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <rect x="3" y="4" width="18" height="13" rx="2"/>
+                <path d="M8 21h8M12 17v4"/>
+              </svg>
+              <svg v-else-if="client.icon === 'apple'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M16.4 12.2c0-2 1.6-3 1.7-3.1-1-1.4-2.4-1.6-2.9-1.6-1.2-.1-2.4.7-3 .7-.7 0-1.7-.7-2.8-.7-1.4 0-2.7.8-3.5 2.1-1.5 2.7-.4 6.6 1.1 8.7.7 1 1.5 2.2 2.7 2.1 1.1 0 1.5-.7 2.8-.7 1.3 0 1.7.7 2.8.7 1.2 0 2-1.1 2.7-2.1.8-1.2 1.1-2.3 1.1-2.4 0-.1-2.7-1.1-2.7-3.7Z"/>
+                <path d="M14.5 6.2c.6-.7 1-1.7.9-2.7-.9 0-1.9.6-2.5 1.3-.6.7-1 1.6-.9 2.6.9.1 1.9-.5 2.5-1.2Z"/>
+              </svg>
+            </span>
             <div class="client-info">
-              <h3 class="client-name">{{ client.name }}</h3>
-              <p class="client-platform">{{ client.platform }}</p>
+              <h3 class="client-name">{{ client.name[currentLang] }}</h3>
+              <p class="client-platform">{{ client.platform[currentLang] }}</p>
             </div>
-            <a :href="client.link" class="client-link" target="_blank" rel="noopener">
-              {{ t.clients.downloadBtn }}
-            </a>
-          </div>
+            <span class="client-link" aria-hidden="true">
+              <svg v-if="client.link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M15 3h6v6"/>
+                <path d="M10 14 21 3"/>
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              </svg>
+              <span v-else>{{ t.clients.comingSoon }}</span>
+            </span>
+          </component>
         </div>
       </div>
     </section>
@@ -580,8 +718,9 @@ const closeEggRoom = () => {
           <div v-else-if="starHistoryError" class="error-state">
             <p>{{ t.stats.error }}</p>
             <a
-              href="https://star-history.com/#qiin2333/Sunshine-Foundation&Date"
+              :href="STAR_HISTORY_URL"
               target="_blank"
+              rel="noopener noreferrer"
               class="btn btn-outline"
             >
               {{ t.stats.viewManually }}
@@ -589,24 +728,26 @@ const closeEggRoom = () => {
           </div>
           <img
             v-else
-            src="https://api.star-history.com/svg?repos=qiin2333/Sunshine-Foundation&type=Date&width=800&height=400"
-            :alt="`${t.title} Star History`"
+            :src="STAR_HISTORY_IMAGE_URL"
+            :alt="`${t.title} ${t.stats.title}`"
             class="star-history-chart"
             loading="lazy"
           />
         </div>
         <div class="stats-actions">
           <a
-            href="https://github.com/qiin2333/Sunshine-Foundation"
+            :href="STAR_REPO_URL"
             class="btn btn-primary"
             target="_blank"
+            rel="noopener noreferrer"
           >
             {{ t.stats.giveStar }}
           </a>
           <a
-            href="https://star-history.com/#qiin2333/Sunshine-Foundation&Date"
+            :href="STAR_HISTORY_URL"
             class="btn btn-outline"
             target="_blank"
+            rel="noopener noreferrer"
           >
             {{ t.stats.viewStats }}
           </a>
@@ -861,7 +1002,7 @@ const closeEggRoom = () => {
             <h4>{{ t.footer.links }}</h4>
             <ul>
               <li>
-                <a href="https://github.com/qiin2333/Sunshine-Foundation" target="_blank">GitHub</a>
+                <a :href="GITHUB_REPO_URL" target="_blank" rel="noopener noreferrer">GitHub</a>
               </li>
               <li>
                 <a href="https://github.com/LizardByte/awesome-sunshine" target="_blank">

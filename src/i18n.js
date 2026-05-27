@@ -11,7 +11,7 @@ export const translations = {
       features: '特性',
       download: '下载',
       clients: '客户端',
-      stats: 'Star History',
+      stats: 'Star 趋势',
       docs: '文档',
       sponsors: '赞助'
     },
@@ -20,6 +20,7 @@ export const translations = {
       download: '立即下载',
       github: 'GitHub开源仓库',
       mirror: '镜像下载',
+      moonlightClient: '下载 Moonlight 客户端',
       stats: ['低延迟', 'HDR 支持', '基地虚拟显示器']
     },
     features: {
@@ -72,6 +73,8 @@ export const translations = {
       githubReleases: 'GitHub Releases',
       mirrorDownload: '镜像下载',
       domesticSpeed: '国内加速',
+      moonlightClient: '下载 Moonlight 客户端',
+      moonlightClientDesc: '查看推荐客户端',
       prerelease: '预发布版本可用',
       prereleaseFound: '发现新的预发布版本',
       viewPrerelease: '查看预发布版本'
@@ -79,13 +82,14 @@ export const translations = {
     clients: {
       title: '推荐的 Moonlight 客户端',
       subtitle: '建议使用以下经过优化的客户端获得最佳的串流体验',
-      downloadBtn: '下载 →'
+      downloadBtn: '下载',
+      comingSoon: '待发布'
     },
     stats: {
-      title: 'Star History',
+      title: 'Star 趋势',
       subtitle: '查看项目的 GitHub Star 增长趋势',
-      loading: '正在加载 Star History...',
-      error: '无法加载 Star History 图表',
+      loading: '正在加载 Star 趋势...',
+      error: '无法加载 Star 趋势图表',
       viewManually: '手动查看',
       giveStar: '给个 Star',
       viewStats: '查看详细统计'
@@ -146,8 +150,9 @@ export const translations = {
     hero: {
       badge: 'Game Streaming Platform',
       download: 'Download Now',
-      github: 'GitHub Releases',
+      github: 'GitHub Repository',
       mirror: 'Mirror Download',
+      moonlightClient: 'Download Moonlight Client',
       stats: ['Low Latency', 'HDR Support', 'Virtual Display']
     },
     features: {
@@ -200,6 +205,8 @@ export const translations = {
       githubReleases: 'GitHub Releases',
       mirrorDownload: 'Mirror Download',
       domesticSpeed: 'Domestic Speed',
+      moonlightClient: 'Download Moonlight Client',
+      moonlightClientDesc: 'View recommended clients',
       prerelease: 'Pre-release Available',
       prereleaseFound: 'New pre-release version found',
       viewPrerelease: 'View Pre-release'
@@ -207,7 +214,8 @@ export const translations = {
     clients: {
       title: 'Recommended Moonlight Clients',
       subtitle: 'Use these optimized clients for the best streaming experience',
-      downloadBtn: 'Download →'
+      downloadBtn: 'Download',
+      comingSoon: 'Coming soon'
     },
     stats: {
       title: 'Star History',

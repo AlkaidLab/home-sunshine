@@ -429,23 +429,26 @@
   margin: 0;
 
   li {
+    position: relative;
     padding: 0.6rem 0;
     border-bottom: 1px solid var(--border-color);
     color: var(--text-secondary);
     font-size: 0.875rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
+    line-height: 1.6;
+    padding-left: 1.35rem;
 
     &::before {
       content: '\2713';
       color: var(--primary-color);
       font-weight: 700;
-      flex-shrink: 0;
+      position: absolute;
+      left: 0;
+      top: 0.6rem;
     }
 
-    a {
+    :deep(a) {
       color: var(--primary-color);
+      white-space: nowrap;
       &:hover { text-decoration: underline; }
     }
   }
@@ -460,6 +463,7 @@
 .download-btn {
   display: flex;
   align-items: center;
+  gap: 0.875rem;
   padding: 1rem 1.25rem;
   background: var(--background-primary);
   border: 1px solid var(--border-color);
@@ -485,6 +489,32 @@
     background: var(--primary-color);
     color: var(--text-inverse);
     border-color: transparent;
+  }
+
+  &.client-jump-btn {
+    border-color: rgba(57, 197, 187, 0.28);
+    background:
+      linear-gradient(135deg, rgba(57, 197, 187, 0.12), rgba(0, 119, 255, 0.06)),
+      var(--background-primary);
+
+    [data-theme="chocolate"] & {
+      border-color: rgba(212, 165, 116, 0.32);
+      background:
+        linear-gradient(135deg, rgba(212, 165, 116, 0.13), rgba(244, 164, 96, 0.07)),
+        var(--background-tertiary);
+    }
+  }
+
+  .download-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    background: var(--primary-color);
+    color: var(--text-inverse);
   }
 
   .download-text {
@@ -559,21 +589,101 @@
 }
 
 .client-card {
-  background: var(--background-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 1.25rem;
+  --client-accent: var(--primary-color);
+  --client-icon-bg: var(--primary-color);
+  --client-card-tint: rgba(57, 197, 187, 0.08);
+  --client-border: var(--border-color);
+
+  min-height: 78px;
+  background:
+    linear-gradient(135deg, var(--client-card-tint), transparent 72%),
+    var(--background-secondary);
+  border: 1px solid var(--client-border);
+  border-radius: 8px;
+  padding: 1rem;
   display: flex;
   align-items: center;
   gap: 1rem;
-  transition: border-color 0.2s;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
 
   [data-theme="chocolate"] & {
-    background: var(--background-tertiary);
+    background:
+      linear-gradient(135deg, var(--client-card-tint), transparent 72%),
+      var(--background-tertiary);
   }
 
   &:hover {
-    border-color: var(--primary-color);
+    border-color: var(--client-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+
+    .client-link {
+      color: var(--client-accent);
+      opacity: 1;
+      transform: translate(2px, -2px);
+    }
+  }
+
+  &--android {
+    --client-accent: #22c55e;
+    --client-icon-bg: #2bdc73;
+    --client-card-tint: rgba(34, 197, 94, 0.14);
+    --client-border: rgba(34, 197, 94, 0.22);
+  }
+
+  &--harmony {
+    --client-accent: #ef4444;
+    --client-icon-bg: #ef4444;
+    --client-card-tint: rgba(239, 68, 68, 0.13);
+    --client-border: rgba(239, 68, 68, 0.2);
+  }
+
+  &--desktop {
+    --client-accent: #64748b;
+    --client-icon-bg: #8b98a7;
+    --client-card-tint: rgba(100, 116, 139, 0.13);
+    --client-border: rgba(100, 116, 139, 0.18);
+  }
+
+  &--apple {
+    --client-accent: #6b7280;
+    --client-icon-bg: #d1d5db;
+    --client-card-tint: rgba(107, 114, 128, 0.1);
+    --client-border: rgba(107, 114, 128, 0.16);
+  }
+
+  &--disabled {
+    cursor: default;
+    opacity: 0.7;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
+  .client-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    background: var(--client-icon-bg);
+    color: #ffffff;
+
+    svg {
+      width: 24px;
+      height: 24px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
   }
 
   .client-info { flex: 1; }
@@ -592,19 +702,23 @@
   }
 
   .client-link {
-    color: var(--primary-color);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.85rem;
-    padding: 0.4rem 0.75rem;
-    border: 1px solid var(--primary-color);
-    border-radius: 6px;
-    transition: all 0.2s;
-    white-space: nowrap;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    opacity: 0.75;
+    transition: color 0.2s, opacity 0.2s, transform 0.2s;
 
-    &:hover {
-      background: var(--primary-color);
-      color: var(--text-inverse);
+    svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
   }
 }
