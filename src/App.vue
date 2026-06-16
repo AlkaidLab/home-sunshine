@@ -69,12 +69,14 @@ const GITHUB_REPO = 'AlkaidLab/foundation-sunshine'
 const GITHUB_REPO_URL = `https://github.com/${GITHUB_REPO}`
 const GITHUB_RELEASES_URL = `${GITHUB_REPO_URL}/releases`
 const GITHUB_LATEST_RELEASE_URL = `${GITHUB_RELEASES_URL}/latest`
-const INSTALLER_FILENAME = 'sunshine-windows-installer.exe'
-const LATEST_INSTALLER_URL = `${GITHUB_LATEST_RELEASE_URL}/download/${INSTALLER_FILENAME}`
 const RELEASES_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases?per_page=20`
-const VERSION_CACHE_KEY = 'foundation-sunshine-release-version-info'
+const WINDOWS_INSTALLER_ASSET_PATTERNS = [
+  /WindowsInstaller\.exe$/i,
+  /windows[-_.]?installer\.exe$/i,
+]
+const DEFAULT_DOWNLOAD_URL = GITHUB_LATEST_RELEASE_URL
+const VERSION_CACHE_KEY = 'foundation-sunshine-release-version-info-v2'
 const VERSION_CACHE_TTL_MS = 30 * 60 * 1000
-const PAN_FALLBACK_URL = 'https://vip.123pan.cn/1813496318/26878949'
 const STAR_REPO_URL = 'https://github.com/AlkaidLab/foundation-sunshine'
 const STAR_HISTORY_REPO = 'AlkaidLab/foundation-sunshine'
 const STAR_HISTORY_URL = `https://www.star-history.com/?type=date&repos=${encodeURIComponent(STAR_HISTORY_REPO)}`
@@ -82,16 +84,19 @@ const STAR_HISTORY_IMAGE_URL = 'https://star.alkaidlab.com/starhistory/AlkaidLab
 
 // 下载链接
 const downloadLinks = ref({
-  windows: LATEST_INSTALLER_URL,
+  windows: DEFAULT_DOWNLOAD_URL,
   github: `${GITHUB_RELEASES_URL}/`,
-  mirror: `${MIRROR_PREFIX}${LATEST_INSTALLER_URL}`,
-  latest: LATEST_INSTALLER_URL,
+  mirror: `${MIRROR_PREFIX}${DEFAULT_DOWNLOAD_URL}`,
+  latest: DEFAULT_DOWNLOAD_URL,
 })
 
 // 提取资源下载链接
-const extractDownloadUrl = (assets = [], filename) =>
+const isWindowsInstallerAsset = asset =>
+  WINDOWS_INSTALLER_ASSET_PATTERNS.some(pattern => pattern.test(asset?.name || ''))
+
+const extractDownloadUrl = (assets = []) =>
   Array.isArray(assets)
-    ? assets.find(asset => asset.name?.includes(filename))?.browser_download_url
+    ? assets.find(isWindowsInstallerAsset)?.browser_download_url
     : undefined
 
 const fetchGithubJson = async (url) => {
@@ -141,7 +146,7 @@ const applyReleaseInfo = ({ latest, preRelease }) => {
   versionInfo.value.latest = latest
   versionInfo.value.preRelease = preRelease || null
 
-  const latestDownloadUrl = latest.downloadUrl || LATEST_INSTALLER_URL
+  const latestDownloadUrl = latest.downloadUrl || latest.releaseUrl || DEFAULT_DOWNLOAD_URL
   downloadLinks.value.latest = latestDownloadUrl
   downloadLinks.value.windows = latestDownloadUrl
   downloadLinks.value.mirror = getMirrorUrl(latestDownloadUrl)
@@ -163,13 +168,13 @@ const fetchReleaseInfo = async () => {
   return {
     latest: {
       version: latestRelease.tag_name,
-      downloadUrl: extractDownloadUrl(latestRelease.assets, INSTALLER_FILENAME) || LATEST_INSTALLER_URL,
+      downloadUrl: extractDownloadUrl(latestRelease.assets) || latestRelease.html_url || DEFAULT_DOWNLOAD_URL,
       releaseUrl: latestRelease.html_url || GITHUB_LATEST_RELEASE_URL,
       body: latestRelease.body,
     },
     preRelease: preRelease ? {
       version: preRelease.tag_name,
-      downloadUrl: extractDownloadUrl(preRelease.assets, INSTALLER_FILENAME),
+      downloadUrl: extractDownloadUrl(preRelease.assets),
       releaseUrl: preRelease.html_url,
       body: preRelease.body,
     } : null,
@@ -206,9 +211,9 @@ const checkLatestVersion = async ({ force = false } = {}) => {
     }
 
     versionInfo.value.error = error.message
-    downloadLinks.value.latest = LATEST_INSTALLER_URL
-    downloadLinks.value.windows = PAN_FALLBACK_URL
-    downloadLinks.value.mirror = PAN_FALLBACK_URL
+    downloadLinks.value.latest = DEFAULT_DOWNLOAD_URL
+    downloadLinks.value.windows = DEFAULT_DOWNLOAD_URL
+    downloadLinks.value.mirror = getMirrorUrl(DEFAULT_DOWNLOAD_URL)
   } finally {
     versionInfo.value.loading = false
   }
