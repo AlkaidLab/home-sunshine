@@ -16,4 +16,12 @@ export default defineConfig({
       },
     },
   },
+  // Vue 3.6 beta's Vapor runtime exposes ESM-only internal bindings.
+  // Bundle Vue packages for the temporary SSR build so Node does not select CJS exports.
+  ssr: {
+    noExternal: true,
+    resolve: {
+      conditions: ['module', 'browser', 'development|production'],
+    },
+  },
 })
