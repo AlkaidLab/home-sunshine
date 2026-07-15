@@ -1,14 +1,18 @@
-<script setup>
+<script setup vapor>
 import { ref, onMounted, computed, watch, markRaw } from 'vue'
 import { translations } from './i18n.js'
 import sponsorsData from './sponsors.json'
 import { DEFAULT_EGG_CLICKS, getEggEntry, getRandomEggEntry } from './eggs/index.js'
+import HeroMeteorSky from './components/HeroMeteorSky.vue'
 
-// 语言状态管理
-const currentLang = ref(localStorage.getItem('language') || 'zh')
+const DEFAULT_LANGUAGE = 'zh'
+const DEFAULT_THEME = 'gura'
+
+// 使用稳定的服务端初始值，客户端挂载后再恢复本地偏好，避免 hydration 不一致。
+const currentLang = ref(DEFAULT_LANGUAGE)
 
 // 主题状态管理 - gura(蓝色) 或 chocolate(巧克力深色)
-const currentTheme = ref(localStorage.getItem('theme') || 'gura')
+const currentTheme = ref(DEFAULT_THEME)
 
 // 切换语言
 const toggleLanguage = () => {
@@ -29,7 +33,9 @@ const toggleTheme = () => {
 
 // 监听主题变化
 watch(currentTheme, (newTheme) => {
-  document.documentElement.setAttribute('data-theme', newTheme)
+  if (typeof document !== 'undefined') {
+    document.documentElement.setAttribute('data-theme', newTheme)
+  }
 })
 
 // 主题名称
@@ -222,6 +228,16 @@ const checkLatestVersion = async ({ force = false } = {}) => {
 const refreshLatestVersion = () => checkLatestVersion({ force: true })
 
 onMounted(() => {
+  const savedLanguage = localStorage.getItem('language')
+  const savedTheme = localStorage.getItem('theme')
+
+  if (savedLanguage === 'zh' || savedLanguage === 'en') {
+    currentLang.value = savedLanguage
+  }
+  if (savedTheme === 'gura' || savedTheme === 'chocolate') {
+    currentTheme.value = savedTheme
+  }
+
   document.documentElement.setAttribute('data-theme', currentTheme.value)
   document.documentElement.lang = currentLang.value === 'zh' ? 'zh-CN' : 'en'
   updatePageTitle()
@@ -460,6 +476,7 @@ const closeEggRoom = () => {
 
     <!-- 主横幅 -->
     <section class="hero">
+      <HeroMeteorSky />
       <div class="container">
         <div class="hero-content">
           <p class="hero-badge">{{ t.hero.badge }}</p>
