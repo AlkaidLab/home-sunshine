@@ -62,6 +62,17 @@
       (function() {
         const savedTheme = localStorage.getItem('theme') || 'gura';
         document.documentElement.setAttribute('data-theme', savedTheme);
+
+        // Play the opening sequence on every full page load without blocking SSG content.
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!prefersReducedMotion) {
+          document.documentElement.setAttribute('data-intro', 'active');
+          window.addEventListener('DOMContentLoaded', () => {
+            window.setTimeout(() => {
+              document.documentElement.removeAttribute('data-intro');
+            }, 2700);
+          }, { once: true });
+        }
         
         // Update theme-color meta tag
         const themeColor = savedTheme === 'chocolate' ? '#d4a574' : '#39c5bb';
