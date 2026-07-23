@@ -802,6 +802,14 @@ const closeEggRoom = () => {
             <p>{{ t.docs.officialDocsDesc }}</p>
           </a>
           <a
+            href="/docs/razer-haptics-sdk-announcement-zh.html"
+            class="doc-card"
+            target="_blank"
+          >
+            <h3>{{ t.docs.razerHaptics }}</h3>
+            <p>{{ t.docs.razerHapticsDesc }}</p>
+          </a>
+          <a
             href="https://qm.qq.com/cgi-bin/qm/qr?k=5qnkzSaLIrIaU4FvumftZH_6Hg7fUuLD&jump_from=webapi"
             class="doc-card"
             target="_blank"

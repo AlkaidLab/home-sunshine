@@ -63,6 +63,17 @@ pnpm preview
 yarn preview
 ```
 
+## 静态文档
+
+Markdown 文档放在 `docs/` 目录中，生产构建会自动生成对应的静态 HTML 页面并输出到 `dist/docs/`：
+
+```bash
+npm run build:docs
+```
+
+首页的“文档与支持”区域可以直接链接这些页面。当前已接入雷蛇手柄触觉支持公告：
+`docs/razer-haptics-sdk-announcement-zh.md`。
+
 ## 项目结构
 
 ```
