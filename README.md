@@ -71,7 +71,7 @@ Markdown 文档放在 `docs/` 目录中，生产构建会自动生成对应的�
 npm run build:docs
 ```
 
-首页的“文档与支持”区域可以直接链接这些页面。当前已接入雷蛇手柄触觉支持公告：
+这些页面可按需通过独立链接发布。当前已接入雷蛇手柄触觉支持公告：
 `docs/razer-haptics-sdk-announcement-zh.md`。
 
 ## 项目结构

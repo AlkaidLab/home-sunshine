@@ -100,8 +100,6 @@ export const translations = {
       userGuideDesc: '详细的使用指南和配置说明',
       officialDocs: '官方文档',
       officialDocsDesc: 'LizardByte 官方文档参考',
-      razerHaptics: '雷蛇手柄触觉公告',
-      razerHapticsDesc: '自研 SDK、授权边界与后续支持计划',
       qqGroup: 'QQ 交流群',
       qqGroupDesc: '加入社区获取帮助'
     },
@@ -234,8 +232,6 @@ export const translations = {
       userGuideDesc: 'Detailed usage guide and configuration instructions',
       officialDocs: 'Official Docs',
       officialDocsDesc: 'LizardByte official documentation reference',
-      razerHaptics: 'Razer Haptics Announcement',
-      razerHapticsDesc: 'Our SDK, licensing boundaries, and support plan',
       qqGroup: 'QQ Group',
       qqGroupDesc: 'Join the community for help'
     },
