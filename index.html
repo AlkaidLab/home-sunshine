@@ -3,10 +3,12 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--seo-head-start-->
     <title>瑶光流梦 - 让游戏串流更优雅</title>
-    <meta name="description" content="瑶光流梦是基于官方分支修改的游戏串流解决方案，提供HDR支持、虚拟显示器、远程麦克风等高级功能。">
-    <meta name="keywords" content="AlkaidLab,瑶光流梦,游戏串流,Moonlight,HDR,虚拟显示器,游戏流媒体">
-    
+    <meta name="description" content="瑶光流梦是基于 LizardByte/Sunshine 官方分支修改的自托管游戏串流服务端，提供 HDR 友好支持、内置虚拟显示器、远程麦克风与高级控制面板，配合 Moonlight 客户端实现低延迟串流。">
+    <meta name="keywords" content="AlkaidLab,瑶光流梦,游戏串流,Sunshine,Moonlight,HDR串流,虚拟显示器,远程串流,游戏流媒体,串流服务端">
+    <!--seo-head-end-->
+
     <!-- Favicon -->
     <link rel="icon" type="image/webp" sizes="256x256" href="/favicon.webp">
     <link rel="apple-touch-icon" sizes="180x180" href="/log.png">
@@ -15,10 +17,8 @@
     <!-- Theme Color - Gura Blue -->
     <meta name="theme-color" content="#39c5bb">
     
-    <!-- Google Fonts - Inter for modern look -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- 自托管可变字体：单文件覆盖 200-800 全部字重，与站点同域，无需依赖境外 CDN -->
+    <link rel="preload" href="/fonts/plus-jakarta-sans-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
     
     <!-- Preload critical styles -->
     <style>
@@ -42,10 +42,23 @@
         box-sizing: border-box;
       }
       
+      /* 拉丁字体必须排在中文之前：思源黑体/苹方自带的拉丁字形是人文主义风格，
+         若英文回退到中文字体会破坏几何骨架。 */
+      @font-face {
+        font-family: 'Plus Jakarta Sans Variable';
+        font-style: normal;
+        font-display: swap;
+        font-weight: 200 800;
+        src: url('/fonts/plus-jakarta-sans-latin-variable.woff2') format('woff2-variations');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+          U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+          U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+
       body {
         margin: 0;
         padding: 0;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-family: 'Plus Jakarta Sans Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Roboto, sans-serif;
         background-color: var(--background-primary);
         color: var(--text-primary);
         transition: background-color 0.3s ease, color 0.3s ease;
@@ -68,9 +81,11 @@
         if (!prefersReducedMotion) {
           document.documentElement.setAttribute('data-intro', 'active');
           window.addEventListener('DOMContentLoaded', () => {
+            // 最慢的一层（流星背景）在 2400ms 结束，之后再留着这个属性只会让
+            // .hero::before 那层大渐变继续参与合成，白白占用一帧预算。
             window.setTimeout(() => {
               document.documentElement.removeAttribute('data-intro');
-            }, 2700);
+            }, 2500);
           }, { once: true });
         }
         

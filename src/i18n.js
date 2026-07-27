@@ -17,6 +17,7 @@ export const translations = {
     },
     hero: {
       badge: '游戏串流平台',
+      h1Prefix: '瑶光流梦 Sunshine 游戏串流服务端 —',
       download: '立即下载',
       github: 'GitHub开源仓库',
       mirror: '镜像下载',
@@ -63,7 +64,7 @@ export const translations = {
       requirementsList: [
         '系统: Windows10 22H2+',
         'CPU: Intel Core i3 / AMD Ryzen 3 以上',
-        'GPU: 支持硬件编码的显卡, 支持VCE 1.0或更高版本, Intel VAAPI / AMD VCE / <a target="_blank" href="https://developer.nvidia.com/video-encode-and-decode-gpu-support-matrix-new">Nvidia NVENC</a>',
+        'GPU: 支持硬件编码的显卡, 支持VCE 1.0或更高版本, Intel VAAPI / AMD VCE / <a target="_blank" rel="noopener noreferrer" href="https://developer.nvidia.com/video-encode-and-decode-gpu-support-matrix-new">Nvidia NVENC</a>',
         'RAM: 4GB 或更多',
         '网络: 5GHz, 802.11ac'
       ],
@@ -98,6 +99,8 @@ export const translations = {
       title: '文档与支持',
       userGuide: '使用文档',
       userGuideDesc: '详细的使用指南和配置说明',
+      docCenter: '文档中心',
+      docCenterDesc: '技术公告与项目说明合集',
       officialDocs: '官方文档',
       officialDocsDesc: 'LizardByte 官方文档参考',
       qqGroup: 'QQ 交流群',
@@ -149,6 +152,7 @@ export const translations = {
     },
     hero: {
       badge: 'Game Streaming Platform',
+      h1Prefix: 'AlkaidLab Sunshine game streaming host —',
       download: 'Download Now',
       github: 'GitHub Repository',
       mirror: 'Mirror Download',
@@ -195,7 +199,7 @@ export const translations = {
       requirementsList: [
         'OS: Windows 10 22H2+',
         'CPU: Intel Core i3 / AMD Ryzen 3 or higher',
-        'GPU: Hardware encoding support, VCE 1.0+, Intel VAAPI / AMD VCE / <a target="_blank" href="https://developer.nvidia.com/video-encode-and-decode-gpu-support-matrix-new">Nvidia NVENC</a>',
+        'GPU: Hardware encoding support, VCE 1.0+, Intel VAAPI / AMD VCE / <a target="_blank" rel="noopener noreferrer" href="https://developer.nvidia.com/video-encode-and-decode-gpu-support-matrix-new">Nvidia NVENC</a>',
         'RAM: 4GB or more',
         'Network: 5GHz, 802.11ac'
       ],
@@ -230,6 +234,8 @@ export const translations = {
       title: 'Documentation & Support',
       userGuide: 'User Guide',
       userGuideDesc: 'Detailed usage guide and configuration instructions',
+      docCenter: 'Doc Center',
+      docCenterDesc: 'Technical announcements and project write-ups',
       officialDocs: 'Official Docs',
       officialDocsDesc: 'LizardByte official documentation reference',
       qqGroup: 'QQ Group',
