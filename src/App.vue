@@ -4,23 +4,30 @@ import { translations } from './i18n.js'
 import sponsorsData from './sponsors.json'
 import { DEFAULT_EGG_CLICKS, getEggEntry, getRandomEggEntry } from './eggs/index.js'
 import HeroMeteorSky from './components/HeroMeteorSky.vue'
+import { HTML_LANG, LANG_PATHS, siteMeta } from './site-meta.js'
 
-const DEFAULT_LANGUAGE = 'zh'
 const DEFAULT_THEME = 'gura'
 
-// 使用稳定的服务端初始值，客户端挂载后再恢复本地偏好，避免 hydration 不一致。
-const currentLang = ref(DEFAULT_LANGUAGE)
+const props = defineProps({
+  lang: { type: String, default: 'zh' },
+})
+
+// 语言由 URL 决定（/ 为中文，/en/ 为英文），服务端与客户端取值一致，避免 hydration 不匹配。
+const currentLang = ref(props.lang === 'en' ? 'en' : 'zh')
 
 // 主题状态管理 - gura(蓝色) 或 chocolate(巧克力深色)
 const currentTheme = ref(DEFAULT_THEME)
 
-// 切换语言
-const toggleLanguage = () => {
-  const newLang = currentLang.value === 'zh' ? 'en' : 'zh'
-  currentLang.value = newLang
-  localStorage.setItem('language', newLang)
-  document.documentElement.lang = newLang === 'zh' ? 'zh-CN' : 'en'
-  updatePageTitle()
+// 语言切换是真实的页面跳转，这样每种语言都有可被收录的独立 URL。
+const otherLang = computed(() => (currentLang.value === 'zh' ? 'en' : 'zh'))
+const otherLangPath = computed(() => LANG_PATHS[otherLang.value])
+
+const rememberLanguage = () => {
+  try {
+    localStorage.setItem('language', otherLang.value)
+  } catch {
+    // 隐私模式下写入失败不影响跳转本身。
+  }
 }
 
 // 切换主题
@@ -48,9 +55,7 @@ const themeName = computed(() => {
 
 // 更新页面标题
 const updatePageTitle = () => {
-  document.title = currentLang.value === 'zh'
-    ? '瑶光流梦 - 让游戏串流更优雅'
-    : 'AlkaidLab Sunshine - Make Game Streaming Greater'
+  document.title = siteMeta[currentLang.value].title
 }
 
 // 当前语言的翻译内容
@@ -87,6 +92,32 @@ const STAR_REPO_URL = 'https://github.com/AlkaidLab/foundation-sunshine'
 const STAR_HISTORY_REPO = 'AlkaidLab/foundation-sunshine'
 const STAR_HISTORY_URL = `https://www.star-history.com/?type=date&repos=${encodeURIComponent(STAR_HISTORY_REPO)}`
 const STAR_HISTORY_IMAGE_URL = 'https://star.alkaidlab.com/starhistory/AlkaidLab/foundation-sunshine'
+// 图表由第三方服务生成，上游故障时会挂起约 10s 才返回 500。
+// 不等它，超过这个时间就直接切到降级卡片，别让访客盯着转圈。
+const STAR_HISTORY_TIMEOUT_MS = 3500
+
+const loadStarHistory = () => {
+  const img = new Image()
+  let settled = false
+
+  const settle = (ok) => {
+    if (settled) return
+    settled = true
+    window.clearTimeout(timer)
+    // 已经放弃的请求即使后到也不再覆盖降级状态，避免图表突然跳出来。
+    if (ok) starHistoryLoaded.value = true
+    else starHistoryError.value = true
+  }
+
+  const timer = window.setTimeout(() => {
+    img.src = ''
+    settle(false)
+  }, STAR_HISTORY_TIMEOUT_MS)
+
+  img.onload = () => settle(true)
+  img.onerror = () => settle(false)
+  img.src = STAR_HISTORY_IMAGE_URL
+}
 
 // 下载链接
 const downloadLinks = ref({
@@ -228,24 +259,17 @@ const checkLatestVersion = async ({ force = false } = {}) => {
 const refreshLatestVersion = () => checkLatestVersion({ force: true })
 
 onMounted(() => {
-  const savedLanguage = localStorage.getItem('language')
   const savedTheme = localStorage.getItem('theme')
 
-  if (savedLanguage === 'zh' || savedLanguage === 'en') {
-    currentLang.value = savedLanguage
-  }
   if (savedTheme === 'gura' || savedTheme === 'chocolate') {
     currentTheme.value = savedTheme
   }
 
   document.documentElement.setAttribute('data-theme', currentTheme.value)
-  document.documentElement.lang = currentLang.value === 'zh' ? 'zh-CN' : 'en'
+  document.documentElement.lang = HTML_LANG[currentLang.value]
   updatePageTitle()
 
-  const img = new Image()
-  img.onload = () => { starHistoryLoaded.value = true }
-  img.onerror = () => { starHistoryError.value = true }
-  img.src = STAR_HISTORY_IMAGE_URL
+  loadStarHistory()
 
   checkLatestVersion()
 })
@@ -447,7 +471,7 @@ const closeEggRoom = () => {
     <header class="header">
       <div class="container">
         <nav class="nav">
-          <a href="#" class="logo">
+          <a :href="LANG_PATHS[currentLang]" class="logo">
             <span class="logo-name">{{ t.title }}</span>
             <span class="logo-badge">Beta</span>
           </a>
@@ -466,9 +490,14 @@ const closeEggRoom = () => {
               <svg v-if="currentTheme === 'gura'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
               <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
             </button>
-            <button @click="toggleLanguage" class="lang-toggle">
+            <a
+              :href="otherLangPath"
+              class="lang-toggle"
+              :hreflang="otherLang === 'zh' ? 'zh-CN' : 'en'"
+              @click="rememberLanguage"
+            >
               {{ currentLang === 'zh' ? 'EN' : '中文' }}
-            </button>
+            </a>
           </div>
         </nav>
       </div>
@@ -480,7 +509,11 @@ const closeEggRoom = () => {
       <div class="container">
         <div class="hero-content">
           <p class="hero-badge">{{ t.hero.badge }}</p>
-          <h1 class="hero-title">{{ t.tagline }}</h1>
+          <h1 class="hero-title">
+            <!-- 品牌与检索词只对爬虫和读屏软件可见，视觉上仍是纯标语。 -->
+            <span class="sr-only">{{ t.hero.h1Prefix }}</span>
+            {{ t.tagline }}
+          </h1>
           <p class="hero-subtitle">{{ t.subtitle }}</p>
           <div class="hero-actions">
             <a
@@ -785,10 +818,15 @@ const closeEggRoom = () => {
           <div class="section-line"></div>
         </div>
         <div class="docs-grid">
+          <a href="/docs/" class="doc-card">
+            <h3>{{ t.docs.docCenter }}</h3>
+            <p>{{ t.docs.docCenterDesc }}</p>
+          </a>
           <a
             href="https://docs.qq.com/aio/DSGdQc3htbFJjSFdO?p=YTpMj5JNNdB5hEKJhhqlSB"
             class="doc-card"
             target="_blank"
+            rel="noopener noreferrer"
           >
             <h3>{{ t.docs.userGuide }}</h3>
             <p>{{ t.docs.userGuideDesc }}</p>
@@ -797,6 +835,7 @@ const closeEggRoom = () => {
             href="https://docs.lizardbyte.dev/projects/sunshine/latest/"
             class="doc-card"
             target="_blank"
+            rel="noopener noreferrer"
           >
             <h3>{{ t.docs.officialDocs }}</h3>
             <p>{{ t.docs.officialDocsDesc }}</p>
@@ -805,6 +844,7 @@ const closeEggRoom = () => {
             href="https://qm.qq.com/cgi-bin/qm/qr?k=5qnkzSaLIrIaU4FvumftZH_6Hg7fUuLD&jump_from=webapi"
             class="doc-card"
             target="_blank"
+            rel="noopener noreferrer"
           >
             <h3>{{ t.docs.qqGroup }}</h3>
             <p>{{ t.docs.qqGroupDesc }}</p>
@@ -969,6 +1009,7 @@ const closeEggRoom = () => {
               href="https://www.ifdian.net/a/Yundi339"
               class="btn btn-primary"
               target="_blank"
+              rel="noopener noreferrer"
             >
               {{ t.sponsors.ifdian }}
             </a>
@@ -1027,7 +1068,7 @@ const closeEggRoom = () => {
                 <a :href="GITHUB_REPO_URL" target="_blank" rel="noopener noreferrer">GitHub</a>
               </li>
               <li>
-                <a href="https://github.com/LizardByte/awesome-sunshine" target="_blank">
+                <a href="https://github.com/LizardByte/awesome-sunshine" target="_blank" rel="noopener noreferrer">
                   awesome-sunshine
                 </a>
               </li>
