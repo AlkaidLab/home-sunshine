@@ -152,6 +152,11 @@ function pageTemplate(title, body, { description, canonicalPath } = {}) {
     <meta name="twitter:title" content="${escapeHtml(pageTitle)}">
     <meta name="twitter:description" content="${escapeHtml(summary)}">
     <meta name="twitter:image" content="${OG_IMAGE}">
+    <script>
+      try {
+        document.documentElement.dataset.theme = localStorage.getItem('theme') === 'chocolate' ? 'chocolate' : 'gura';
+      } catch {}
+    </script>
     <style>
       :root { color-scheme: light; --ink: #213547; --muted: #667985; --line: #d8e2e8; --accent: #1769aa; --panel: #f4f8fa; --strong: #183b56; }
       * { box-sizing: border-box; }
@@ -182,6 +187,17 @@ function pageTemplate(title, body, { description, canonicalPath } = {}) {
       th { background: var(--strong); color: #fff; font-weight: 700; }
       tbody tr:nth-child(even) { background: #f7fafc; }
       .site-footer { max-width: 1000px; margin: -36px auto 34px; padding: 0 22px; color: var(--muted); font-size: .82rem; text-align: center; }
+      :root[data-theme="chocolate"] { color-scheme: dark; --ink: #f5f0eb; --muted: #c4b8ab; --line: #4a3d32; --accent: #e8c9a8; --panel: #2d241c; --strong: #f5f0eb; }
+      [data-theme="chocolate"] body { background: #1a1410; }
+      [data-theme="chocolate"] .site-header { background: rgba(26,20,16,.94); }
+      [data-theme="chocolate"] .document { background: #231c16; box-shadow: none; }
+      [data-theme="chocolate"] h2, [data-theme="chocolate"] pre, [data-theme="chocolate"] th, [data-theme="chocolate"] td { border-color: var(--line); }
+      [data-theme="chocolate"] h3, [data-theme="chocolate"] strong { color: var(--accent); }
+      [data-theme="chocolate"] blockquote { background: var(--panel); color: var(--ink); border-color: #d4a574; }
+      [data-theme="chocolate"] code, [data-theme="chocolate"] tbody tr:nth-child(even) { background: var(--panel); }
+      [data-theme="chocolate"] pre { color: var(--ink); }
+      [data-theme="chocolate"] pre code { background: transparent; }
+      [data-theme="chocolate"] th { background: #3d3128; color: var(--ink); }
       @media (max-width: 720px) {
         .header-inner { padding: 12px 16px; }
         .document { margin: 18px 10px 42px; padding: 30px 22px 38px; }
