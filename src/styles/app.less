@@ -326,6 +326,147 @@
 // Features Grid
 // ============================================
 
+#products, #stories {
+  --showcase-accent: #23796e;
+  --showcase-cover: #102f2b;
+  --showcase-cover-text: #b8e3cc;
+  --showcase-wave-light: #c0ead0;
+  --showcase-wave-dark: #41b49a;
+  scroll-margin-top: 130px;
+
+  [data-theme="chocolate"] & {
+    --showcase-accent: #e8c9a8;
+    --showcase-cover: #302218;
+    --showcase-cover-text: #edd6b9;
+    --showcase-wave-light: #f0dbbe;
+    --showcase-wave-dark: #c49464;
+  }
+}
+
+.showcase-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 4px;
+  }
+}
+
+.showcase-label {
+  color: var(--showcase-accent);
+  font-size: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.showcase-platform, .showcase-note {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  margin-top: 1rem;
+}
+
+.showcase-action {
+  color: var(--showcase-accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding-top: 1rem;
+  margin-top: auto;
+}
+
+#products .showcase-card,
+#stories .showcase-card {
+  background: var(--card-background);
+  border-color: var(--border-color);
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+}
+
+#products .showcase-card:first-child {
+  background: linear-gradient(125deg, rgba(var(--meteor-rgb), 0.05), rgba(var(--meteor-rgb), 0.095)), var(--card-background);
+  border-color: rgba(var(--meteor-rgb), 0.4);
+}
+
+#stories .docs-grid {
+  grid-template-columns: 1.15fr 1fr;
+  gap: 1.25rem;
+}
+
+#stories .showcase-featured {
+  grid-row: span 3;
+  .showcase-action { margin-top: 0; }
+}
+
+#stories .showcase-community {
+  grid-column: 1 / -1;
+  background: linear-gradient(120deg, rgba(var(--meteor-rgb), 0.06), rgba(var(--meteor-rgb), 0.14)), var(--card-background);
+}
+
+.showcase-sound {
+  position: relative;
+  height: 240px;
+  flex-shrink: 0;
+  margin: -1.5rem -1.5rem 1.5rem;
+  padding: 25px;
+  overflow: hidden;
+  background: var(--showcase-cover);
+  color: var(--showcase-cover-text);
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+.showcase-wave {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  height: 125px;
+  margin-top: 9px;
+  transform: rotate(-8deg);
+
+  i {
+    width: 5px;
+    border-radius: 8px;
+    background: linear-gradient(var(--showcase-wave-light), var(--showcase-wave-dark));
+    box-shadow: 0 0 12px rgba(var(--meteor-rgb), 0.14);
+  }
+}
+
+.showcase-sound-caption {
+  position: absolute;
+  bottom: 22px;
+  left: 25px;
+  letter-spacing: 4px;
+}
+
+.showcase-community-art {
+  position: absolute;
+  right: 15px;
+  bottom: -55px;
+  font-size: 160px;
+  line-height: 1.4;
+  color: rgba(var(--meteor-rgb), 0.095);
+  pointer-events: none;
+}
+
+@media (max-width: 700px) {
+  #stories .docs-grid { grid-template-columns: 1fr; }
+  #stories .showcase-featured { grid-row: auto; }
+}
+
+// 新增导航入口后，中等宽度也允许换行。
+@media (min-width: 769px) and (max-width: 1200px) {
+  .nav { flex-wrap: wrap; }
+  .nav-center { order: 3; width: 100%; flex-wrap: wrap; justify-content: center; }
+}
+
 .features-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

@@ -1,6 +1,7 @@
 <script setup vapor>
 import { ref, onMounted, computed, watch, markRaw } from 'vue'
 import { translations } from './i18n.js'
+import { showcaseContent } from './showcase.js'
 import sponsorsData from './sponsors.json'
 import { DEFAULT_EGG_CLICKS, getEggEntry, getRandomEggEntry } from './eggs/index.js'
 import HeroMeteorSky from './components/HeroMeteorSky.vue'
@@ -60,6 +61,7 @@ const updatePageTitle = () => {
 
 // 当前语言的翻译内容
 const t = computed(() => translations[currentLang.value])
+const showcase = computed(() => showcaseContent[currentLang.value])
 
 // Star History 图表状态
 const starHistoryLoaded = ref(false)
@@ -477,6 +479,8 @@ const closeEggRoom = () => {
           </a>
 
           <div class="nav-center">
+            <a href="#products" class="nav-link">{{ showcase.products }}</a>
+            <a href="#stories" class="nav-link">{{ showcase.stories }}</a>
             <a href="#features" class="nav-link">{{ t.nav.features }}</a>
             <a href="#download" class="nav-link">{{ t.nav.download }}</a>
             <a href="#clients" class="nav-link">{{ t.nav.clients }}</a>
@@ -551,6 +555,76 @@ const closeEggRoom = () => {
             <span class="stat-divider"></span>
             <span class="stat-item">{{ t.hero.stats[2] }}</span>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 产品矩阵：沿用现有官网的标题和卡片样式 -->
+    <section id="products" class="section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">{{ showcase.products }}</h2>
+          <p class="section-subtitle">{{ showcase.productsSubtitle }}</p>
+          <div class="section-line"></div>
+        </div>
+        <div class="features-grid">
+          <a href="#download" class="feature-card showcase-card">
+
+            <span class="showcase-label">{{ showcase.host }}</span>
+            <h3 class="feature-title">{{ currentLang === 'zh' ? '瑶光流梦 Sunshine' : t.title }}</h3>
+            <p class="feature-desc">{{ showcase.hostDescription }}</p>
+            <span class="showcase-platform">Windows</span>
+            <span class="showcase-action">{{ showcase.getHost }}</span>
+          </a>
+          <a
+            v-for="client in clients"
+            :key="client.id"
+            :href="client.link"
+            class="feature-card showcase-card"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+
+            <span class="showcase-label">{{ showcase.client }}</span>
+            <h3 class="feature-title">{{ client.name[currentLang] }}</h3>
+            <p class="feature-desc">{{ showcase.clientDescriptions[client.id] }}</p>
+            <span class="showcase-platform">{{ client.platform[currentLang] }}</span>
+            <span class="showcase-action">{{ showcase.getClient }}</span>
+          </a>
+        </div>
+        <p class="showcase-note">{{ showcase.note }}</p>
+      </div>
+    </section>
+
+    <!-- 流梦现场 -->
+    <section id="stories" class="section section-alt">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">{{ showcase.stories }}</h2>
+          <p class="section-subtitle">{{ showcase.storiesSubtitle }}</p>
+          <div class="section-line"></div>
+        </div>
+        <div class="docs-grid">
+          <a
+            v-for="story in showcase.items"
+            :key="story.url"
+            :href="story.url"
+            class="doc-card showcase-card"
+            :class="{ 'showcase-featured': story.url === '/audio-haptics-demo.html', 'showcase-community': story.url.startsWith('https://qm.qq.com/') }"
+            :target="story.url.startsWith('https:') ? '_blank' : undefined"
+            :rel="story.url.startsWith('https:') ? 'noopener noreferrer' : undefined"
+          >
+            <div v-if="story.url === '/audio-haptics-demo.html'" class="showcase-sound" aria-hidden="true">
+              <span>AUDIO → HAPTICS</span>
+              <div class="showcase-wave"><i v-for="n in 29" :key="n" :style="{ height: `${18 + ((n * 37) % 95)}px` }"></i></div>
+              <span class="showcase-sound-caption">FEEL THE SOUND.</span>
+            </div>
+            <span v-if="story.url.startsWith('https://qm.qq.com/')" class="showcase-community-art" aria-hidden="true">↗</span>
+            <span class="showcase-label">{{ story.category }}</span>
+            <h3>{{ story.title }}</h3>
+            <p>{{ story.description }}</p>
+            <span class="showcase-action">{{ showcase.read }}</span>
+          </a>
         </div>
       </div>
     </section>
