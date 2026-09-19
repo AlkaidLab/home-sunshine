@@ -890,6 +890,43 @@
 // Star History
 // ============================================
 
+.star-history-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  padding: 0.4rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--background-tertiary);
+}
+
+.star-history-tab {
+  min-height: 2.75rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s, background-color 0.2s, border-color 0.2s, transform 0.2s;
+
+  &:hover {
+    color: var(--primary-color);
+    border-color: var(--border-color);
+  }
+
+  &.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--text-inverse);
+    box-shadow: 0 4px 12px rgba(var(--meteor-rgb), 0.18);
+  }
+}
+
 .stats-actions {
   display: flex;
   align-items: center;
@@ -920,6 +957,19 @@
   max-width: 800px;
   height: auto;
   border-radius: 8px;
+}
+
+.star-history-select-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 10rem;
+  color: var(--text-secondary);
+  text-align: center;
+
+  p {
+    margin: 0;
+  }
 }
 
 .loading-state,
@@ -995,7 +1045,7 @@
 }
 
 #sponsors .section-header {
-  margin-bottom: 3.875rem;
+  margin-bottom: 3rem;
 }
 
 #sponsors .section-title {

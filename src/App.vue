@@ -64,8 +64,26 @@ const t = computed(() => translations[currentLang.value])
 const showcase = computed(() => showcaseContent[currentLang.value])
 
 // Star History 图表状态
-const starHistoryLoaded = ref(false)
-const starHistoryError = ref(false)
+const STAR_HISTORY_REPOS = [
+  {
+    id: 'sunshine',
+    labelKey: 'sunshine',
+    repo: 'AlkaidLab/foundation-sunshine',
+  },
+  {
+    id: 'android-moonlight',
+    labelKey: 'androidMoonlight',
+    repo: 'qiin2333/moonlight-vplus',
+  },
+  {
+    id: 'moonlight-pc',
+    labelKey: 'moonlightPc',
+    repo: 'qiin2333/moonlight-qt',
+  },
+]
+
+const activeStarRepoId = ref('sunshine')
+const starHistoryStates = ref({})
 
 // 版本信息状态
 const versionInfo = ref({
@@ -92,13 +110,45 @@ const VERSION_CACHE_KEY = 'foundation-sunshine-release-version-info-v2'
 const VERSION_CACHE_TTL_MS = 30 * 60 * 1000
 const STAR_REPO_URL = 'https://github.com/AlkaidLab/foundation-sunshine'
 const STAR_HISTORY_REPO = 'AlkaidLab/foundation-sunshine'
-const STAR_HISTORY_URL = `https://www.star-history.com/?type=date&repos=${encodeURIComponent(STAR_HISTORY_REPO)}`
-const STAR_HISTORY_IMAGE_URL = 'https://star.alkaidlab.com/starhistory/AlkaidLab/foundation-sunshine'
+const STAR_HISTORY_BASE_URL = '/star'
+const STAR_HISTORY_URL = `${STAR_HISTORY_BASE_URL}/${STAR_HISTORY_REPO}/detail`
 // 图表由第三方服务生成，上游故障时会挂起约 10s 才返回 500。
 // 不等它，超过这个时间就直接切到降级卡片，别让访客盯着转圈。
 const STAR_HISTORY_TIMEOUT_MS = 3500
 
-const loadStarHistory = () => {
+const activeStarRepo = computed(() =>
+  STAR_HISTORY_REPOS.find(repo => repo.id === activeStarRepoId.value) || null
+)
+
+const getStarHistoryTheme = theme => theme === 'chocolate' ? 'dark' : 'light'
+
+const getStarHistoryStateKey = (repo, theme = currentTheme.value) =>
+  `${repo.id}:${getStarHistoryTheme(theme)}`
+
+const activeStarHistoryState = computed(() =>
+  activeStarRepo.value
+    ? (starHistoryStates.value[getStarHistoryStateKey(activeStarRepo.value)] || { status: 'idle' })
+    : null
+)
+
+const getStarHistoryUrl = repo =>
+  `${STAR_HISTORY_BASE_URL}/${repo.repo}/detail`
+
+const getStarHistoryImageUrl = (repo, theme = currentTheme.value) =>
+  `${STAR_HISTORY_BASE_URL}/${repo.repo}?theme=${getStarHistoryTheme(theme)}`
+
+const loadStarHistory = (repo, theme = currentTheme.value) => {
+  if (!repo) return
+
+  const stateKey = getStarHistoryStateKey(repo, theme)
+  const currentState = starHistoryStates.value[stateKey]?.status
+  if (currentState === 'loading' || currentState === 'loaded') return
+
+  starHistoryStates.value = {
+    ...starHistoryStates.value,
+    [stateKey]: { status: 'loading' },
+  }
+
   const img = new Image()
   let settled = false
 
@@ -107,8 +157,10 @@ const loadStarHistory = () => {
     settled = true
     window.clearTimeout(timer)
     // 已经放弃的请求即使后到也不再覆盖降级状态，避免图表突然跳出来。
-    if (ok) starHistoryLoaded.value = true
-    else starHistoryError.value = true
+    starHistoryStates.value = {
+      ...starHistoryStates.value,
+      [stateKey]: { status: ok ? 'loaded' : 'error' },
+    }
   }
 
   const timer = window.setTimeout(() => {
@@ -118,8 +170,20 @@ const loadStarHistory = () => {
 
   img.onload = () => settle(true)
   img.onerror = () => settle(false)
-  img.src = STAR_HISTORY_IMAGE_URL
+  img.src = getStarHistoryImageUrl(repo, theme)
 }
+
+const selectStarRepo = repo => {
+  activeStarRepoId.value = repo.id
+  loadStarHistory(repo)
+}
+
+const activeStarRepoUrl = computed(() => activeStarRepo.value ? `https://github.com/${activeStarRepo.value.repo}` : STAR_REPO_URL)
+const activeStarHistoryUrl = computed(() => activeStarRepo.value ? getStarHistoryUrl(activeStarRepo.value) : STAR_HISTORY_URL)
+
+watch(currentTheme, newTheme => {
+  if (activeStarRepo.value) loadStarHistory(activeStarRepo.value, newTheme)
+})
 
 // 下载链接
 const downloadLinks = ref({
@@ -271,8 +335,7 @@ onMounted(() => {
   document.documentElement.lang = HTML_LANG[currentLang.value]
   updatePageTitle()
 
-  loadStarHistory()
-
+  loadStarHistory(STAR_HISTORY_REPOS[0])
   checkLatestVersion()
 })
 
@@ -839,15 +902,32 @@ const closeEggRoom = () => {
           <p class="section-subtitle">{{ t.stats.subtitle }}</p>
           <div class="section-line"></div>
         </div>
+        <div class="star-history-tabs" role="tablist" :aria-label="t.stats.repositoryTabs">
+          <button
+            v-for="repo in STAR_HISTORY_REPOS"
+            :key="repo.id"
+            type="button"
+            class="star-history-tab"
+            :class="{ active: activeStarRepoId === repo.id }"
+            :aria-selected="activeStarRepoId === repo.id"
+            role="tab"
+            @click="selectStarRepo(repo)"
+          >
+            {{ t.stats.repositories[repo.labelKey] }}
+          </button>
+        </div>
         <div class="star-history-container">
-          <div v-if="!starHistoryLoaded && !starHistoryError" class="loading-state">
+          <div v-if="!activeStarRepo" class="star-history-select-hint">
+            <p>{{ t.stats.selectRepository }}</p>
+          </div>
+          <div v-else-if="activeStarHistoryState.status === 'idle' || activeStarHistoryState.status === 'loading'" class="loading-state">
             <div class="loading-spinner"></div>
             <p>{{ t.stats.loading }}</p>
           </div>
-          <div v-else-if="starHistoryError" class="error-state">
+          <div v-else-if="activeStarHistoryState.status === 'error'" class="error-state">
             <p>{{ t.stats.error }}</p>
             <a
-              :href="STAR_HISTORY_URL"
+              :href="activeStarHistoryUrl"
               target="_blank"
               rel="noopener noreferrer"
               class="btn btn-outline"
@@ -857,7 +937,7 @@ const closeEggRoom = () => {
           </div>
           <img
             v-else
-            :src="STAR_HISTORY_IMAGE_URL"
+            :src="getStarHistoryImageUrl(activeStarRepo)"
             :alt="`${t.title} ${t.stats.title}`"
             class="star-history-chart"
             loading="lazy"
@@ -865,7 +945,7 @@ const closeEggRoom = () => {
         </div>
         <div class="stats-actions">
           <a
-            :href="STAR_REPO_URL"
+            :href="activeStarRepoUrl"
             class="btn btn-primary"
             target="_blank"
             rel="noopener noreferrer"
@@ -873,7 +953,7 @@ const closeEggRoom = () => {
             {{ t.stats.giveStar }}
           </a>
           <a
-            :href="STAR_HISTORY_URL"
+            :href="activeStarHistoryUrl"
             class="btn btn-outline"
             target="_blank"
             rel="noopener noreferrer"

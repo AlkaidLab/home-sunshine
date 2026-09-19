@@ -89,6 +89,13 @@ export const translations = {
     stats: {
       title: 'Star 趋势',
       subtitle: '查看项目的 GitHub Star 增长趋势',
+      repositoryTabs: '选择要查看的仓库',
+      repositories: {
+        sunshine: 'Sunshine',
+        androidMoonlight: '安卓 Moonlight',
+        moonlightPc: 'Moonlight PC'
+      },
+      selectRepository: '点击上方仓库查看 Star 趋势',
       loading: '正在加载 Star 趋势...',
       error: '无法加载 Star 趋势图表',
       viewManually: '手动查看',
@@ -224,6 +231,13 @@ export const translations = {
     stats: {
       title: 'Star History',
       subtitle: 'View GitHub Star growth trends',
+      repositoryTabs: 'Choose a repository to view',
+      repositories: {
+        sunshine: 'Sunshine',
+        androidMoonlight: 'Android Moonlight',
+        moonlightPc: 'Moonlight PC'
+      },
+      selectRepository: 'Choose a repository above to view its Star history',
       loading: 'Loading Star History...',
       error: 'Unable to load Star History chart',
       viewManually: 'View Manually',
