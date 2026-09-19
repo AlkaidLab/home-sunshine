@@ -990,16 +990,40 @@
 // Sponsors
 // ============================================
 
+#sponsors.section {
+  padding: 3.3rem 0;
+}
+
+#sponsors .section-header {
+  margin-bottom: 3.875rem;
+}
+
+#sponsors .section-title {
+  font-size: 2.25rem;
+  line-height: 1.25;
+}
+
+#sponsors .section-subtitle {
+  font-size: 1.125rem;
+  margin-bottom: 1.1875rem;
+}
+
+#sponsors .section-line {
+  width: 60px;
+  height: 4px;
+}
+
 .sponsors-tier {
-  margin-bottom: 2.5rem;
+  margin-bottom: 3rem;
 }
 
 .tier-label {
-  font-size: 0.8rem;
+  font-size: 0.95rem;
+  line-height: 1.25;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin: 0 0 1rem;
+  letter-spacing: 0.05em;
+  margin: 0 0 1.3rem;
   text-align: center;
 
   &.tier-gold { color: #d4a017; }
@@ -1018,7 +1042,7 @@
 .sponsor-featured {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
   background:
     linear-gradient(180deg, rgba(212, 160, 23, 0.08), transparent 68%),
     var(--background-primary);
@@ -1027,8 +1051,9 @@
   padding: 1.5rem 2rem;
   text-decoration: none;
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-  min-width: 320px;
-  max-width: 480px;
+  width: min(100%, 400px);
+  min-width: min(320px, 100%);
+  min-height: 143px;
   position: relative;
   overflow: hidden;
   box-shadow:
@@ -1087,15 +1112,15 @@
 }
 
 .sponsor-featured-logo {
-  height: 40px;
-  width: 40px;
+  height: 50px;
+  width: 50px;
   object-fit: contain;
   border-radius: 8px;
   border: 2px solid #d4a017;
 }
 
 .sponsor-featured-name {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 800;
   color: var(--text-primary);
   letter-spacing: -0.02em;
@@ -1215,6 +1240,8 @@
 }
 
 .sponsor-avatar--gold {
+  width: 70px;
+  height: 70px;
   border-color: #d4a017;
 
   .sponsor-avatar-item:hover & {
@@ -1352,14 +1379,14 @@
 
 .sponsors-cta {
   text-align: center;
-  margin-top: 1rem;
+  margin-top: 0;
 }
 
 .sponsors-cta-label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin: 0 0 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--primary-light);
+  margin: 0 0 0.8125rem;
 }
 
 .sponsors-cta-buttons {
@@ -1368,6 +1395,23 @@
   justify-content: center;
   gap: 0.75rem;
   flex-wrap: wrap;
+}
+
+.sponsors-cta .btn {
+  min-width: 147px;
+  min-height: 53px;
+  padding: 0.8125rem 1.5rem;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+#sponsors .sponsors-cta + .sponsors-tier {
+  margin-top: 1rem;
+}
+
+#sponsors .sponsors-tier:nth-of-type(4),
+#sponsors .sponsors-tier:nth-of-type(5) {
+  margin-bottom: 4rem;
 }
 
 .sponsor-btn-wechat:hover {
