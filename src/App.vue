@@ -372,12 +372,12 @@ const clients = [
   {
     id: 'moonlight-pc',
     name: {
-      zh: 'Moonlight PC',
-      en: 'Moonlight PC',
+      zh: 'PC Moonlight V+',
+      en: 'PC Moonlight V+',
     },
     platform: {
-      zh: 'Windows / macOS / Linux',
-      en: 'Windows / macOS / Linux',
+      zh: 'Windows / macOS / Linux / Steam Link',
+      en: 'Windows / macOS / Linux / Steam Link',
     },
     link: 'https://github.com/qiin2333/moonlight-qt',
     icon: 'monitor',

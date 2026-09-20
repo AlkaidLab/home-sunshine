@@ -93,7 +93,7 @@ export const translations = {
       repositories: {
         sunshine: 'Sunshine',
         androidMoonlight: '安卓 Moonlight',
-        moonlightPc: 'Moonlight PC'
+        moonlightPc: 'PC Moonlight V+'
       },
       selectRepository: '点击上方仓库查看 Star 趋势',
       loading: '正在加载 Star 趋势...',
@@ -235,7 +235,7 @@ export const translations = {
       repositories: {
         sunshine: 'Sunshine',
         androidMoonlight: 'Android Moonlight',
-        moonlightPc: 'Moonlight PC'
+        moonlightPc: 'PC Moonlight V+'
       },
       selectRepository: 'Choose a repository above to view its Star history',
       loading: 'Loading Star History...',

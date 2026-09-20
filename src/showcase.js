@@ -11,7 +11,7 @@ export const showcaseContent = {
     clientDescriptions: {
       'android-vplus': '在 Android 手机、平板和电视上连接游戏电脑。',
       'harmonyos-vplus': '面向 HarmonyOS NEXT 设备的游戏串流客户端。',
-      'moonlight-pc': '在 Windows、macOS 和 Linux 电脑上接收串流。',
+      'moonlight-pc': '在 Windows、macOS、Linux 和 Steam Link 上接收串流。',
       'macos-enhanced': '社区维护的 macOS 增强客户端。',
       voidlink: '在 iPhone 和 iPad 上体验电脑游戏。',
     },
@@ -38,7 +38,7 @@ export const showcaseContent = {
     clientDescriptions: {
       'android-vplus': 'Connect to your gaming PC from an Android phone, tablet or TV.',
       'harmonyos-vplus': 'A game streaming client for HarmonyOS NEXT devices.',
-      'moonlight-pc': 'Receive streams on Windows, macOS and Linux computers.',
+      'moonlight-pc': 'Receive streams on Windows, macOS, Linux and Steam Link.',
       'macos-enhanced': 'A community-maintained enhanced client for macOS.',
       voidlink: 'Enjoy PC games on iPhone and iPad.',
     },
