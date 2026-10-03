@@ -6,7 +6,11 @@ import sponsorsData from './sponsors.json'
 import { DEFAULT_EGG_CLICKS, getEggEntry, getRandomEggEntry } from './eggs/index.js'
 import HeroMeteorSky from './components/HeroMeteorSky.vue'
 import StreamingGuide from './components/StreamingGuide.vue'
-import { buildCnbUrl, CNB_DOWNLOADS, CNB_RELEASE_REPOSITORIES, FRIEND_LINKS, GITHUB_DOWNLOADS, PRODUCTS } from './products.js'
+import { FRIEND_LINKS, PRODUCTS } from './products.js'
+import {
+  getReleaseDownloadUrls,
+  resolveReleaseDownloadUrls,
+} from './downloads.js'
 import { HTML_LANG, LANG_PATHS, siteMeta } from './site-meta.js'
 
 const DEFAULT_THEME = 'gura'
@@ -105,37 +109,20 @@ const STAR_HISTORY_REPOS = [
     labelKey: 'moonlightPc',
     repo: 'qiin2333/moonlight-qt',
   },
+  {
+    id: 'macos-enhanced',
+    labelKey: 'macosEnhanced',
+    repo: 'skyhua0224/moonlight-macos-enhanced',
+  },
 ]
 
 const activeStarRepoId = ref('sunshine')
 const starHistoryStates = ref({})
 
-// 版本信息状态
-const versionInfo = ref({
-  current: null,
-  latest: null,
-  preRelease: null,
-  loading: true,
-  error: null,
-})
-
 const GITHUB_REPO = 'AlkaidLab/foundation-sunshine'
 const GITHUB_REPO_URL = `https://github.com/${GITHUB_REPO}`
-const GITHUB_RELEASES_URL = `${GITHUB_REPO_URL}/releases`
-const GITHUB_LATEST_RELEASE_URL = `${GITHUB_RELEASES_URL}/latest`
-const CNB_RELEASES_URL = `https://cnb.cool/${CNB_RELEASE_REPOSITORIES.sunshine}/-/releases`
-const RELEASES_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases?per_page=20`
-const RELEASES_API_PROXY_URL = `/api/repos/${GITHUB_REPO}/releases?per_page=20`
-const WINDOWS_INSTALLER_ASSET_PATTERNS = [
-  /WindowsInstaller\.exe$/i,
-  /windows[-_.]?installer\.exe$/i,
-]
-const PRE_RELEASE_ASSET_PATTERN = /(?:^|[-_.])(?:alpha|beta|rc|pre)(?:[-_.]|$)/i
-const DEFAULT_DOWNLOAD_URL = currentLang.value === 'zh' ? CNB_DOWNLOADS.sunshine : GITHUB_DOWNLOADS.sunshine
-const MIRROR_DOWNLOAD_URL = currentLang.value === 'zh' ? GITHUB_DOWNLOADS.sunshine : CNB_DOWNLOADS.sunshine
-const RELEASES_LIST_URL = currentLang.value === 'zh' ? CNB_RELEASES_URL : `${GITHUB_RELEASES_URL}/`
-const VERSION_CACHE_KEY = 'foundation-sunshine-release-version-info-v2'
-const VERSION_CACHE_TTL_MS = 30 * 60 * 1000
+const BILIBILI_SPACE_URL = 'https://space.bilibili.com/3690974838524514'
+const INITIAL_SUNSHINE_URLS = getReleaseDownloadUrls('sunshine', 'windows', null, currentLang.value)
 const STAR_REPO_URL = 'https://github.com/AlkaidLab/foundation-sunshine'
 const STAR_HISTORY_REPO = 'AlkaidLab/foundation-sunshine'
 const STAR_HISTORY_BASE_URL = '/star'
@@ -213,158 +200,18 @@ watch(currentTheme, newTheme => {
   if (activeStarRepo.value) loadStarHistory(activeStarRepo.value, newTheme)
 })
 
-// 下载链接
 const downloadLinks = ref({
-  windows: DEFAULT_DOWNLOAD_URL,
-  mirror: MIRROR_DOWNLOAD_URL,
-  releases: RELEASES_LIST_URL,
-  latest: DEFAULT_DOWNLOAD_URL,
+  windows: INITIAL_SUNSHINE_URLS.official,
+  mirror: INITIAL_SUNSHINE_URLS.mirror,
+  latest: INITIAL_SUNSHINE_URLS.official,
 })
 
-// 提取资源下载链接
-const isWindowsInstallerAsset = asset =>
-  WINDOWS_INSTALLER_ASSET_PATTERNS.some(pattern => pattern.test(asset?.name || ''))
-
-const extractDownloadUrl = (assets = []) =>
-  Array.isArray(assets)
-    ? assets.find(isWindowsInstallerAsset)?.browser_download_url
-    : undefined
-
-const isPreviewRelease = release => Boolean(release?.prerelease) || (
-  PRE_RELEASE_ASSET_PATTERN.test(release?.tag_name || '') ||
-  PRE_RELEASE_ASSET_PATTERN.test(release?.name || '')
-)
-
-const fetchGithubJson = async (url) => {
-  const response = await fetch(url, {
-    headers: { Accept: 'application/vnd.github+json' },
-  })
-  const data = await response.json().catch(() => null)
-
-  if (!response.ok) {
-    const message = data?.message || response.statusText || 'request failed'
-    throw new Error(`GitHub API ${response.status}: ${message}`)
-  }
-
-  return data
+const resolveSunshineDownload = async () => {
+  const urls = await resolveReleaseDownloadUrls('sunshine', 'windows', currentLang.value)
+  downloadLinks.value.windows = urls.official
+  downloadLinks.value.latest = urls.official
+  downloadLinks.value.mirror = urls.mirror
 }
-
-const isGithubRateLimitError = error =>
-  /GitHub API 403:.*rate limit/i.test(error?.message || '')
-
-const readCachedVersionInfo = () => {
-  try {
-    const cached = JSON.parse(localStorage.getItem(VERSION_CACHE_KEY) || 'null')
-    return cached?.latest?.version ? cached : null
-  } catch {
-    return null
-  }
-}
-
-const writeCachedVersionInfo = (releaseInfo) => {
-  try {
-    localStorage.setItem(VERSION_CACHE_KEY, JSON.stringify({
-      ...releaseInfo,
-      timestamp: Date.now(),
-    }))
-  } catch {
-    // Ignore storage failures; the direct download fallback still works.
-  }
-}
-
-const isFreshCachedVersionInfo = cached =>
-  cached?.timestamp && Date.now() - cached.timestamp < VERSION_CACHE_TTL_MS
-
-const applyReleaseInfo = ({ latest, preRelease }) => {
-  versionInfo.value.latest = latest
-  versionInfo.value.preRelease = preRelease || null
-
-  const githubDownloadUrl = latest.downloadUrl || latest.releaseUrl || GITHUB_DOWNLOADS.sunshine
-  const dynamicCnbUrl = githubDownloadUrl.includes('/download/')
-    ? buildCnbUrl('sunshine', decodeURIComponent(githubDownloadUrl.slice(githubDownloadUrl.lastIndexOf('/') + 1)))
-    : CNB_DOWNLOADS.sunshine
-  const officialDownloadUrl = currentLang.value === 'zh' ? dynamicCnbUrl : githubDownloadUrl
-  const mirrorDownloadUrl = currentLang.value === 'zh' ? githubDownloadUrl : dynamicCnbUrl
-  downloadLinks.value.latest = officialDownloadUrl
-  downloadLinks.value.windows = officialDownloadUrl
-  downloadLinks.value.mirror = mirrorDownloadUrl
-}
-
-const fetchReleaseInfo = async () => {
-  let releases
-  try {
-    // Race the official API with the same-origin Worker proxy so networks that
-    // block api.github.com still resolve the direct installer URL.
-    releases = await Promise.any([RELEASES_API_URL, RELEASES_API_PROXY_URL].map(url => fetchGithubJson(url)))
-  } catch (error) {
-    throw error?.errors?.[0] || error
-  }
-  if (!Array.isArray(releases)) {
-    throw new Error('GitHub API returned invalid release data')
-  }
-
-  const latestRelease = releases.find(release => !release.draft && !isPreviewRelease(release))
-  const preRelease = releases.find(release => !release.draft && isPreviewRelease(release))
-
-  if (!latestRelease?.tag_name) {
-    throw new Error('GitHub API returned invalid latest release data')
-  }
-
-  return {
-    latest: {
-      version: latestRelease.tag_name,
-      downloadUrl: extractDownloadUrl(latestRelease.assets) || latestRelease.html_url || DEFAULT_DOWNLOAD_URL,
-      releaseUrl: latestRelease.html_url || GITHUB_LATEST_RELEASE_URL,
-      body: latestRelease.body,
-    },
-    preRelease: preRelease ? {
-      version: preRelease.tag_name,
-      downloadUrl: extractDownloadUrl(preRelease.assets),
-      releaseUrl: preRelease.html_url,
-      body: preRelease.body,
-    } : null,
-  }
-}
-
-// 检查最新版本
-const checkLatestVersion = async ({ force = false } = {}) => {
-  const cachedReleaseInfo = readCachedVersionInfo()
-
-  if (!force && isFreshCachedVersionInfo(cachedReleaseInfo)) {
-    applyReleaseInfo(cachedReleaseInfo)
-    versionInfo.value.loading = false
-    versionInfo.value.error = null
-    return
-  }
-
-  try {
-    versionInfo.value.loading = true
-    versionInfo.value.error = null
-
-    const releaseInfo = await fetchReleaseInfo()
-    applyReleaseInfo(releaseInfo)
-    writeCachedVersionInfo(releaseInfo)
-  } catch (error) {
-    if (cachedReleaseInfo) {
-      applyReleaseInfo(cachedReleaseInfo)
-      versionInfo.value.error = null
-      return
-    }
-
-    if (!isGithubRateLimitError(error)) {
-      console.warn('版本检查失败:', error)
-    }
-
-    versionInfo.value.error = error.message
-    downloadLinks.value.latest = DEFAULT_DOWNLOAD_URL
-    downloadLinks.value.windows = DEFAULT_DOWNLOAD_URL
-    downloadLinks.value.mirror = MIRROR_DOWNLOAD_URL
-  } finally {
-    versionInfo.value.loading = false
-  }
-}
-
-const refreshLatestVersion = () => checkLatestVersion({ force: true })
 
 onMounted(() => {
   const savedTheme = localStorage.getItem('theme')
@@ -378,7 +225,9 @@ onMounted(() => {
   updatePageTitle()
 
   loadStarHistory(STAR_HISTORY_REPOS[0])
-  checkLatestVersion()
+  resolveSunshineDownload().catch(() => {
+    // The synchronous links already cover the offline path.
+  })
 })
 
 // 客户端推荐
@@ -579,6 +428,9 @@ const closeEggRoom = () => {
           </div>
 
           <div class="nav-controls">
+            <a :href="BILIBILI_SPACE_URL" class="nav-icon" target="_blank" rel="noopener noreferrer" :aria-label="t.nav.bilibili" :title="t.nav.bilibili">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5 10.2 7"/><path d="M17 3.5 13.8 7"/><rect x="2.5" y="7" width="19" height="13" rx="3.5"/><line x1="8.5" y1="12" x2="8.5" y2="15"/><line x1="15.5" y1="12" x2="15.5" y2="15"/></svg>
+            </a>
             <a :href="GITHUB_REPO_URL" class="nav-github" target="_blank" rel="noopener noreferrer" :aria-label="t.nav.github" :title="t.nav.github">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.17c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.75 2.69 1.25 3.34.95.1-.74.4-1.25.72-1.53-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.35.77 1.05.77 2.12v3.14c0 .3.21.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
             </a>
@@ -759,46 +611,50 @@ const closeEggRoom = () => {
           <p class="section-subtitle">{{ t.stats.subtitle }}</p>
           <div class="section-line"></div>
         </div>
-        <div class="star-history-tabs" role="tablist" :aria-label="t.stats.repositoryTabs">
-          <button
-            v-for="repo in STAR_HISTORY_REPOS"
-            :key="repo.id"
-            type="button"
-            class="star-history-tab"
-            :class="{ active: activeStarRepoId === repo.id }"
-            :aria-selected="activeStarRepoId === repo.id"
-            role="tab"
-            @click="selectStarRepo(repo)"
-          >
-            {{ t.stats.repositories[repo.labelKey] }}
-          </button>
-        </div>
-        <div class="star-history-container">
-          <div v-if="!activeStarRepo" class="star-history-select-hint">
-            <p>{{ t.stats.selectRepository }}</p>
-          </div>
-          <div v-else-if="activeStarHistoryState.status === 'idle' || activeStarHistoryState.status === 'loading'" class="loading-state">
-            <div class="loading-spinner"></div>
-            <p>{{ t.stats.loading }}</p>
-          </div>
-          <div v-else-if="activeStarHistoryState.status === 'error'" class="error-state">
-            <p>{{ t.stats.error }}</p>
-            <a
-              :href="activeStarHistoryUrl"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn btn-outline"
+        <p class="star-trend-intro">{{ t.stats.trendIntro }}</p>
+        <div class="star-history-layout">
+          <div class="star-history-tabs" role="tablist" :aria-label="t.stats.repositoryTabs">
+            <button
+              v-for="(repo, index) in STAR_HISTORY_REPOS"
+              :key="repo.id"
+              type="button"
+              class="star-history-tab"
+              :class="{ active: activeStarRepoId === repo.id }"
+              :aria-selected="activeStarRepoId === repo.id"
+              role="tab"
+              @click="selectStarRepo(repo)"
             >
-              {{ t.stats.viewManually }}
-            </a>
+              <span class="star-history-tab-index" aria-hidden="true">{{ index + 1 }}</span>
+              {{ t.stats.repositories[repo.labelKey] }}
+            </button>
           </div>
-          <img
-            v-else
-            :src="getStarHistoryImageUrl(activeStarRepo)"
-            :alt="`${t.title} ${t.stats.title}`"
-            class="star-history-chart"
-            loading="lazy"
-          />
+          <div class="star-history-container">
+            <div v-if="!activeStarRepo" class="star-history-select-hint">
+              <p>{{ t.stats.selectRepository }}</p>
+            </div>
+            <div v-else-if="activeStarHistoryState.status === 'idle' || activeStarHistoryState.status === 'loading'" class="loading-state">
+              <div class="loading-spinner"></div>
+              <p>{{ t.stats.loading }}</p>
+            </div>
+            <div v-else-if="activeStarHistoryState.status === 'error'" class="error-state">
+              <p>{{ t.stats.error }}</p>
+              <a
+                :href="activeStarHistoryUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-outline"
+              >
+                {{ t.stats.viewManually }}
+              </a>
+            </div>
+            <img
+              v-else
+              :src="getStarHistoryImageUrl(activeStarRepo)"
+              :alt="`${t.title} ${t.stats.title}`"
+              class="star-history-chart"
+              loading="lazy"
+            />
+          </div>
         </div>
         <div class="stats-actions">
           <a
@@ -850,6 +706,15 @@ const closeEggRoom = () => {
           >
             <h3>{{ t.docs.officialDocs }}</h3>
             <p>{{ t.docs.officialDocsDesc }}</p>
+          </a>
+          <a
+            :href="BILIBILI_SPACE_URL"
+            class="doc-card"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <h3>{{ t.docs.bilibili }}</h3>
+            <p>{{ t.docs.bilibiliDesc }}</p>
           </a>
           <a
             href="https://qm.qq.com/q/AfMQoyKrkc"

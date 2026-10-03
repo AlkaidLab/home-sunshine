@@ -10,6 +10,7 @@ export const translations = {
     nav: {
       brand: '瑶光流梦 · AlkaidLab',
       github: 'GitHub 仓库',
+      bilibili: 'B 站频道',
       features: '特性',
       download: '下载',
       clients: '客户端',
@@ -61,7 +62,8 @@ export const translations = {
       menuProject: '项目主页',
       menuMirror: '镜像下载',
       menuStar: 'Star 仓库',
-      helpTitle: '需要帮助或有建议？',
+      helpAskCommunity: '需要帮助？',
+      helpAskIssue: '想要提建议？',
       communityQq: '加入交流群 ↗',
       communityIssue: '提交 Issue ↗',
       downloadModal: {
@@ -187,11 +189,13 @@ export const translations = {
     stats: {
       title: '点亮Star',
       subtitle: '点亮 Star，收藏项目并支持我们持续开发',
+      trendIntro: '下面是 AlkaidLab 主力项目的仓库 Star 趋势~',
       repositoryTabs: '选择要查看的仓库',
       repositories: {
         sunshine: 'Foundation Sunshine',
-        androidMoonlight: 'Moonlight V+ · 安卓',
-        moonlightPc: 'Moonlight V+ · PC'
+        androidMoonlight: '安卓 Moonlight V+',
+        moonlightPc: 'PC Moonlight V+',
+        macosEnhanced: 'macOS enhanced'
       },
       selectRepository: '点击上方仓库查看 Star 趋势',
       loading: '正在加载 Star 趋势...',
@@ -208,6 +212,8 @@ export const translations = {
       docCenterDesc: '技术公告与项目说明合集',
       officialDocs: '官方文档',
       officialDocsDesc: 'LizardByte 官方文档参考',
+      bilibili: 'B 站频道',
+      bilibiliDesc: '观看功能演示与教程视频，关注频道获取更新动态。',
       qqGroup: 'QQ 交流群',
       qqGroupDesc: '加入社区获取帮助'
     },
@@ -250,6 +256,7 @@ export const translations = {
     nav: {
       brand: 'AlkaidLab Sunshine',
       github: 'GitHub repository',
+      bilibili: 'Bilibili channel',
       features: 'Features',
       download: 'Get App',
       clients: 'Clients',
@@ -301,7 +308,8 @@ export const translations = {
       menuProject: 'Project',
       menuMirror: 'Mirror download',
       menuStar: 'Star repo',
-      helpTitle: 'Need help or have suggestions?',
+      helpAskCommunity: 'Need help?',
+      helpAskIssue: 'Have suggestions?',
       communityQq: 'Join the community ↗',
       communityIssue: 'Open an issue ↗',
       downloadModal: {
@@ -427,11 +435,13 @@ export const translations = {
     stats: {
       title: 'Star',
       subtitle: 'Star our projects on GitHub to support development',
+      trendIntro: 'Here are the repository Star trends of AlkaidLab\'s core projects~',
       repositoryTabs: 'Choose a repository to view',
       repositories: {
         sunshine: 'Foundation Sunshine',
-        androidMoonlight: 'Moonlight V+ · Android',
-        moonlightPc: 'Moonlight V+ · PC'
+        androidMoonlight: 'Android Moonlight V+',
+        moonlightPc: 'PC Moonlight V+',
+        macosEnhanced: 'macOS enhanced'
       },
       selectRepository: 'Choose a repository above to view its Stars',
       loading: 'Loading Stars...',
@@ -448,6 +458,8 @@ export const translations = {
       docCenterDesc: 'Technical announcements and project write-ups',
       officialDocs: 'Official Docs',
       officialDocsDesc: 'LizardByte official documentation reference',
+      bilibili: 'Bilibili Channel',
+      bilibiliDesc: 'Watch feature demos and tutorials — follow for updates.',
       qqGroup: 'QQ Group',
       qqGroupDesc: 'Join the community for help'
     },

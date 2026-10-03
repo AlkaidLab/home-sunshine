@@ -104,7 +104,9 @@
   }
 }
 
-.nav-github {
+.nav-github,
+.nav-bilibili,
+.nav-icon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -121,6 +123,8 @@
     border-color: var(--primary-color);
   }
 }
+
+.nav-bilibili svg { width: 20px; height: 20px; }
 
 .lang-toggle {
   display: inline-block;
@@ -993,13 +997,37 @@
 
 .star-history-tabs {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.5rem;
   padding: 0.4rem;
-  margin-bottom: 1rem;
   border: 1px solid var(--border-color);
   border-radius: 12px;
   background: var(--background-tertiary);
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.star-history-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  align-items: stretch;
+
+  @media (max-width: 768px) {
+    grid-template-columns: minmax(104px, 128px) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.star-trend-intro {
+  margin: -1.75rem 0 1.25rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  text-align: center;
 }
 
 .star-history-tab {
@@ -1015,9 +1043,42 @@
   cursor: pointer;
   transition: color 0.2s, background-color 0.2s, border-color 0.2s, transform 0.2s;
 
+  .star-history-tab-index {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 2.35rem;
+    padding: 0.5rem 0.6rem;
+    font-size: 0.78rem;
+    text-align: left;
+
+    .star-history-tab-index {
+      display: grid;
+      place-items: center;
+      width: 1.3rem;
+      height: 1.3rem;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--primary-color) 14%, transparent);
+      color: var(--primary-color);
+      font-size: 0.7rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+  }
+
   &:hover {
     color: var(--primary-color);
     border-color: var(--border-color);
+  }
+
+  @media (max-width: 768px) {
+    min-height: 2.35rem;
+    padding: 0.5rem 0.6rem;
+    font-size: 0.78rem;
   }
 
   &.active {
@@ -1025,6 +1086,11 @@
     border-color: var(--primary-color);
     color: var(--text-inverse);
     box-shadow: 0 4px 12px rgba(var(--meteor-rgb), 0.18);
+
+    .star-history-tab-index {
+      background: rgba(255, 255, 255, 0.24);
+      color: var(--text-inverse);
+    }
   }
 }
 

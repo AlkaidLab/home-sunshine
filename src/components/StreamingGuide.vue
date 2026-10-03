@@ -1,5 +1,5 @@
 <script setup vapor>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { translations } from '../i18n.js'
 import DeviceIcon from './DeviceIcon.vue'
 import DownloadModal from './DownloadModal.vue'
@@ -9,9 +9,12 @@ import {
   FRIEND_LINKS,
   getClientsForDevice,
   detectDevice,
-  getReleaseDownloadUrls,
   isDeviceId,
 } from '../products.js'
+import {
+  getReleaseDownloadUrls,
+  resolveReleaseDownloadUrls,
+} from '../downloads.js'
 
 const props = defineProps({
   lang: { type: String, default: 'zh' },
@@ -30,9 +33,6 @@ const clientCopy = computed(() => selected.value ? guide.value.platforms[selecte
 const clientProductName = computed(() => clientCopy.value?.detail.split(' · ')[0] || '')
 const clientDevices = computed(() => clientCopy.value?.detail.split(' · ').slice(1).join(' · ') || '')
 const clientReleaseUrls = ref({})
-const CLIENT_RELEASE_CACHE_KEY = 'alkaidlab-client-release-assets-v2'
-const CLIENT_RELEASE_CACHE_TTL_MS = 30 * 60 * 1000
-const PRE_RELEASE_ASSET_PATTERN = /(?:^|[-_.])(?:alpha|beta|rc|pre)(?:[-_.]|$)/i
 const clientFriendLink = computed(() => FRIEND_LINKS.find(link => link.devices.includes(selected.value)) || null)
 const clientFriendUrl = computed(() => clientFriendLink.value?.urls[props.lang] || null)
 const clientFriendAction = computed(() => guide.value.friendAction)
@@ -47,7 +47,7 @@ const clientReleaseDownloadUrls = computed(() => {
   const [productKey, device] = key.startsWith('moonlight-pc@')
     ? ['moonlightPc', key.split('@')[1]]
     : [key]
-  return getReleaseDownloadUrls(productKey, device, clientReleaseUrls.value[key], props.lang)
+  return clientReleaseUrls.value[key] || getReleaseDownloadUrls(productKey, device, null, props.lang)
 })
 const clientDirectUrl = computed(() => {
   return clientReleaseDownloadUrls.value?.official || null
@@ -57,7 +57,7 @@ const clientMirrorUrl = computed(() => clientReleaseDownloadUrls.value?.mirror |
 const alternateDownloadUrls = computed(() => {
   const option = clientOtherOptions.value[0]
   if (!option || option.id !== 'macos-enhanced') return null
-  return getReleaseDownloadUrls('macos-enhanced', 'macos', clientReleaseUrls.value['macos-enhanced'], props.lang)
+  return clientReleaseUrls.value['macos-enhanced'] || getReleaseDownloadUrls('macos-enhanced', 'macos', null, props.lang)
 })
 const clientUrl = computed(() => clientDownloadUrl.value)
 const issueUrl = computed(() => `${props.projectUrl}/issues`)
@@ -99,69 +99,39 @@ const getLinkKind = url => {
   return 'file'
 }
 
-const fetchStableGithubRelease = async repo => {
-  const endpoints = [
-    `https://api.github.com/repos/${repo}/releases?per_page=20`,
-    `/api/repos/${repo}/releases?per_page=20`,
-  ]
-  const releases = await Promise.any(endpoints.map(url =>
-    fetch(url, { cache: 'no-store', headers: { Accept: 'application/vnd.github+json' } }).then(response => {
-      if (!response.ok) throw new Error(`GitHub API ${response.status}`)
-      return response.json()
-    })
-  ))
-  return Array.isArray(releases)
-    ? releases.find(release => !release.draft && !release.prerelease && !PRE_RELEASE_ASSET_PATTERN.test(release.tag_name || ''))
-    : null
-}
+let clientResolveRequestId = 0
+const resolveClientReleaseAssets = async deviceId => {
+  const requestId = ++clientResolveRequestId
+  const requests = []
 
-const pickReleaseAsset = (assets, patterns) => {
-  for (const pattern of patterns) {
-    const asset = (assets || []).find(asset => pattern.test(asset.name || ''))
-    if (asset?.browser_download_url) return asset.browser_download_url
-  }
-  return null
-}
-
-const resolveClientReleaseAssets = async () => {
-  try {
-    const cached = JSON.parse(localStorage.getItem(CLIENT_RELEASE_CACHE_KEY) || 'null')
-    if (cached?.timestamp && Date.now() - cached.timestamp < CLIENT_RELEASE_CACHE_TTL_MS && cached.urls) {
-      clientReleaseUrls.value = cached.urls
-      return
-    }
-  } catch { /* storage is optional */ }
-
-  const [vplus, qt] = await Promise.allSettled([
-    fetchStableGithubRelease('qiin2333/moonlight-vplus'),
-    fetchStableGithubRelease('qiin2333/moonlight-qt'),
-  ])
-  const urls = {}
-
-  if (vplus.status === 'fulfilled') {
-    const url = pickReleaseAsset(vplus.value?.assets, [/\.apk$/i])
-    if (url) urls['android-vplus'] = url
+  if (deviceId === 'android' || deviceId === 'android-tv' || deviceId === 'quest') {
+    requests.push(['androidVplus', 'android', 'android-vplus'])
+  } else if (deviceId === 'windows' || deviceId === 'macos' || deviceId === 'linux' || deviceId === 'steam') {
+    requests.push(['moonlightPc', deviceId, `moonlight-pc@${deviceId}`])
+    if (deviceId === 'macos') requests.push(['macos-enhanced', 'macos', 'macos-enhanced'])
   }
 
-  if (qt.status === 'fulfilled') {
-    const assets = qt.value?.assets
-    const qtUrls = {
-      windows: pickReleaseAsset(assets, [/setup.*\.exe$/i]),
-      macos: pickReleaseAsset(assets, [/universal.*\.dmg$/i, /arm64.*\.dmg$/i]),
-      linux: pickReleaseAsset(assets, [/x86_64\.appimage$/i]),
-      steam: pickReleaseAsset(assets, [/steamlink.*\.zip$/i]),
-    }
-    for (const [device, url] of Object.entries(qtUrls)) {
-      if (url) urls[`moonlight-pc@${device}`] = url
+  if (!requests.length) return
+
+  const resolved = await Promise.allSettled(
+    requests.map(async ([productKey, device, key]) => [
+      key,
+      await resolveReleaseDownloadUrls(productKey, device, props.lang),
+    ]),
+  )
+
+  // A quick platform switch should not let an older response overwrite the
+  // links for the newly selected device.
+  if (requestId !== clientResolveRequestId) return
+
+  const urls = { ...clientReleaseUrls.value }
+  for (const result of resolved) {
+    if (result.status === 'fulfilled') {
+      const [key, value] = result.value
+      urls[key] = value
     }
   }
-
-  // A total resolution failure must not be cached, or clients stay on the
-  // page fallback for the whole TTL while Sunshine serves its cached direct URL.
-  if (!Object.keys(urls).length) return
-
-  clientReleaseUrls.value = urls
-  try { localStorage.setItem(CLIENT_RELEASE_CACHE_KEY, JSON.stringify({ timestamp: Date.now(), urls })) } catch { /* storage is optional */ }
+  if (Object.keys(urls).length) clientReleaseUrls.value = urls
 }
 const openDownloadCard = ({ scope, icon, projectName, title, subtitle, downloadUrl, mirrorUrl = null, projectUrl = null }) => {
   openMenu.value = null
@@ -273,6 +243,10 @@ const selectPlatform = id => {
   try { localStorage.setItem(DEVICE_STORAGE_KEY, id) } catch { /* storage is optional */ }
 }
 
+watch(selected, deviceId => {
+  if (deviceId) resolveClientReleaseAssets(deviceId)
+})
+
 onMounted(() => {
   document.addEventListener('click', onGlobalClick)
   document.addEventListener('keydown', onGlobalKeydown)
@@ -291,7 +265,6 @@ onMounted(() => {
     }
   }
 
-  resolveClientReleaseAssets()
 })
 
 onBeforeUnmount(() => {
@@ -451,9 +424,14 @@ onBeforeUnmount(() => {
       <div class="guide-help">
         <div class="guide-help-main">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-          <strong>{{ guide.helpTitle }}</strong>
-          <a :href="communityUrl" class="guide-help-link" target="_blank" rel="noopener noreferrer" @click="openQqGroup">{{ guide.communityQq }}</a>
-          <a :href="issueUrl" class="guide-help-link" target="_blank" rel="noopener noreferrer">{{ guide.communityIssue }}</a>
+          <span class="guide-help-item">
+            <strong>{{ guide.helpAskCommunity }}</strong>
+            <a :href="communityUrl" class="guide-help-link" target="_blank" rel="noopener noreferrer" @click="openQqGroup">{{ guide.communityQq }}</a>
+          </span>
+          <span class="guide-help-item">
+            <strong>{{ guide.helpAskIssue }}</strong>
+            <a :href="issueUrl" class="guide-help-link" target="_blank" rel="noopener noreferrer">{{ guide.communityIssue }}</a>
+          </span>
         </div>
       </div>
 
@@ -520,6 +498,7 @@ small { display: block; margin-top: 0.3rem; color: var(--text-secondary); font-f
 .guide-alternate-hint { margin-top: 0.2rem; color: var(--text-secondary); }
 .guide-help { display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem; padding: 0.9rem 1rem; border: 1px solid var(--border-color); border-radius: 12px; background: var(--background-secondary); }
 .guide-help-main { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; > svg { width: 18px; height: 18px; color: var(--primary-color); flex-shrink: 0; } strong { display: inline; margin: 0; font-size: 0.875rem; } }
+.guide-help-item { display: inline-flex; align-items: center; gap: 0.4rem; }
 .guide-help-link { font-size: 0.8125rem; font-weight: 600; }
 a:focus-visible, button:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 3px; }
 @media (max-width: 1050px) { .guide-platforms { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
