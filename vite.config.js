@@ -16,6 +16,14 @@ export default defineConfig({
       },
     },
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: "https://www.alkaidlab.com",
+        changeOrigin: true,
+      },
+    },
+  },
   // Vue 3.6 beta's Vapor runtime exposes ESM-only internal bindings.
   // Bundle Vue packages for the temporary SSR build so Node does not select CJS exports.
   ssr: {

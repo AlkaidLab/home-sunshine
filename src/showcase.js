@@ -16,7 +16,7 @@ export const showcaseContent = {
       voidlink: '在 iPhone 和 iPad 上体验电脑游戏。',
     },
     note: '生态客户端包含社区项目，具体功能和发行信息以各项目页面为准。',
-    stories: '流梦现场',
+    stories: '探索串流',
     storiesSubtitle: '了解开发进展，体验新功能，与社区一起探索串流玩法。',
     read: '了解更多',
     items: [
@@ -24,7 +24,7 @@ export const showcaseContent = {
       { category: '开发手记', title: '杜比视界：从元数据到原生输出', description: '记录联想“无极”平板黑屏的排查，以及 Profile 8.1 与 8.4 的实机验证。', url: '/docs/dolby-vision-dev-journal-zh.html' },
       { category: '研发进展 · 2026.07.23', title: '手柄支持与自研触觉 SDK', description: '了解触觉 SDK 的技术方向与设备支持计划。', url: '/docs/razer-haptics-sdk-announcement-zh.html' },
       { category: '版本动态', title: 'Sunshine 更新日志', description: '查看新版本的功能变化、修复内容和发行说明。', url: 'https://github.com/AlkaidLab/foundation-sunshine/releases' },
-      { category: '玩家社区', title: '一起交流串流玩法', description: '加入 QQ 交流群，分享设备配置、使用心得与建议。', url: 'https://qm.qq.com/cgi-bin/qm/qr?k=5qnkzSaLIrIaU4FvumftZH_6Hg7fUuLD&jump_from=webapi' },
+      { category: '玩家社区', title: '一起交流串流玩法', description: '加入 QQ 交流群，分享设备配置、使用心得与建议。', url: 'https://qm.qq.com/q/AfMQoyKrkc' },
     ],
   },
   en: {
@@ -43,7 +43,7 @@ export const showcaseContent = {
       voidlink: 'Enjoy PC games on iPhone and iPad.',
     },
     note: 'The ecosystem includes community projects. See each project for features and releases.',
-    stories: 'Inside Alkaid',
+    stories: 'Explore Streaming',
     storiesSubtitle: 'Follow development, try new features and explore streaming with the community.',
     read: 'Learn more',
     items: [
@@ -51,7 +51,7 @@ export const showcaseContent = {
       { category: 'Dev journal', title: 'Dolby Vision: from metadata to native output', description: 'Tracing a Lenovo tablet black screen and validating native Profile 8.1 and 8.4 output. Article in Chinese.', url: '/docs/dolby-vision-dev-journal-zh.html' },
       { category: 'Development · 2026.07.23', title: 'Controller support & our haptics SDK', description: 'Read about our technical direction and device support plans. Article in Chinese.', url: '/docs/razer-haptics-sdk-announcement-zh.html' },
       { category: 'Releases', title: 'Sunshine release notes', description: 'Discover features, fixes and release notes for new versions.', url: 'https://github.com/AlkaidLab/foundation-sunshine/releases' },
-      { category: 'Community', title: 'Share your streaming experience', description: 'Join our QQ community to share device setups, tips and feedback.', url: 'https://qm.qq.com/cgi-bin/qm/qr?k=5qnkzSaLIrIaU4FvumftZH_6Hg7fUuLD&jump_from=webapi' },
+      { category: 'Community', title: 'Share your streaming experience', description: 'Join our QQ community to share device setups, tips and feedback.', url: 'https://qm.qq.com/q/AfMQoyKrkc' },
     ],
   },
 }

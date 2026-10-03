@@ -5,6 +5,8 @@ import { showcaseContent } from './showcase.js'
 import sponsorsData from './sponsors.json'
 import { DEFAULT_EGG_CLICKS, getEggEntry, getRandomEggEntry } from './eggs/index.js'
 import HeroMeteorSky from './components/HeroMeteorSky.vue'
+import StreamingGuide from './components/StreamingGuide.vue'
+import { buildCnbUrl, CNB_DOWNLOADS, CNB_RELEASE_REPOSITORIES, FRIEND_LINKS, GITHUB_DOWNLOADS, PRODUCTS } from './products.js'
 import { HTML_LANG, LANG_PATHS, siteMeta } from './site-meta.js'
 
 const DEFAULT_THEME = 'gura'
@@ -46,14 +48,6 @@ watch(currentTheme, (newTheme) => {
   }
 })
 
-// 主题名称
-const themeName = computed(() => {
-  const isGura = currentTheme.value === 'gura'
-  return currentLang.value === 'zh'
-    ? (isGura ? 'Gura 蓝' : '巧克力')
-    : (isGura ? 'Gura Blue' : 'Chocolate')
-})
-
 // 更新页面标题
 const updatePageTitle = () => {
   document.title = siteMeta[currentLang.value].title
@@ -62,6 +56,37 @@ const updatePageTitle = () => {
 // 当前语言的翻译内容
 const t = computed(() => translations[currentLang.value])
 const showcase = computed(() => showcaseContent[currentLang.value])
+const activeCatalogFilter = ref('all')
+// 基地版 iOS / Apple TV 尚未发布，在矩阵中并入“敬请期待”卡片；Xbox 一并预告。
+const UPCOMING_CLIENT_IDS = ['ios', 'apple-tv']
+const catalogProducts = computed(() => {
+  const filter = activeCatalogFilter.value
+  const items = PRODUCTS
+    .filter(product => filter === 'all' || product.kind === filter)
+    .filter(product => !UPCOMING_CLIENT_IDS.includes(product.id))
+    .map(product => ({ ...product, copy: t.value.catalog.products[product.id] }))
+  if (filter === 'all' || filter === 'client') {
+    items.push({ id: 'upcoming-clients', kind: 'client', upcoming: true, copy: t.value.catalog.products.upcoming })
+  }
+  return items
+})
+const catalogFriendLinks = computed(() => FRIEND_LINKS.map(link => ({
+  ...link,
+  url: link.urls[currentLang.value],
+  copy: t.value.catalog.friendProducts[link.id],
+  deviceLabel: t.value.guide.platforms[link.devices[0]]?.label || link.devices[0],
+})))
+// QQ 群有两个入口链接：点击时随机选一个，用户不需要感知第二条链接的存在。
+// QQ 群有两个入口链接：点击时随机选一个跳转，用户不需要感知第二条链接的存在。
+const QQ_GROUP_LINKS = ['https://qm.qq.com/q/AfMQoyKrkc', 'https://qm.qq.com/q/vIVhpjDMic']
+const openQqGroup = event => {
+  event.preventDefault()
+  window.open(QQ_GROUP_LINKS[Math.floor(Math.random() * QQ_GROUP_LINKS.length)], '_blank', 'noopener,noreferrer')
+}
+const productDeviceLabels = product => product.devices
+  .map(device => t.value.guide.platforms[device]?.label)
+  .filter(Boolean)
+  .join(' · ')
 
 // Star History 图表状态
 const STAR_HISTORY_REPOS = [
@@ -94,18 +119,21 @@ const versionInfo = ref({
   error: null,
 })
 
-// 国内镜像前缀
-const MIRROR_PREFIX = 'https://mirror.ghproxy.com/'
 const GITHUB_REPO = 'AlkaidLab/foundation-sunshine'
 const GITHUB_REPO_URL = `https://github.com/${GITHUB_REPO}`
 const GITHUB_RELEASES_URL = `${GITHUB_REPO_URL}/releases`
 const GITHUB_LATEST_RELEASE_URL = `${GITHUB_RELEASES_URL}/latest`
+const CNB_RELEASES_URL = `https://cnb.cool/${CNB_RELEASE_REPOSITORIES.sunshine}/-/releases`
 const RELEASES_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases?per_page=20`
+const RELEASES_API_PROXY_URL = `/api/repos/${GITHUB_REPO}/releases?per_page=20`
 const WINDOWS_INSTALLER_ASSET_PATTERNS = [
   /WindowsInstaller\.exe$/i,
   /windows[-_.]?installer\.exe$/i,
 ]
-const DEFAULT_DOWNLOAD_URL = GITHUB_LATEST_RELEASE_URL
+const PRE_RELEASE_ASSET_PATTERN = /(?:^|[-_.])(?:alpha|beta|rc|pre)(?:[-_.]|$)/i
+const DEFAULT_DOWNLOAD_URL = currentLang.value === 'zh' ? CNB_DOWNLOADS.sunshine : GITHUB_DOWNLOADS.sunshine
+const MIRROR_DOWNLOAD_URL = currentLang.value === 'zh' ? GITHUB_DOWNLOADS.sunshine : CNB_DOWNLOADS.sunshine
+const RELEASES_LIST_URL = currentLang.value === 'zh' ? CNB_RELEASES_URL : `${GITHUB_RELEASES_URL}/`
 const VERSION_CACHE_KEY = 'foundation-sunshine-release-version-info-v2'
 const VERSION_CACHE_TTL_MS = 30 * 60 * 1000
 const STAR_REPO_URL = 'https://github.com/AlkaidLab/foundation-sunshine'
@@ -188,8 +216,8 @@ watch(currentTheme, newTheme => {
 // 下载链接
 const downloadLinks = ref({
   windows: DEFAULT_DOWNLOAD_URL,
-  github: `${GITHUB_RELEASES_URL}/`,
-  mirror: `${MIRROR_PREFIX}${DEFAULT_DOWNLOAD_URL}`,
+  mirror: MIRROR_DOWNLOAD_URL,
+  releases: RELEASES_LIST_URL,
   latest: DEFAULT_DOWNLOAD_URL,
 })
 
@@ -201,6 +229,11 @@ const extractDownloadUrl = (assets = []) =>
   Array.isArray(assets)
     ? assets.find(isWindowsInstallerAsset)?.browser_download_url
     : undefined
+
+const isPreviewRelease = release => Boolean(release?.prerelease) || (
+  PRE_RELEASE_ASSET_PATTERN.test(release?.tag_name || '') ||
+  PRE_RELEASE_ASSET_PATTERN.test(release?.name || '')
+)
 
 const fetchGithubJson = async (url) => {
   const response = await fetch(url, {
@@ -242,27 +275,36 @@ const writeCachedVersionInfo = (releaseInfo) => {
 const isFreshCachedVersionInfo = cached =>
   cached?.timestamp && Date.now() - cached.timestamp < VERSION_CACHE_TTL_MS
 
-const getMirrorUrl = url =>
-  url?.startsWith('https://github.com/') ? `${MIRROR_PREFIX}${url}` : url
-
 const applyReleaseInfo = ({ latest, preRelease }) => {
   versionInfo.value.latest = latest
   versionInfo.value.preRelease = preRelease || null
 
-  const latestDownloadUrl = latest.downloadUrl || latest.releaseUrl || DEFAULT_DOWNLOAD_URL
-  downloadLinks.value.latest = latestDownloadUrl
-  downloadLinks.value.windows = latestDownloadUrl
-  downloadLinks.value.mirror = getMirrorUrl(latestDownloadUrl)
+  const githubDownloadUrl = latest.downloadUrl || latest.releaseUrl || GITHUB_DOWNLOADS.sunshine
+  const dynamicCnbUrl = githubDownloadUrl.includes('/download/')
+    ? buildCnbUrl('sunshine', decodeURIComponent(githubDownloadUrl.slice(githubDownloadUrl.lastIndexOf('/') + 1)))
+    : CNB_DOWNLOADS.sunshine
+  const officialDownloadUrl = currentLang.value === 'zh' ? dynamicCnbUrl : githubDownloadUrl
+  const mirrorDownloadUrl = currentLang.value === 'zh' ? githubDownloadUrl : dynamicCnbUrl
+  downloadLinks.value.latest = officialDownloadUrl
+  downloadLinks.value.windows = officialDownloadUrl
+  downloadLinks.value.mirror = mirrorDownloadUrl
 }
 
 const fetchReleaseInfo = async () => {
-  const releases = await fetchGithubJson(RELEASES_API_URL)
+  let releases
+  try {
+    // Race the official API with the same-origin Worker proxy so networks that
+    // block api.github.com still resolve the direct installer URL.
+    releases = await Promise.any([RELEASES_API_URL, RELEASES_API_PROXY_URL].map(url => fetchGithubJson(url)))
+  } catch (error) {
+    throw error?.errors?.[0] || error
+  }
   if (!Array.isArray(releases)) {
     throw new Error('GitHub API returned invalid release data')
   }
 
-  const latestRelease = releases.find(release => !release.draft && !release.prerelease)
-  const preRelease = releases.find(release => !release.draft && release.prerelease)
+  const latestRelease = releases.find(release => !release.draft && !isPreviewRelease(release))
+  const preRelease = releases.find(release => !release.draft && isPreviewRelease(release))
 
   if (!latestRelease?.tag_name) {
     throw new Error('GitHub API returned invalid latest release data')
@@ -316,7 +358,7 @@ const checkLatestVersion = async ({ force = false } = {}) => {
     versionInfo.value.error = error.message
     downloadLinks.value.latest = DEFAULT_DOWNLOAD_URL
     downloadLinks.value.windows = DEFAULT_DOWNLOAD_URL
-    downloadLinks.value.mirror = getMirrorUrl(DEFAULT_DOWNLOAD_URL)
+    downloadLinks.value.mirror = MIRROR_DOWNLOAD_URL
   } finally {
     versionInfo.value.loading = false
   }
@@ -394,20 +436,6 @@ const clients = [
       en: 'skyhua0224 · macOS Enhanced',
     },
     link: 'https://github.com/skyhua0224/moonlight-macos-enhanced',
-    icon: 'apple',
-    type: 'apple',
-  },
-  {
-    id: 'voidlink',
-    name: {
-      zh: '虚空终端 (VoidLink)',
-      en: 'VoidLink',
-    },
-    platform: {
-      zh: 'iOS / iPadOS',
-      en: 'iOS / iPadOS',
-    },
-    link: 'https://apps.apple.com/cn/app/voidlink/id6747717070',
     icon: 'apple',
     type: 'apple',
   },
@@ -537,23 +565,24 @@ const closeEggRoom = () => {
       <div class="container">
         <nav class="nav">
           <a :href="LANG_PATHS[currentLang]" class="logo">
-            <span class="logo-name">{{ t.title }}</span>
-            <span class="logo-badge">Beta</span>
+            <span class="logo-name">{{ t.nav.brand }}</span>
           </a>
 
           <div class="nav-center">
+            <a href="#stream-guide" class="nav-link">{{ t.nav.start }}</a>
             <a href="#products" class="nav-link">{{ showcase.products }}</a>
             <a href="#stories" class="nav-link">{{ showcase.stories }}</a>
             <a href="#features" class="nav-link">{{ t.nav.features }}</a>
-            <a href="#download" class="nav-link">{{ t.nav.download }}</a>
-            <a href="#clients" class="nav-link">{{ t.nav.clients }}</a>
             <a href="#stats" class="nav-link">{{ t.nav.stats }}</a>
             <a href="#docs" class="nav-link">{{ t.nav.docs }}</a>
             <a href="#sponsors" class="nav-link">{{ t.nav.sponsors }}</a>
           </div>
 
           <div class="nav-controls">
-            <button @click="toggleTheme" class="theme-toggle" :title="themeName">
+            <a :href="GITHUB_REPO_URL" class="nav-github" target="_blank" rel="noopener noreferrer" :aria-label="t.nav.github" :title="t.nav.github">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.17c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.75 2.69 1.25 3.34.95.1-.74.4-1.25.72-1.53-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.35.77 1.05.77 2.12v3.14c0 .3.21.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+            </a>
+            <button @click="toggleTheme" class="theme-toggle" :title="currentTheme === 'gura' ? t.nav.toDark : t.nav.toLight" :aria-label="currentTheme === 'gura' ? t.nav.toDark : t.nav.toLight">
               <svg v-if="currentTheme === 'gura'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
               <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
             </button>
@@ -575,87 +604,92 @@ const closeEggRoom = () => {
       <HeroMeteorSky />
       <div class="container">
         <div class="hero-content">
-          <p class="hero-badge">{{ t.hero.badge }}</p>
           <h1 class="hero-title">
             <!-- 品牌与检索词只对爬虫和读屏软件可见，视觉上仍是纯标语。 -->
             <span class="sr-only">{{ t.hero.h1Prefix }}</span>
-            {{ t.tagline }}
+            {{ t.hero.title }}
           </h1>
-          <p class="hero-subtitle">{{ t.subtitle }}</p>
+          <p class="hero-subtitle"><span v-for="line in t.hero.intro" :key="line">{{ line }}</span></p>
+          <p class="hero-tags">
+            <template v-for="(tag, index) in t.hero.tags" :key="tag">
+              <span>{{ tag }}</span>
+              <i v-if="index < t.hero.tags.length - 1" class="tag-dot" aria-hidden="true"></i>
+            </template>
+          </p>
+          <p class="hero-metrics">★ {{ t.hero.metrics }}</p>
           <div class="hero-actions">
             <a
-              :href="downloadLinks.windows"
+              href="#stream-guide"
               class="btn btn-primary"
-              target="_blank"
-              rel="noopener noreferrer"
             >
-              {{ t.hero.download }}
+              {{ t.hero.start }}
             </a>
-            <a
-              :href="downloadLinks.github"
-              class="btn btn-outline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {{ t.hero.github }}
-            </a>
-            <a
-              :href="downloadLinks.mirror"
-              class="btn btn-outline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {{ t.hero.mirror }}
-            </a>
-            <a href="#clients" class="btn btn-outline">
-              {{ t.hero.moonlightClient }}
-            </a>
-          </div>
-          <div class="hero-stats">
-            <span class="stat-item">{{ t.hero.stats[0] }}</span>
-            <span class="stat-divider"></span>
-            <span class="stat-item">{{ t.hero.stats[1] }}</span>
-            <span class="stat-divider"></span>
-            <span class="stat-item">{{ t.hero.stats[2] }}</span>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 产品矩阵：沿用现有官网的标题和卡片样式 -->
-    <section id="products" class="section">
+    <StreamingGuide :lang="currentLang" :host-url="downloadLinks.windows" :mirror-url="downloadLinks.mirror" :project-url="GITHUB_REPO_URL" />
+
+    <!-- 产品矩阵：展示完整产品，友情链接独立成行 -->
+    <section id="products" class="section product-catalog">
       <div class="container">
         <div class="section-header">
-          <h2 class="section-title">{{ showcase.products }}</h2>
-          <p class="section-subtitle">{{ showcase.productsSubtitle }}</p>
+          <h2 class="section-title">{{ t.catalog.title }}</h2>
+          <p class="section-subtitle">{{ t.catalog.subtitle }}</p>
           <div class="section-line"></div>
         </div>
-        <div class="features-grid">
-          <a href="#download" class="feature-card showcase-card">
-
-            <span class="showcase-label">{{ showcase.host }}</span>
-            <h3 class="feature-title">{{ currentLang === 'zh' ? '瑶光流梦 Sunshine' : t.title }}</h3>
-            <p class="feature-desc">{{ showcase.hostDescription }}</p>
-            <span class="showcase-platform">Windows</span>
-            <span class="showcase-action">{{ showcase.getHost }}</span>
-          </a>
-          <a
-            v-for="client in clients"
-            :key="client.id"
-            :href="client.link"
-            class="feature-card showcase-card"
-            target="_blank"
-            rel="noopener noreferrer"
+        <div class="catalog-filters" role="group" :aria-label="t.catalog.filterLabel">
+          <button
+            v-for="filter in ['all', 'host', 'client', 'friend']"
+            :key="filter"
+            type="button"
+            :class="{ active: activeCatalogFilter === filter }"
+            @click="activeCatalogFilter = filter"
           >
-
-            <span class="showcase-label">{{ showcase.client }}</span>
-            <h3 class="feature-title">{{ client.name[currentLang] }}</h3>
-            <p class="feature-desc">{{ showcase.clientDescriptions[client.id] }}</p>
-            <span class="showcase-platform">{{ client.platform[currentLang] }}</span>
-            <span class="showcase-action">{{ showcase.getClient }}</span>
+            {{ t.catalog.filters[filter] }}
+          </button>
+        </div>
+        <div v-if="catalogProducts.length" class="features-grid">
+          <div
+            v-for="product in catalogProducts"
+            :key="product.id"
+            class="feature-card showcase-card catalog-card"
+            :class="{ 'catalog-card--disabled': !product.project }"
+          >
+            <template v-if="product.upcoming">
+              <span class="showcase-label">{{ t.catalog.filters.client }}</span>
+              <h3 class="feature-title">{{ product.copy.name }}</h3>
+              <p class="feature-desc">{{ product.copy.description }}</p>
+              <span class="showcase-platform">{{ product.copy.platforms }}</span>
+              <span class="showcase-action">{{ t.guide.comingSoon }}</span>
+            </template>
+            <template v-else>
+              <span class="showcase-label">{{ t.catalog.filters[product.kind] }}</span>
+              <h3 class="feature-title">{{ product.copy.name }}</h3>
+              <p class="feature-desc">{{ product.copy.description }}</p>
+              <span class="showcase-platform">{{ productDeviceLabels(product) }}</span>
+              <div v-if="product.project" class="catalog-card-actions">
+                <a :href="product.project" class="showcase-action" target="_blank" rel="noopener noreferrer">{{ t.guide.project }}</a>
+                <a :href="product.project" class="showcase-action catalog-star-link" target="_blank" rel="noopener noreferrer">{{ t.guide.star }}</a>
+              </div>
+              <span v-else class="showcase-action">{{ t.guide.comingSoon }}</span>
+            </template>
+          </div>
+        </div>
+        <p v-else-if="activeCatalogFilter !== 'friend'" class="catalog-empty">{{ t.catalog.empty }}</p>
+        <div v-if="activeCatalogFilter === 'all' || activeCatalogFilter === 'friend'" class="features-grid catalog-friend-grid">
+          <a v-for="link in catalogFriendLinks" :key="link.id" :href="link.url" class="feature-card showcase-card catalog-card catalog-friend-card" target="_blank" rel="noopener noreferrer">
+            <span class="showcase-label">{{ t.catalog.friends }}</span>
+            <h3 class="feature-title">{{ link.copy.name }}</h3>
+            <p class="feature-desc">{{ link.copy.description }}</p>
+            <span class="showcase-platform">{{ link.deviceLabel }}</span>
+            <div class="catalog-card-actions">
+              <span class="showcase-action">{{ t.catalog.friendAction }}</span>
+            </div>
           </a>
         </div>
-        <p class="showcase-note">{{ showcase.note }}</p>
+        <p class="showcase-note">{{ t.catalog.note }}</p>
       </div>
     </section>
 
@@ -672,6 +706,7 @@ const closeEggRoom = () => {
             v-for="story in showcase.items"
             :key="story.url"
             :href="story.url"
+            @click="story.url.startsWith('https://qm.qq.com/') ? openQqGroup($event) : undefined"
             class="doc-card showcase-card"
             :class="{ 'showcase-featured': story.url === '/audio-haptics-demo.html', 'showcase-community': story.url.startsWith('https://qm.qq.com/') }"
             :target="story.url.startsWith('https:') ? '_blank' : undefined"
@@ -699,6 +734,9 @@ const closeEggRoom = () => {
           <h2 class="section-title">{{ t.features.title }}</h2>
           <div class="section-line"></div>
         </div>
+        <div class="features-meta">
+          <small class="hero-note">{{ t.hero.note }}</small>
+        </div>
         <div class="features-grid">
           <div
             v-for="(feature, index) in t.features.items"
@@ -709,187 +747,6 @@ const closeEggRoom = () => {
             <h3 class="feature-title">{{ feature.title }}</h3>
             <p class="feature-desc">{{ feature.description }}</p>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 下载区域 -->
-    <section id="download" class="section section-alt">
-      <div class="container">
-        <div class="section-header">
-          <h2 class="section-title">{{ t.download.title }}</h2>
-          <div class="section-line"></div>
-        </div>
-
-        <!-- 版本信息 -->
-        <div v-if="versionInfo.latest" class="version-info">
-          <div class="version-badge">
-            <span class="version-dot"></span>
-            <span class="version-label">{{ t.download.latestVersion }}</span>
-            <span class="version-number">{{ versionInfo.latest.version }}</span>
-          </div>
-          <button
-            @click="refreshLatestVersion"
-            class="btn-text"
-            :disabled="versionInfo.loading"
-          >
-            {{ t.download.checkUpdate }}
-          </button>
-        </div>
-
-        <!-- 加载状态 -->
-        <div v-if="versionInfo.loading" class="loading-state">
-          <div class="loading-spinner"></div>
-          <p>{{ t.download.checking }}</p>
-        </div>
-
-        <!-- 错误状态 -->
-        <div v-if="versionInfo.error" class="error-state">
-          <p>{{ t.download.error }}</p>
-          <button @click="refreshLatestVersion" class="btn btn-outline">
-            {{ t.download.retry }}
-          </button>
-        </div>
-
-        <div class="download-content">
-          <div class="download-info">
-            <h3>{{ t.download.requirements }}</h3>
-            <ul class="requirements-list">
-              <li
-                v-for="(req, index) in t.download.requirementsList"
-                :key="index"
-                v-html="req"
-              ></li>
-            </ul>
-          </div>
-          <div class="download-actions">
-            <a
-              :href="downloadLinks.windows"
-              class="download-btn primary"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span class="download-text">
-                <strong>{{ t.download.windowsLatest }}</strong>
-                <small>{{ versionInfo.latest?.version || t.download.recommended }}</small>
-              </span>
-              <span class="download-arrow">&rarr;</span>
-            </a>
-            <a
-              :href="downloadLinks.github"
-              class="download-btn"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span class="download-text">
-                <strong>{{ t.download.allVersions }}</strong>
-                <small>{{ t.download.githubReleases }}</small>
-              </span>
-              <span class="download-arrow">&rarr;</span>
-            </a>
-            <a
-              :href="downloadLinks.mirror"
-              class="download-btn"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span class="download-text">
-                <strong>{{ t.download.mirrorDownload }}</strong>
-                <small>{{ t.download.domesticSpeed }}</small>
-              </span>
-              <span class="download-arrow">&rarr;</span>
-            </a>
-            <a href="#clients" class="download-btn client-jump-btn">
-              <span class="download-icon" aria-hidden="true">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 3v12"/>
-                  <path d="m7 10 5 5 5-5"/>
-                  <path d="M5 21h14"/>
-                </svg>
-              </span>
-              <span class="download-text">
-                <strong>{{ t.download.moonlightClient }}</strong>
-                <small>{{ t.download.moonlightClientDesc }}</small>
-              </span>
-              <span class="download-arrow">&rarr;</span>
-            </a>
-          </div>
-        </div>
-
-        <!-- 预发布版本 -->
-        <div v-if="versionInfo.preRelease" class="prerelease-alert">
-          <div class="alert-content">
-            <h4>{{ t.download.prerelease }}</h4>
-            <p>
-              {{ t.download.prereleaseFound }}
-              <strong>{{ versionInfo.preRelease.version }}</strong>
-            </p>
-          </div>
-          <a
-            :href="versionInfo.preRelease.releaseUrl"
-            class="btn btn-outline"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {{ t.download.viewPrerelease }}
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- 推荐客户端 -->
-    <section id="clients" class="section">
-      <div class="container">
-        <div class="section-header">
-          <h2 class="section-title">{{ t.clients.title }}</h2>
-          <p class="section-subtitle">{{ t.clients.subtitle }}</p>
-          <div class="section-line"></div>
-        </div>
-        <div class="clients-grid">
-          <component
-            v-for="client in clients"
-            :key="client.id"
-            :is="client.link ? 'a' : 'span'"
-            :href="client.link || undefined"
-            class="client-card"
-            :class="[`client-card--${client.type}`, { 'client-card--disabled': !client.link }]"
-            :target="client.link ? '_blank' : undefined"
-            :rel="client.link ? 'noopener noreferrer' : undefined"
-            :aria-label="client.link ? `${t.clients.downloadBtn} ${client.name[currentLang]}` : `${client.name[currentLang]} ${t.clients.comingSoon}`"
-          >
-            <span class="client-icon" aria-hidden="true">
-              <svg v-if="client.icon === 'android'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path d="M7.2 9.2h9.6a2 2 0 0 1 2 2v5.6a2 2 0 0 1-2 2H7.2a2 2 0 0 1-2-2v-5.6a2 2 0 0 1 2-2Z"/>
-                <path d="M8 9.2 6.4 6.5M16 9.2l1.6-2.7"/>
-                <path d="M8.6 13h.01M15.4 13h.01"/>
-                <path d="M3.5 11.2v5M20.5 11.2v5"/>
-              </svg>
-              <svg v-else-if="client.icon === 'phone'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <rect x="7" y="3" width="10" height="18" rx="2"/>
-                <path d="M11 18h2"/>
-              </svg>
-              <svg v-else-if="client.icon === 'monitor'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <rect x="3" y="4" width="18" height="13" rx="2"/>
-                <path d="M8 21h8M12 17v4"/>
-              </svg>
-              <svg v-else-if="client.icon === 'apple'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path d="M16.4 12.2c0-2 1.6-3 1.7-3.1-1-1.4-2.4-1.6-2.9-1.6-1.2-.1-2.4.7-3 .7-.7 0-1.7-.7-2.8-.7-1.4 0-2.7.8-3.5 2.1-1.5 2.7-.4 6.6 1.1 8.7.7 1 1.5 2.2 2.7 2.1 1.1 0 1.5-.7 2.8-.7 1.3 0 1.7.7 2.8.7 1.2 0 2-1.1 2.7-2.1.8-1.2 1.1-2.3 1.1-2.4 0-.1-2.7-1.1-2.7-3.7Z"/>
-                <path d="M14.5 6.2c.6-.7 1-1.7.9-2.7-.9 0-1.9.6-2.5 1.3-.6.7-1 1.6-.9 2.6.9.1 1.9-.5 2.5-1.2Z"/>
-              </svg>
-            </span>
-            <div class="client-info">
-              <h3 class="client-name">{{ client.name[currentLang] }}</h3>
-              <p class="client-platform">{{ client.platform[currentLang] }}</p>
-            </div>
-            <span class="client-link" aria-hidden="true">
-              <svg v-if="client.link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path d="M15 3h6v6"/>
-                <path d="M10 14 21 3"/>
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-              </svg>
-              <span v-else>{{ t.clients.comingSoon }}</span>
-            </span>
-          </component>
         </div>
       </div>
     </section>
@@ -995,7 +852,8 @@ const closeEggRoom = () => {
             <p>{{ t.docs.officialDocsDesc }}</p>
           </a>
           <a
-            href="https://qm.qq.com/cgi-bin/qm/qr?k=5qnkzSaLIrIaU4FvumftZH_6Hg7fUuLD&jump_from=webapi"
+            href="https://qm.qq.com/q/AfMQoyKrkc"
+            @click="openQqGroup"
             class="doc-card"
             target="_blank"
             rel="noopener noreferrer"
