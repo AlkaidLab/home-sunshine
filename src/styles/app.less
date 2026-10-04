@@ -226,6 +226,23 @@
   margin-bottom: 1.25rem;
 }
 
+.hero-secondary-btn {
+  .btn-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex: 0 0 auto;
+  }
+
+  color: var(--primary-strong);
+  border-color: color-mix(in srgb, var(--primary-color) 42%, var(--border-color));
+
+  &:hover {
+    color: var(--primary-strong);
+    border-color: var(--primary-strong);
+    background: color-mix(in srgb, var(--primary-color) 8%, var(--background-primary));
+  }
+}
+
 .hero-tags {
   display: inline-flex;
   align-items: center;

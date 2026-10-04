@@ -150,11 +150,12 @@ const openDownloadCard = ({ scope, icon, projectName, title, subtitle, downloadU
   openMenu.value = null
   modalProduct.value = { scope, icon, projectName, title, subtitle, kind: getLinkKind(downloadUrl), downloadUrl, mirrorUrl, projectUrl }
   showDownloadModal.value = true
+  const beforeDownloadPromise = beforeDownload
+    ? Promise.resolve().then(beforeDownload).catch(() => null)
+    : null
   // Paint the card first, then hand the request to the browser on the next frame.
   nextTick(() => window.setTimeout(async () => {
-    if (beforeDownload) {
-      try { await beforeDownload() } catch { /* The fallback URL remains usable. */ }
-    }
+    if (beforeDownloadPromise) await beforeDownloadPromise
     const current = modalProduct.value
     if (!current?.downloadUrl) return
     triggerDownload(current.downloadUrl, { newTab: getLinkKind(current.downloadUrl) !== 'file' })
@@ -409,22 +410,24 @@ onBeforeUnmount(() => {
             <div aria-live="polite" class="guide-result-info">
               <strong>{{ clientResultTitle }}</strong>
               <small v-if="clientResultSubtitle" class="guide-result-subtitle">{{ clientResultSubtitle }}</small>
+              <small v-if="!client.download" class="guide-coming-soon-inline">
+                {{ guide.comingSoon }}<template v-if="clientFriendUrl">，{{ guide.friendComingSoon }}</template>
+              </small>
             </div>
-            <div class="guide-result-actions">
-              <template v-if="client.download">
-                <a :href="clientUrl" class="btn btn-primary" target="_blank" rel="noopener noreferrer" @click="startClientDownload">
-                  <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
-                  {{ client.store ? guide.store : guide.download }}
-                </a>
-                <div v-if="client.project" class="guide-more">
-                  <button type="button" class="guide-more-trigger" :aria-expanded="openMenu === 'client-main'" @click="toggleMenu('client-main')">
-                    <span class="guide-more-label">{{ guide.moreActions }}</span>
-                    <span class="guide-more-dots" aria-hidden="true">⋯</span>
-                    <svg class="chev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-                  </button>
+            <div v-if="client.download" class="guide-result-actions">
+              <a :href="clientUrl" class="btn btn-primary" target="_blank" rel="noopener noreferrer" @click="startClientDownload">
+                <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+                {{ client.store ? guide.store : guide.download }}
+              </a>
+              <div v-if="client.project" class="guide-more">
+                <button type="button" class="guide-more-trigger" :aria-expanded="openMenu === 'client-main'" @click="toggleMenu('client-main')">
+                  <span class="guide-more-label">{{ guide.moreActions }}</span>
+                  <span class="guide-more-dots" aria-hidden="true">⋯</span>
+                  <svg class="chev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
                 <div v-if="openMenu === 'client-main'" class="guide-more-menu">
                   <a :href="client.project" target="_blank" rel="noopener noreferrer">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
                     {{ guide.menuProject }}
                   </a>
                   <a v-if="clientMirrorUrl" :href="clientMirrorUrl" @click="startClientMirrorDownload">
@@ -432,20 +435,13 @@ onBeforeUnmount(() => {
                     {{ guide.menuMirror }}
                   </a>
                   <a :href="client.project" target="_blank" rel="noopener noreferrer">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
-                      {{ guide.menuStar }}
-                    </a>
-                  </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
+                    {{ guide.menuStar }}
+                  </a>
                 </div>
-              </template>
-             <template v-else>
-               <div class="guide-coming-soon">
-                 <span class="guide-coming-soon-title">{{ guide.comingSoon }}</span>
-                 <small v-if="clientFriendUrl" class="guide-coming-soon-note">{{ guide.friendComingSoon }}</small>
-               </div>
-            </template>
-           </div>
-         </div>
+              </div>
+            </div>
+          </div>
           <div v-if="clientFriendUrl" class="guide-friend-section">
             <p class="guide-friend-title">{{ guide.friendTitle }}</p>
             <div class="guide-friend-card">
@@ -553,19 +549,10 @@ small { display: block; margin-top: 0.3rem; color: var(--text-secondary); font-f
 .chev { width: 14px; height: 14px; flex-shrink: 0; }
 .guide-more-menu { position: absolute; right: 0; top: calc(100% + 6px); min-width: 168px; padding: 0.4rem; border: 1px solid var(--border-color); border-radius: 10px; background: var(--background-primary); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14); z-index: 30; display: flex; flex-direction: column; a { display: flex; align-items: center; gap: 0.55rem; padding: 0.5rem 0.6rem; border-radius: 6px; color: var(--text-primary); font-weight: 500; text-decoration: none; white-space: nowrap; svg { width: 15px; height: 15px; color: var(--text-muted); flex-shrink: 0; } &:hover { background: color-mix(in srgb, var(--primary-color) 10%, var(--background-primary)); color: var(--primary-color); svg { color: var(--primary-color); } } } }
 [data-theme="chocolate"] .guide-more-menu { background: var(--background-secondary); }
-.guide-coming-soon { display: flex; flex-direction: column; gap: 0.2rem; color: var(--text-muted); font-family: var(--font-sans); font-size: 0.875rem; }
-.guide-coming-soon-title { color: var(--text-primary); font-weight: 600; }
-.guide-coming-soon-note { margin-top: 0; color: var(--text-secondary); font-size: 0.8rem; }
-.guide-friend-section { margin-top: 0.9rem; animation: guide-friend-float 3.4s ease-in-out infinite; }
+.guide-coming-soon-inline { color: var(--primary-strong); font-weight: 600; }
+.guide-friend-section { margin-top: 0.9rem; }
 .guide-friend-title { display: inline-flex; align-items: center; gap: 0.35rem; margin: 0 0 0.5rem; padding: 0.3rem 0.65rem; border: 1px solid color-mix(in srgb, var(--primary-color) 32%, var(--border-color)); border-radius: 999px; background: color-mix(in srgb, var(--primary-color) 8%, var(--background-primary)); color: var(--primary-strong); font-family: var(--font-sans); font-size: 0.75rem; font-weight: 700; line-height: 1.4; letter-spacing: 0.04em; }
 .guide-friend-title::before { content: '✦'; color: var(--primary-color); font-size: 0.7rem; }
-@keyframes guide-friend-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .guide-friend-section { animation: none; }
-}
 .guide-friend-card { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.75rem 1rem; border: 1px dashed var(--border-color); border-radius: 10px; background: var(--background-secondary); }
 .guide-friend-card small { margin-top: 0.2rem; }
 .guide-alternate-result { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 0.5rem; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 10px; background: var(--background-secondary); }

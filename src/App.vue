@@ -529,6 +529,24 @@ const closeEggRoom = () => {
             >
               {{ t.hero.start }}
             </a>
+            <a
+              :href="GITHUB_REPO_URL"
+              class="btn btn-outline hero-secondary-btn"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.17c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.75 2.69 1.25 3.34.95.1-.74.4-1.25.72-1.53-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.35.77 1.05.77 2.12v3.14c0 .3.21.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+              {{ t.hero.github }}
+            </a>
+            <a
+              :href="BILIBILI_SPACE_URL"
+              class="btn btn-outline hero-secondary-btn"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5 10.2 7"/><path d="M17 3.5 13.8 7"/><rect x="2.5" y="7" width="19" height="13" rx="3.5"/><line x1="8.5" y1="12" x2="8.5" y2="15"/><line x1="15.5" y1="12" x2="15.5" y2="15"/></svg>
+              {{ t.hero.bilibili }}
+            </a>
           </div>
         </div>
       </div>
