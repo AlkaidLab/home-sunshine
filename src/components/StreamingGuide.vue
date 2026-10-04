@@ -144,17 +144,33 @@ const resolveClientReleaseAssets = async deviceId => {
     }
   }
   if (Object.keys(urls).length) clientReleaseUrls.value = urls
+  return urls
 }
-const openDownloadCard = ({ scope, icon, projectName, title, subtitle, downloadUrl, mirrorUrl = null, projectUrl = null }) => {
+const openDownloadCard = ({ scope, icon, projectName, title, subtitle, downloadUrl, mirrorUrl = null, projectUrl = null, beforeDownload = null }) => {
   openMenu.value = null
   modalProduct.value = { scope, icon, projectName, title, subtitle, kind: getLinkKind(downloadUrl), downloadUrl, mirrorUrl, projectUrl }
   showDownloadModal.value = true
   // Paint the card first, then hand the request to the browser on the next frame.
-  nextTick(() => window.setTimeout(() => {
+  nextTick(() => window.setTimeout(async () => {
+    if (beforeDownload) {
+      try { await beforeDownload() } catch { /* The fallback URL remains usable. */ }
+    }
     const current = modalProduct.value
     if (!current?.downloadUrl) return
     triggerDownload(current.downloadUrl, { newTab: getLinkKind(current.downloadUrl) !== 'file' })
   }, 150))
+}
+const refreshClientDownload = async ({ deviceId, releaseKey, channel = 'official' }) => {
+  const urls = await resolveClientReleaseAssets(deviceId)
+  const release = urls?.[releaseKey]
+  const downloadUrl = release?.[channel]
+  if (!downloadUrl || modalProduct.value?.scope !== 'client') return
+  modalProduct.value = {
+    ...modalProduct.value,
+    downloadUrl,
+    mirrorUrl: release.mirror || modalProduct.value.mirrorUrl,
+    kind: getLinkKind(downloadUrl),
+  }
 }
 const refreshHostDownload = async preferredChannel => {
   if (!props.resolveHostDownload) return
@@ -215,6 +231,11 @@ const startClientDownload = event => {
     downloadUrl: clientDownloadUrl.value,
     mirrorUrl: clientMirrorUrl.value,
     projectUrl: client.value.project,
+    beforeDownload: () => refreshClientDownload({
+      deviceId: selected.value,
+      releaseKey: clientReleaseKey.value,
+      channel: 'official',
+    }),
   })
 }
 const startClientMirrorDownload = event => {
@@ -229,6 +250,11 @@ const startClientMirrorDownload = event => {
     subtitle: clientCopy.value.detail || '',
     downloadUrl: clientMirrorUrl.value,
     projectUrl: client.value.project,
+    beforeDownload: () => refreshClientDownload({
+      deviceId: selected.value,
+      releaseKey: clientReleaseKey.value,
+      channel: 'mirror',
+    }),
   })
 }
 const startAlternateDownload = (event, option) => {
@@ -244,6 +270,11 @@ const startAlternateDownload = (event, option) => {
     downloadUrl: alternateDownloadUrls.value?.official || option.download,
     mirrorUrl: alternateDownloadUrls.value?.mirror || null,
     projectUrl: option.project,
+    beforeDownload: () => refreshClientDownload({
+      deviceId: selected.value,
+      releaseKey: option.id,
+      channel: 'official',
+    }),
   })
 }
 const retryModalDownload = () => {
@@ -276,7 +307,6 @@ const selectPlatform = id => {
   manuallySelected.value = true
   detectedSelection.value = false
   try { localStorage.setItem(DEVICE_STORAGE_KEY, id) } catch { /* storage is optional */ }
-  resolveClientReleaseAssets(id)
 }
 
 onMounted(() => {
@@ -409,7 +439,10 @@ onBeforeUnmount(() => {
                 </div>
               </template>
              <template v-else>
-               <span class="guide-coming-soon">{{ guide.comingSoon }}</span>
+               <div class="guide-coming-soon">
+                 <span class="guide-coming-soon-title">{{ guide.comingSoon }}</span>
+                 <small v-if="clientFriendUrl" class="guide-coming-soon-note">{{ guide.friendComingSoon }}</small>
+               </div>
             </template>
            </div>
          </div>
@@ -520,9 +553,19 @@ small { display: block; margin-top: 0.3rem; color: var(--text-secondary); font-f
 .chev { width: 14px; height: 14px; flex-shrink: 0; }
 .guide-more-menu { position: absolute; right: 0; top: calc(100% + 6px); min-width: 168px; padding: 0.4rem; border: 1px solid var(--border-color); border-radius: 10px; background: var(--background-primary); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14); z-index: 30; display: flex; flex-direction: column; a { display: flex; align-items: center; gap: 0.55rem; padding: 0.5rem 0.6rem; border-radius: 6px; color: var(--text-primary); font-weight: 500; text-decoration: none; white-space: nowrap; svg { width: 15px; height: 15px; color: var(--text-muted); flex-shrink: 0; } &:hover { background: color-mix(in srgb, var(--primary-color) 10%, var(--background-primary)); color: var(--primary-color); svg { color: var(--primary-color); } } } }
 [data-theme="chocolate"] .guide-more-menu { background: var(--background-secondary); }
-.guide-coming-soon { color: var(--text-muted); font-family: var(--font-sans); font-size: 0.875rem; white-space: nowrap; }
-.guide-friend-section { margin-top: 0.9rem; }
-.guide-friend-title { margin: 0 0 0.5rem; color: var(--text-secondary); font-family: var(--font-sans); font-size: 0.75rem; font-weight: 600; line-height: 1.5; text-transform: uppercase; letter-spacing: 0.04em; }
+.guide-coming-soon { display: flex; flex-direction: column; gap: 0.2rem; color: var(--text-muted); font-family: var(--font-sans); font-size: 0.875rem; }
+.guide-coming-soon-title { color: var(--text-primary); font-weight: 600; }
+.guide-coming-soon-note { margin-top: 0; color: var(--text-secondary); font-size: 0.8rem; }
+.guide-friend-section { margin-top: 0.9rem; animation: guide-friend-float 3.4s ease-in-out infinite; }
+.guide-friend-title { display: inline-flex; align-items: center; gap: 0.35rem; margin: 0 0 0.5rem; padding: 0.3rem 0.65rem; border: 1px solid color-mix(in srgb, var(--primary-color) 32%, var(--border-color)); border-radius: 999px; background: color-mix(in srgb, var(--primary-color) 8%, var(--background-primary)); color: var(--primary-strong); font-family: var(--font-sans); font-size: 0.75rem; font-weight: 700; line-height: 1.4; letter-spacing: 0.04em; }
+.guide-friend-title::before { content: '✦'; color: var(--primary-color); font-size: 0.7rem; }
+@keyframes guide-friend-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .guide-friend-section { animation: none; }
+}
 .guide-friend-card { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.75rem 1rem; border: 1px dashed var(--border-color); border-radius: 10px; background: var(--background-secondary); }
 .guide-friend-card small { margin-top: 0.2rem; }
 .guide-alternate-result { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 0.5rem; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 10px; background: var(--background-secondary); }
