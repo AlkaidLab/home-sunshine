@@ -13,6 +13,10 @@
   --primary-light: #5dd9d0;
   --primary-dark: #2ba39a;
   --primary-hover: #2ba39a;
+  --primary-strong: #0f766e;
+  --primary-action: #0f766e;
+  --primary-action-hover: #0b5e58;
+  --primary-action-text: #ffffff;
   --accent-color: #00d4ff;
   --accent-secondary: #7c3aed;
   --meteor-rgb: 57, 197, 187;
@@ -51,6 +55,10 @@
   --primary-light: #e8c9a8;
   --primary-dark: #8b5e3c;
   --primary-hover: #c49464;
+  --primary-strong: #e8c9a8;
+  --primary-action: #d4a574;
+  --primary-action-hover: #e8c9a8;
+  --primary-action-text: #2d1b0e;
   --accent-color: #f4a460;
   --accent-secondary: #cd853f;
   --meteor-rgb: 244, 164, 96;
@@ -103,6 +111,7 @@
 html {
   font-size: 16px;
   line-height: 1.5;
+  scroll-padding-top: 82px;
   /* 移除 scroll-behavior: smooth 以提升滚动性能 */
   /* scroll-behavior: smooth; */
 }
@@ -123,7 +132,7 @@ body {
 // ============================================
 
 a {
-  color: var(--primary-color);
+  color: var(--primary-strong);
   text-decoration: none;
   transition: color 0.3s ease;
 
@@ -490,6 +499,29 @@ html[data-intro='active'] {
     .hero::before {
       animation: none;
       opacity: 0;
+    }
+  }
+}
+
+// 手机端首屏需要立即可读，背景可以保留氛围动画，正文不再等待入场动画。
+@media (max-width: 640px) {
+  html {
+    scroll-padding-top: 68px;
+  }
+
+  html[data-intro='active'] {
+    .header,
+    .hero-badge,
+    .hero-title,
+    .hero-subtitle,
+    .hero-actions,
+    .hero-stats,
+    .hero-tags,
+    .hero-metrics {
+      animation: none;
+      filter: none;
+      opacity: 1;
+      transform: none;
     }
   }
 }

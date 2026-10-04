@@ -1,5 +1,5 @@
 <script setup vapor>
-import { ref, onMounted, computed, watch, markRaw } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, watch, markRaw } from 'vue'
 import { translations } from './i18n.js'
 import { showcaseContent } from './showcase.js'
 import sponsorsData from './sponsors.json'
@@ -21,6 +21,30 @@ const props = defineProps({
 
 // 语言由 URL 决定（/ 为中文，/en/ 为英文），服务端与客户端取值一致，避免 hydration 不匹配。
 const currentLang = ref(props.lang === 'en' ? 'en' : 'zh')
+const mobileNavOpen = ref(false)
+
+const toggleMobileNav = () => {
+  mobileNavOpen.value = !mobileNavOpen.value
+}
+
+const closeMobileNav = () => {
+  mobileNavOpen.value = false
+}
+
+const onMobileNavKeydown = event => {
+  if (event.key === 'Escape') closeMobileNav()
+}
+
+// 首屏动画和客户端水合会改变页面高度，浏览器第一次处理 hash 时可能落在目标上方。
+// 等布局稳定后再对齐一次，尤其是手机端的粘性导航和串流引导区。
+const alignHashTarget = () => {
+  if (typeof window === 'undefined' || !window.location.hash) return
+  const target = document.getElementById(window.location.hash.slice(1))
+  if (!target) return
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => target.scrollIntoView({ behavior: 'auto', block: 'start' }))
+  })
+}
 
 // 主题状态管理 - gura(蓝色) 或 chocolate(巧克力深色)
 const currentTheme = ref(DEFAULT_THEME)
@@ -211,6 +235,7 @@ const resolveSunshineDownload = async () => {
   downloadLinks.value.windows = urls.official
   downloadLinks.value.latest = urls.official
   downloadLinks.value.mirror = urls.mirror
+  return urls
 }
 
 onMounted(() => {
@@ -223,11 +248,16 @@ onMounted(() => {
   document.documentElement.setAttribute('data-theme', currentTheme.value)
   document.documentElement.lang = HTML_LANG[currentLang.value]
   updatePageTitle()
+  document.addEventListener('keydown', onMobileNavKeydown)
+  window.addEventListener('hashchange', alignHashTarget)
+  window.setTimeout(alignHashTarget, 120)
 
   loadStarHistory(STAR_HISTORY_REPOS[0])
-  resolveSunshineDownload().catch(() => {
-    // The synchronous links already cover the offline path.
-  })
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('keydown', onMobileNavKeydown)
+  window.removeEventListener('hashchange', alignHashTarget)
 })
 
 // 客户端推荐
@@ -438,6 +468,16 @@ const closeEggRoom = () => {
               <svg v-if="currentTheme === 'gura'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
               <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
             </button>
+            <button
+              type="button"
+              class="mobile-nav-toggle"
+              :aria-expanded="mobileNavOpen"
+              :aria-label="mobileNavOpen ? t.nav.closeMenu : t.nav.openMenu"
+              @click="toggleMobileNav"
+            >
+              <svg v-if="!mobileNavOpen" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg>
+              <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12"/><path d="m18 6-12 12"/></svg>
+            </button>
             <a
               :href="otherLangPath"
               class="lang-toggle"
@@ -448,6 +488,19 @@ const closeEggRoom = () => {
             </a>
           </div>
         </nav>
+        <div v-if="mobileNavOpen" class="mobile-nav-panel">
+          <a href="#stream-guide" class="mobile-nav-link" @click="closeMobileNav">{{ t.nav.start }}</a>
+          <a href="#products" class="mobile-nav-link" @click="closeMobileNav">{{ showcase.products }}</a>
+          <a href="#stories" class="mobile-nav-link" @click="closeMobileNav">{{ showcase.stories }}</a>
+          <a href="#features" class="mobile-nav-link" @click="closeMobileNav">{{ t.nav.features }}</a>
+          <a href="#stats" class="mobile-nav-link" @click="closeMobileNav">{{ t.nav.stats }}</a>
+          <a href="#docs" class="mobile-nav-link" @click="closeMobileNav">{{ t.nav.docs }}</a>
+          <a href="#sponsors" class="mobile-nav-link" @click="closeMobileNav">{{ t.nav.sponsors }}</a>
+          <div class="mobile-nav-external">
+            <a :href="GITHUB_REPO_URL" target="_blank" rel="noopener noreferrer" @click="closeMobileNav">{{ t.nav.github }}</a>
+            <a :href="BILIBILI_SPACE_URL" target="_blank" rel="noopener noreferrer" @click="closeMobileNav">{{ t.nav.bilibili }}</a>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -481,7 +534,7 @@ const closeEggRoom = () => {
       </div>
     </section>
 
-    <StreamingGuide :lang="currentLang" :host-url="downloadLinks.windows" :mirror-url="downloadLinks.mirror" :project-url="GITHUB_REPO_URL" />
+    <StreamingGuide :lang="currentLang" :host-url="downloadLinks.windows" :mirror-url="downloadLinks.mirror" :project-url="GITHUB_REPO_URL" :resolve-host-download="resolveSunshineDownload" />
 
     <!-- 产品矩阵：展示完整产品，友情链接独立成行 -->
     <section id="products" class="section product-catalog">
@@ -531,21 +584,20 @@ const closeEggRoom = () => {
         </div>
         <p v-else-if="activeCatalogFilter !== 'friend'" class="catalog-empty">{{ t.catalog.empty }}</p>
         <div v-if="activeCatalogFilter === 'all' || activeCatalogFilter === 'friend'" class="features-grid catalog-friend-grid">
-          <a v-for="link in catalogFriendLinks" :key="link.id" :href="link.url" class="feature-card showcase-card catalog-card catalog-friend-card" target="_blank" rel="noopener noreferrer">
+          <article v-for="link in catalogFriendLinks" :key="link.id" class="feature-card showcase-card catalog-card catalog-friend-card">
             <span class="showcase-label">{{ t.catalog.friends }}</span>
             <h3 class="feature-title">{{ link.copy.name }}</h3>
-            <p class="feature-desc">{{ link.copy.description }}</p>
             <span class="showcase-platform">{{ link.deviceLabel }}</span>
             <div class="catalog-card-actions">
-              <span class="showcase-action">{{ t.catalog.friendAction }}</span>
+              <a :href="link.url" class="showcase-action" target="_blank" rel="noopener noreferrer">{{ t.catalog.friendAction }}</a>
             </div>
-          </a>
+          </article>
         </div>
         <p class="showcase-note">{{ t.catalog.note }}</p>
       </div>
     </section>
 
-    <!-- 流梦现场 -->
+    <!-- 探索串流 -->
     <section id="stories" class="section section-alt">
       <div class="container">
         <div class="section-header">
@@ -554,15 +606,11 @@ const closeEggRoom = () => {
           <div class="section-line"></div>
         </div>
         <div class="docs-grid">
-          <a
+          <article
             v-for="story in showcase.items"
             :key="story.url"
-            :href="story.url"
-            @click="story.url.startsWith('https://qm.qq.com/') ? openQqGroup($event) : undefined"
             class="doc-card showcase-card"
             :class="{ 'showcase-featured': story.url === '/audio-haptics-demo.html', 'showcase-community': story.url.startsWith('https://qm.qq.com/') }"
-            :target="story.url.startsWith('https:') ? '_blank' : undefined"
-            :rel="story.url.startsWith('https:') ? 'noopener noreferrer' : undefined"
           >
             <div v-if="story.url === '/audio-haptics-demo.html'" class="showcase-sound" aria-hidden="true">
               <span>AUDIO → HAPTICS</span>
@@ -573,8 +621,15 @@ const closeEggRoom = () => {
             <span class="showcase-label">{{ story.category }}</span>
             <h3>{{ story.title }}</h3>
             <p>{{ story.description }}</p>
-            <span class="showcase-action">{{ showcase.read }}</span>
-          </a>
+            <a
+              :href="story.url"
+              class="showcase-action"
+              :aria-label="`${showcase.read}: ${story.title}`"
+              :target="story.url.startsWith('https:') ? '_blank' : undefined"
+              :rel="story.url.startsWith('https:') ? 'noopener noreferrer' : undefined"
+              @click="story.url.startsWith('https://qm.qq.com/') ? openQqGroup($event) : undefined"
+            >{{ showcase.read }} <svg class="inline-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+          </article>
         </div>
       </div>
     </section>
@@ -685,47 +740,62 @@ const closeEggRoom = () => {
           <div class="section-line"></div>
         </div>
         <div class="docs-grid">
-          <a href="/docs/" class="doc-card">
-            <h3>{{ t.docs.docCenter }}</h3>
-            <p>{{ t.docs.docCenterDesc }}</p>
-          </a>
-          <a
-            href="https://docs.qq.com/aio/DSGdQc3htbFJjSFdO?p=YTpMj5JNNdB5hEKJhhqlSB"
-            class="doc-card"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h3>{{ t.docs.userGuide }}</h3>
-            <p>{{ t.docs.userGuideDesc }}</p>
-          </a>
-          <a
-            href="https://docs.lizardbyte.dev/projects/sunshine/latest/"
-            class="doc-card"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h3>{{ t.docs.officialDocs }}</h3>
-            <p>{{ t.docs.officialDocsDesc }}</p>
-          </a>
-          <a
-            :href="BILIBILI_SPACE_URL"
-            class="doc-card"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h3>{{ t.docs.bilibili }}</h3>
-            <p>{{ t.docs.bilibiliDesc }}</p>
-          </a>
-          <a
-            href="https://qm.qq.com/q/AfMQoyKrkc"
-            @click="openQqGroup"
-            class="doc-card"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h3>{{ t.docs.qqGroup }}</h3>
-            <p>{{ t.docs.qqGroupDesc }}</p>
-          </a>
+          <article class="doc-card">
+            <div class="doc-card-body">
+              <h3>{{ t.docs.docCenter }}</h3>
+              <p>{{ t.docs.docCenterDesc }}</p>
+            </div>
+            <a href="/docs/" class="doc-card-action">{{ t.docs.view }} <svg class="inline-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+          </article>
+          <article class="doc-card">
+            <div class="doc-card-body">
+              <h3>{{ t.docs.userGuide }}</h3>
+              <p>{{ t.docs.userGuideDesc }}</p>
+            </div>
+            <a
+              href="https://docs.qq.com/aio/DSGdQc3htbFJjSFdO?p=YTpMj5JNNdB5hEKJhhqlSB"
+              class="doc-card-action"
+              target="_blank"
+              rel="noopener noreferrer"
+            >{{ t.docs.view }} <svg class="inline-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+          </article>
+          <article class="doc-card">
+            <div class="doc-card-body">
+              <h3>{{ t.docs.officialDocs }}</h3>
+              <p>{{ t.docs.officialDocsDesc }}</p>
+            </div>
+            <a
+              href="https://docs.lizardbyte.dev/projects/sunshine/latest/"
+              class="doc-card-action"
+              target="_blank"
+              rel="noopener noreferrer"
+            >{{ t.docs.view }} <svg class="inline-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+          </article>
+          <article class="doc-card">
+            <div class="doc-card-body">
+              <h3>{{ t.docs.bilibili }}</h3>
+              <p>{{ t.docs.bilibiliDesc }}</p>
+            </div>
+            <a
+              :href="BILIBILI_SPACE_URL"
+              class="doc-card-action"
+              target="_blank"
+              rel="noopener noreferrer"
+            >{{ t.docs.view }} <svg class="inline-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+          </article>
+          <article class="doc-card">
+            <div class="doc-card-body">
+              <h3>{{ t.docs.qqGroup }}</h3>
+              <p>{{ t.docs.qqGroupDesc }}</p>
+            </div>
+            <a
+              href="https://qm.qq.com/q/AfMQoyKrkc"
+              @click="openQqGroup"
+              class="doc-card-action"
+              target="_blank"
+              rel="noopener noreferrer"
+            >{{ t.docs.view }} <svg class="inline-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+          </article>
         </div>
       </div>
     </section>

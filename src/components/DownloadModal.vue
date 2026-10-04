@@ -10,6 +10,8 @@ const props = defineProps({
 const emit = defineEmits(['close', 'retry', 'continue'])
 
 const dialog = ref(null)
+let previousBodyOverflow = ''
+let previousDocumentOverflow = ''
 
 const statusTitle = computed(() => {
   const kind = props.product.kind
@@ -54,11 +56,17 @@ const onKeydown = event => {
 }
 
 onMounted(() => {
+  previousBodyOverflow = document.body.style.overflow
+  previousDocumentOverflow = document.documentElement.style.overflow
+  document.body.style.overflow = 'hidden'
+  document.documentElement.style.overflow = 'hidden'
   document.addEventListener('keydown', onKeydown)
   nextTick(() => dialog.value?.focus())
 })
 
 onBeforeUnmount(() => {
+  document.body.style.overflow = previousBodyOverflow
+  document.documentElement.style.overflow = previousDocumentOverflow
   document.removeEventListener('keydown', onKeydown)
 })
 </script>
@@ -142,20 +150,26 @@ onBeforeUnmount(() => {
 
 <style scoped lang="less">
 .download-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: grid;
-  justify-items: center;
-  align-items: start;
-  padding: 14vh 1.25rem 1.25rem;
+ position: fixed;
+ inset: 0;
+ z-index: 100;
+  display: flex;
+ align-items: center;
+  justify-content: center;
+ overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: clamp(1rem, 8vh, 7rem) 1.25rem max(1rem, env(safe-area-inset-bottom));
   background: rgba(15, 23, 42, 0.18);
   backdrop-filter: blur(2px);
 }
 
 .download-card {
   width: min(100%, 540px);
-  overflow: hidden;
+  max-height: calc(100vh - 2rem);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
   padding: 1.75rem 2rem 1.5rem;
   border: 1px solid var(--border-color);
   border-radius: 24px;
@@ -208,13 +222,13 @@ onBeforeUnmount(() => {
 .download-close {
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   border: 0;
   border-radius: 50%;
   background: transparent;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   cursor: pointer;
   flex-shrink: 0;
 
@@ -272,7 +286,8 @@ onBeforeUnmount(() => {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  color: var(--primary-color);
+  min-height: 40px;
+  color: var(--primary-strong);
   font-family: var(--font-sans);
   font-size: 0.875rem;
   font-weight: 400;
@@ -341,7 +356,8 @@ onBeforeUnmount(() => {
   padding: 0.5rem 1.05rem;
   border: 1px solid color-mix(in srgb, var(--primary-color) 40%, var(--border-color));
   border-radius: 8px;
-  color: var(--primary-color);
+  min-height: 44px;
+  color: var(--primary-strong);
   font-family: var(--font-sans);
   font-size: 0.875rem;
   font-weight: 600;
@@ -362,7 +378,7 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  min-height: 38px;
+  min-height: 44px;
   padding: 0.55rem 1.2rem;
   border: 1px solid var(--border-color);
   border-radius: 8px;
@@ -385,8 +401,23 @@ a:focus-visible, button:focus-visible {
 }
 
 @media (max-width: 640px) {
-  .download-card { padding: 1.35rem 1.15rem 1.2rem; border-radius: 18px; }
+  .download-overlay { padding: max(0.5rem, env(safe-area-inset-top)) 0.75rem max(0.5rem, env(safe-area-inset-bottom)); }
+  .download-card { width: 100%; max-height: calc(100vh - 1rem); max-height: calc(100dvh - 1rem); padding: 1rem 0.9rem 0.9rem; border-radius: 16px; }
+  .download-product-icon { width: 44px; height: 44px; border-radius: 12px; }
+  .download-product-icon svg { width: 22px; height: 22px; }
+  .download-product-copy h3 { font-size: 1.1rem; }
+  .download-product-copy p { font-size: 0.8125rem; }
   .download-status { margin-top: 1.35rem; }
+  .download-status-icon { width: 44px; height: 44px; }
+  .download-status-icon svg { width: 22px; height: 22px; }
+  .download-status-title { font-size: 1.1rem; }
+  .download-status-hint { font-size: 0.8125rem; }
+  .download-links { padding-left: 0; margin-top: 0.75rem; gap: 0.15rem 0.7rem; }
+  .download-support { gap: 0.7rem; margin-top: 0.9rem; padding: 0.8rem 0.85rem; border-radius: 12px; }
+  .download-github-icon { width: 36px; height: 36px; border-radius: 9px; }
+  .download-github-icon svg { width: 18px; height: 18px; }
+  .download-support-desc { font-size: 0.8rem; line-height: 1.45; }
+  .download-star-btn { margin-top: 0.6rem; padding: 0.4rem 0.75rem; font-size: 0.8125rem; }
   .download-footer { display: block; }
   .download-continue-btn { width: 100%; }
 }

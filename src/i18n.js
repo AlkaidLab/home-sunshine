@@ -20,7 +20,9 @@ export const translations = {
       start: '开始使用',
       support: '文档与支持',
       toDark: '切换至深色模式',
-      toLight: '切换至浅色模式'
+      toLight: '切换至浅色模式',
+      openMenu: '打开菜单',
+      closeMenu: '关闭菜单'
     },
     hero: {
       title: '电脑游戏，换个屏幕玩',
@@ -62,6 +64,7 @@ export const translations = {
       menuProject: '项目主页',
       menuMirror: '镜像下载',
       menuStar: 'Star 仓库',
+      helpTitle: '需要帮助或有建议？',
       helpAskCommunity: '需要帮助？',
       helpAskIssue: '想要提建议？',
       communityQq: '加入交流群 ↗',
@@ -109,8 +112,8 @@ export const translations = {
       note: '生态客户端包含社区项目，具体功能、系统要求与收费情况以各项目页面为准。',
       friends: '友情链接',
       friendProducts: {
-        'voidlink-ios': { name: 'VoidLink', description: '社区开发的 iPhone / iPad 客户端，已上架 App Store，免费下载，连接电脑即可游玩。' },
-        'voidlink-apple-tv': { name: 'VoidLink', description: '社区开发的 Apple TV 客户端，通过 TestFlight 安装体验版，在大屏上畅玩电脑游戏。' }
+        'voidlink-ios': { name: 'VoidLink', description: '社区独立维护的 iPhone / iPad 串流客户端，连接 Sunshine 主机，在手机或平板上游玩电脑游戏。' },
+        'voidlink-apple-tv': { name: 'VoidLink', description: '社区独立维护的 Apple TV 串流客户端，通过 TestFlight 体验，在电视上游玩电脑游戏。' }
       },
       friendAction: '查看 ↗',
       products: {
@@ -206,6 +209,7 @@ export const translations = {
     },
     docs: {
       title: '文档与支持',
+      view: '查看',
       userGuide: '使用文档',
       userGuideDesc: '详细的使用指南和配置说明',
       docCenter: '文档中心',
@@ -266,7 +270,9 @@ export const translations = {
       start: 'Get started',
       support: 'Docs & support',
       toDark: 'Switch to dark mode',
-      toLight: 'Switch to light mode'
+      toLight: 'Switch to light mode',
+      openMenu: 'Open menu',
+      closeMenu: 'Close menu'
     },
     hero: {
       title: 'PC games, on any screen',
@@ -308,6 +314,7 @@ export const translations = {
       menuProject: 'Project',
       menuMirror: 'Mirror download',
       menuStar: 'Star repo',
+      helpTitle: 'Need help or have a suggestion?',
       helpAskCommunity: 'Need help?',
       helpAskIssue: 'Have suggestions?',
       communityQq: 'Join the community ↗',
@@ -355,8 +362,8 @@ export const translations = {
       note: 'The ecosystem includes community projects. Features, system requirements and pricing are determined by each project.',
       friends: 'Friends of AlkaidLab',
       friendProducts: {
-        'voidlink-ios': { name: 'VoidLink', description: 'A community-built iPhone / iPad client on the App Store — free to download and play.' },
-        'voidlink-apple-tv': { name: 'VoidLink', description: 'A community-built Apple TV client, installed via TestFlight for big-screen play.' }
+        'voidlink-ios': { name: 'VoidLink', description: 'An independently maintained community streaming client for iPhone and iPad. Connect to a Sunshine host to play PC games on your phone or tablet.' },
+        'voidlink-apple-tv': { name: 'VoidLink', description: 'An independently maintained community streaming client for Apple TV. Try it through TestFlight to play PC games on your TV.' }
       },
       friendAction: 'View ↗',
       products: {
@@ -452,6 +459,7 @@ export const translations = {
     },
     docs: {
       title: 'Documentation & Support',
+      view: 'View',
       userGuide: 'User Guide',
       userGuideDesc: 'Detailed usage guide and configuration instructions',
       docCenter: 'Doc Center',

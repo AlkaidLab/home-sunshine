@@ -21,6 +21,7 @@ const props = defineProps({
   hostUrl: { type: String, required: true },
   mirrorUrl: { type: String, required: true },
   projectUrl: { type: String, required: true },
+  resolveHostDownload: { type: Function, default: null },
 })
 const selected = ref(null)
 const manuallySelected = ref(false)
@@ -32,9 +33,19 @@ const client = computed(() => selected.value ? getClientsForDevice(selected.valu
 const clientCopy = computed(() => selected.value ? guide.value.platforms[selected.value] : null)
 const clientProductName = computed(() => clientCopy.value?.detail.split(' · ')[0] || '')
 const clientDevices = computed(() => clientCopy.value?.detail.split(' · ').slice(1).join(' · ') || '')
+const clientResultTitle = computed(() => client.value?.download ? clientProductName.value : (clientCopy.value?.name || ''))
+const clientResultSubtitle = computed(() => {
+  if (!clientCopy.value) return ''
+  if (!client.value?.download) return clientCopy.value.detail || ''
+  return [clientCopy.value.name, clientDevices.value].filter(Boolean).join(' · ')
+})
 const clientReleaseUrls = ref({})
 const clientFriendLink = computed(() => FRIEND_LINKS.find(link => link.devices.includes(selected.value)) || null)
 const clientFriendUrl = computed(() => clientFriendLink.value?.urls[props.lang] || null)
+const clientFriendDescription = computed(() => {
+  const id = clientFriendLink.value?.id
+  return id ? copy.value.catalog.friendProducts[id]?.description || guide.value.friendDescription : ''
+})
 const clientFriendAction = computed(() => guide.value.friendAction)
 const clientOtherOptions = computed(() => selected.value === 'macos' && client.value?.id === 'moonlight-pc' ? [getClientsForDevice(selected.value)[1]] : [])
 const clientReleaseKey = computed(() => {
@@ -60,7 +71,8 @@ const alternateDownloadUrls = computed(() => {
   return clientReleaseUrls.value['macos-enhanced'] || getReleaseDownloadUrls('macos-enhanced', 'macos', null, props.lang)
 })
 const clientUrl = computed(() => clientDownloadUrl.value)
-const issueUrl = computed(() => `${props.projectUrl}/issues`)
+const issueProjectUrl = computed(() => client.value?.project || props.projectUrl)
+const issueUrl = computed(() => `${issueProjectUrl.value}/issues`)
 // QQ 群两个入口链接：点击时随机选择一个，对用户保持单一入口。
 const QQ_GROUP_LINKS = ['https://qm.qq.com/q/AfMQoyKrkc', 'https://qm.qq.com/q/vIVhpjDMic']
 const communityUrl = QQ_GROUP_LINKS[0]
@@ -138,7 +150,28 @@ const openDownloadCard = ({ scope, icon, projectName, title, subtitle, downloadU
   modalProduct.value = { scope, icon, projectName, title, subtitle, kind: getLinkKind(downloadUrl), downloadUrl, mirrorUrl, projectUrl }
   showDownloadModal.value = true
   // Paint the card first, then hand the request to the browser on the next frame.
-  nextTick(() => window.setTimeout(() => triggerDownload(downloadUrl, { newTab: getLinkKind(downloadUrl) !== 'file' }), 150))
+  nextTick(() => window.setTimeout(() => {
+    const current = modalProduct.value
+    if (!current?.downloadUrl) return
+    triggerDownload(current.downloadUrl, { newTab: getLinkKind(current.downloadUrl) !== 'file' })
+  }, 150))
+}
+const refreshHostDownload = async preferredChannel => {
+  if (!props.resolveHostDownload) return
+  try {
+    const urls = await props.resolveHostDownload()
+    if (!urls || modalProduct.value?.scope !== 'host') return
+    const downloadUrl = preferredChannel === 'mirror' ? urls.mirror : urls.official
+    if (!downloadUrl) return
+    modalProduct.value = {
+      ...modalProduct.value,
+      downloadUrl,
+      mirrorUrl: urls.mirror || modalProduct.value.mirrorUrl,
+      kind: getLinkKind(downloadUrl),
+    }
+  } catch {
+    // The synchronous CNB/GitHub fallback is already available in the modal.
+  }
 }
 const startHostDownload = event => {
   event.preventDefault()
@@ -153,6 +186,7 @@ const startHostDownload = event => {
     mirrorUrl: props.mirrorUrl,
     projectUrl: props.projectUrl,
   })
+  refreshHostDownload('official')
 }
 const startHostMirrorDownload = event => {
   event.preventDefault()
@@ -166,6 +200,7 @@ const startHostMirrorDownload = event => {
     downloadUrl: props.mirrorUrl,
     projectUrl: props.projectUrl,
   })
+  refreshHostDownload('mirror')
 }
 const startClientDownload = event => {
   if (!client.value?.download || !clientCopy.value) return
@@ -241,11 +276,8 @@ const selectPlatform = id => {
   manuallySelected.value = true
   detectedSelection.value = false
   try { localStorage.setItem(DEVICE_STORAGE_KEY, id) } catch { /* storage is optional */ }
+  resolveClientReleaseAssets(id)
 }
-
-watch(selected, deviceId => {
-  if (deviceId) resolveClientReleaseAssets(deviceId)
-})
 
 onMounted(() => {
   document.addEventListener('click', onGlobalClick)
@@ -310,7 +342,8 @@ onBeforeUnmount(() => {
               </a>
               <div class="guide-more">
                 <button type="button" class="guide-more-trigger" :aria-expanded="openMenu === 'host'" @click="toggleMenu('host')">
-                  {{ guide.moreActions }}
+                  <span class="guide-more-label">{{ guide.moreActions }}</span>
+                  <span class="guide-more-dots" aria-hidden="true">⋯</span>
                   <svg class="chev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
                 </button>
                 <div v-if="openMenu === 'host'" class="guide-more-menu">
@@ -338,16 +371,14 @@ onBeforeUnmount(() => {
             <button v-for="platform in platforms" :key="platform.id" type="button" :class="{ active: selected === platform.id }" :aria-pressed="selected === platform.id" @click="selectPlatform(platform.id)">
               <DeviceIcon :name="platform.icon" />
               <span>{{ guide.platforms[platform.id].label }}</span>
-              <span v-if="selected === platform.id" class="guide-selected-mark" aria-hidden="true">✓</span>
             </button>
           </div>
           <p v-if="detectedSelection && !manuallySelected" class="guide-detected">{{ guide.detected }}</p>
           <p v-if="!client" class="guide-empty" aria-live="polite">{{ guide.empty }}</p>
           <div v-else class="guide-result">
             <div aria-live="polite" class="guide-result-info">
-              <strong>{{ clientCopy.name || clientCopy.label }}</strong>
-              <small v-if="clientProductName" class="guide-result-product">{{ clientProductName }}</small>
-              <small v-if="clientDevices" class="guide-result-devices">{{ guide.devicesLabel }}{{ clientDevices }}</small>
+              <strong>{{ clientResultTitle }}</strong>
+              <small v-if="clientResultSubtitle" class="guide-result-subtitle">{{ clientResultSubtitle }}</small>
             </div>
             <div class="guide-result-actions">
               <template v-if="client.download">
@@ -357,7 +388,8 @@ onBeforeUnmount(() => {
                 </a>
                 <div v-if="client.project" class="guide-more">
                   <button type="button" class="guide-more-trigger" :aria-expanded="openMenu === 'client-main'" @click="toggleMenu('client-main')">
-                    {{ guide.moreActions }}
+                    <span class="guide-more-label">{{ guide.moreActions }}</span>
+                    <span class="guide-more-dots" aria-hidden="true">⋯</span>
                     <svg class="chev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
                   </button>
                 <div v-if="openMenu === 'client-main'" class="guide-more-menu">
@@ -384,7 +416,10 @@ onBeforeUnmount(() => {
           <div v-if="clientFriendUrl" class="guide-friend-section">
             <p class="guide-friend-title">{{ guide.friendTitle }}</p>
             <div class="guide-friend-card">
-              <div><strong>{{ clientFriendLink.name }}</strong></div>
+              <div>
+                <strong>{{ clientFriendLink.name }}</strong>
+                <small v-if="clientFriendDescription">{{ clientFriendDescription }}</small>
+              </div>
               <div class="guide-result-actions">
                 <a :href="clientFriendUrl" class="btn btn-primary" target="_blank" rel="noopener noreferrer">{{ clientFriendAction }}</a>
               </div>
@@ -403,7 +438,8 @@ onBeforeUnmount(() => {
               </a>
               <div v-if="option.project" class="guide-more">
                 <button type="button" class="guide-more-trigger" :aria-expanded="openMenu === 'client-alt'" @click="toggleMenu('client-alt')">
-                  {{ guide.moreActions }}
+                  <span class="guide-more-label">{{ guide.moreActions }}</span>
+                  <span class="guide-more-dots" aria-hidden="true">⋯</span>
                   <svg class="chev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
                 </button>
                 <div v-if="openMenu === 'client-alt'" class="guide-more-menu">
@@ -422,16 +458,10 @@ onBeforeUnmount(() => {
         </div>
       </div>
       <div class="guide-help">
-        <div class="guide-help-main">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-          <span class="guide-help-item">
-            <strong>{{ guide.helpAskCommunity }}</strong>
-            <a :href="communityUrl" class="guide-help-link" target="_blank" rel="noopener noreferrer" @click="openQqGroup">{{ guide.communityQq }}</a>
-          </span>
-          <span class="guide-help-item">
-            <strong>{{ guide.helpAskIssue }}</strong>
-            <a :href="issueUrl" class="guide-help-link" target="_blank" rel="noopener noreferrer">{{ guide.communityIssue }}</a>
-          </span>
+        <strong class="guide-help-title">{{ guide.helpTitle }}</strong>
+        <div class="guide-help-links">
+          <a :href="communityUrl" class="guide-help-link" target="_blank" rel="noopener noreferrer" @click="openQqGroup">{{ guide.communityQq }}</a>
+          <a :href="issueUrl" class="guide-help-link" target="_blank" rel="noopener noreferrer">{{ guide.communityIssue }}</a>
         </div>
       </div>
 
@@ -449,21 +479,22 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped lang="less">
-.stream-guide { padding: 2.5rem 0 1.5rem; scroll-margin-top: 96px; }
+.stream-guide { padding: 2.5rem 0 1.5rem; scroll-margin-top: 0; }
 .stream-guide > .container { width: 100%; max-width: 1200px; margin-inline: auto; }
 .stream-guide-card { width: 100%; margin-inline: auto; padding: 2rem; border: 1px solid var(--border-color); border-radius: 24px; background: linear-gradient(135deg, var(--background-primary), var(--background-secondary)); box-shadow: var(--card-shadow); }
-.guide-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.75rem; h2 { margin: 0 0 0.5rem; color: var(--text-primary); font-family: var(--font-sans); font-size: 1.75rem; font-weight: 700; line-height: 1.25; letter-spacing: normal; } p { margin: 0; color: var(--text-secondary); font-family: var(--font-sans); font-size: 1rem; line-height: 1.6; } }
-.guide-browse { font-size: 0.875rem; }
-a { color: var(--primary-color); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 600; flex-shrink: 0; }
+.guide-heading { display: flex; align-items: center; justify-content: center; position: relative; gap: 1rem; margin-bottom: 1.75rem; padding-inline: 12rem; text-align: center; h2 { margin: 0 0 0.5rem; color: var(--text-primary); font-family: var(--font-sans); font-size: 1.75rem; font-weight: 700; line-height: 1.25; letter-spacing: normal; } p { margin: 0; color: var(--text-secondary); font-family: var(--font-sans); font-size: 1rem; line-height: 1.6; } }
+.guide-heading > div { width: 100%; min-width: 0; }
+.guide-browse { position: absolute; top: 50%; right: 0; transform: translateY(-50%); font-size: 0.875rem; white-space: nowrap; }
+a { color: var(--primary-strong); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 600; flex-shrink: 0; }
 [data-theme="chocolate"] a { color: var(--primary-light); }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; min-height: 36px; padding: 0.55rem 0.9rem; border-radius: 8px; border: 1px solid transparent; font-family: var(--font-sans); font-size: 0.875rem; font-weight: 600; line-height: 1.25; text-decoration: none; }
-.btn-primary { background: var(--primary-color); color: var(--text-inverse) !important; }
-.btn-primary:hover { color: var(--text-inverse) !important; opacity: 0.9; }
+.btn-primary { background: var(--primary-action); color: var(--primary-action-text) !important; }
+.btn-primary:hover { background: var(--primary-action-hover); color: var(--primary-action-text) !important; opacity: 0.9; }
 .btn-icon { width: 15px; height: 15px; flex-shrink: 0; }
 .guide-columns { display: flex; flex-direction: column; gap: 1.25rem; }
 .guide-host { padding-bottom: 1.25rem; border-bottom: 1px solid var(--border-color); }
-.guide-client { scroll-margin-top: 96px; }
-.guide-step { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 0.9rem; color: var(--text-primary); font-family: var(--font-sans); font-size: 0.9375rem; font-weight: 700; line-height: 1.6; span { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: color-mix(in srgb, var(--primary-color) 16%, var(--background-primary)); color: var(--primary-color); font-size: 0.8125rem; font-weight: 700; } }
+.guide-client { scroll-margin-top: 0; }
+.guide-step { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 0.9rem; color: var(--text-primary); font-family: var(--font-sans); font-size: 0.9375rem; font-weight: 700; line-height: 1.6; span { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: color-mix(in srgb, var(--primary-color) 16%, var(--background-primary)); color: var(--primary-strong); font-size: 0.8125rem; font-weight: 700; } }
 .guide-host-product { display: flex; align-items: center; gap: 0.75rem; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: 12px; background: var(--background-secondary); }
 strong { display: block; color: var(--text-primary); font-family: var(--font-sans); font-size: 1rem; font-weight: 700; line-height: 1.4; }
 small { display: block; margin-top: 0.3rem; color: var(--text-secondary); font-family: var(--font-sans); font-size: 0.8125rem; line-height: 1.5; }
@@ -473,19 +504,19 @@ small { display: block; margin-top: 0.3rem; color: var(--text-secondary); font-f
 .guide-host-platform-row { display: flex; align-items: center; flex-wrap: wrap; gap: 0.45rem; }
 .guide-requirements-toggle { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.22rem 0.6rem; border: 1px solid color-mix(in srgb, var(--primary-color) 35%, var(--border-color)); border-radius: 999px; background: color-mix(in srgb, var(--primary-color) 8%, var(--background-primary)); color: var(--text-secondary); font-family: var(--font-sans); font-size: 0.6875rem; font-weight: 600; line-height: 1.5; cursor: pointer; user-select: none; transition: color 0.2s, border-color 0.2s, background 0.2s; .chev { width: 11px; height: 11px; transition: transform 0.2s; } &:hover { color: var(--primary-color); border-color: var(--primary-color); } &[aria-expanded='true'] { color: var(--primary-color); border-color: var(--primary-color); background: color-mix(in srgb, var(--primary-color) 12%, var(--background-primary)); .chev { transform: rotate(180deg); } } }
 .guide-requirements-list { margin: 0.5rem 0 0; padding-left: 1rem; color: var(--text-secondary); font-family: var(--font-sans); font-size: 0.75rem; line-height: 1.8; }
-.guide-platforms { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 0.45rem; button { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.35rem; min-height: 66px; padding: 0.4rem 0.2rem; border: 1px solid var(--border-color); border-radius: 10px; background: var(--background-secondary); color: var(--text-primary); font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; line-height: 1.35; cursor: pointer; transition: border-color 0.2s, color 0.2s, transform 0.2s; &:hover { transform: translateY(-1px); } &.active { border-color: var(--primary-color); color: var(--primary-color); background: color-mix(in srgb, var(--primary-color) 10%, var(--background-primary)); } } svg { width: 19px; height: 19px; } }
-.guide-selected-mark { position: absolute; top: 0.3rem; right: 0.35rem; color: var(--primary-color); font-size: 0.75rem; font-weight: 700; }
+.guide-platforms { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 0.45rem; button { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.35rem; min-height: 66px; padding: 0.4rem 0.2rem; border: 1px solid var(--border-color); border-radius: 10px; background: var(--background-secondary); color: var(--text-primary); font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; line-height: 1.35; cursor: pointer; transition: border-color 0.2s, color 0.2s, transform 0.2s; &:hover { transform: translateY(-1px); } &.active { border-color: var(--primary-color); color: var(--primary-strong); background: color-mix(in srgb, var(--primary-color) 10%, var(--background-primary)); } } svg { width: 19px; height: 19px; } }
 .guide-empty, .guide-detected { margin: 0.9rem 0 0; color: var(--text-secondary); font-family: var(--font-sans); font-size: 0.875rem; line-height: 1.6; }
 .guide-result { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 0.9rem; padding: 1rem; border: 1px solid color-mix(in srgb, var(--primary-color) 35%, var(--border-color)); border-radius: 12px; background: color-mix(in srgb, var(--primary-color) 10%, var(--background-secondary)); }
 .guide-result-info { display: flex; flex-direction: column; min-width: 0; }
-.guide-result-product { margin-top: 0.25rem; color: var(--text-primary); font-weight: 600; }
+.guide-result-subtitle { margin-top: 0.25rem; color: var(--text-secondary); font-weight: 500; }
 .guide-result-devices { color: var(--text-secondary); }
 .guide-result-actions { display: flex; align-items: center; gap: 0.75rem; }
 .guide-project-link, .guide-star-link { white-space: nowrap; }
 .guide-star-link { color: var(--text-secondary); }
 [data-theme="chocolate"] .guide-star-link { color: var(--text-secondary); }
 .guide-more { position: relative; }
-.guide-more-trigger { display: inline-flex; align-items: center; gap: 0.4rem; min-height: 36px; padding: 0.55rem 0.9rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--background-secondary); color: var(--text-secondary); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 600; line-height: 1.25; cursor: pointer; white-space: nowrap; transition: border-color 0.2s, color 0.2s; &:hover { border-color: var(--primary-color); color: var(--primary-color); } &[aria-expanded="true"] { border-color: var(--primary-color); color: var(--primary-color); } }
+.guide-more-trigger { display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; min-height: 36px; padding: 0.55rem 0.9rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--background-secondary); color: var(--text-secondary); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 600; line-height: 1.25; cursor: pointer; white-space: nowrap; transition: border-color 0.2s, color 0.2s; &:hover { border-color: var(--primary-strong); color: var(--primary-strong); } &[aria-expanded="true"] { border-color: var(--primary-strong); color: var(--primary-strong); } }
+.guide-more-dots { display: none; font-size: 1.45rem; line-height: 1; }
 .chev { width: 14px; height: 14px; flex-shrink: 0; }
 .guide-more-menu { position: absolute; right: 0; top: calc(100% + 6px); min-width: 168px; padding: 0.4rem; border: 1px solid var(--border-color); border-radius: 10px; background: var(--background-primary); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14); z-index: 30; display: flex; flex-direction: column; a { display: flex; align-items: center; gap: 0.55rem; padding: 0.5rem 0.6rem; border-radius: 6px; color: var(--text-primary); font-weight: 500; text-decoration: none; white-space: nowrap; svg { width: 15px; height: 15px; color: var(--text-muted); flex-shrink: 0; } &:hover { background: color-mix(in srgb, var(--primary-color) 10%, var(--background-primary)); color: var(--primary-color); svg { color: var(--primary-color); } } } }
 [data-theme="chocolate"] .guide-more-menu { background: var(--background-secondary); }
@@ -493,28 +524,50 @@ small { display: block; margin-top: 0.3rem; color: var(--text-secondary); font-f
 .guide-friend-section { margin-top: 0.9rem; }
 .guide-friend-title { margin: 0 0 0.5rem; color: var(--text-secondary); font-family: var(--font-sans); font-size: 0.75rem; font-weight: 600; line-height: 1.5; text-transform: uppercase; letter-spacing: 0.04em; }
 .guide-friend-card { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.75rem 1rem; border: 1px dashed var(--border-color); border-radius: 10px; background: var(--background-secondary); }
+.guide-friend-card small { margin-top: 0.2rem; }
 .guide-alternate-result { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 0.5rem; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 10px; background: var(--background-secondary); }
 .guide-client-note { margin: -0.55rem 0 0.9rem; color: var(--text-secondary); font-family: var(--font-sans); font-size: 0.875rem; line-height: 1.6; }
 .guide-alternate-hint { margin-top: 0.2rem; color: var(--text-secondary); }
-.guide-help { display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem; padding: 0.9rem 1rem; border: 1px solid var(--border-color); border-radius: 12px; background: var(--background-secondary); }
-.guide-help-main { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; > svg { width: 18px; height: 18px; color: var(--primary-color); flex-shrink: 0; } strong { display: inline; margin: 0; font-size: 0.875rem; } }
-.guide-help-item { display: inline-flex; align-items: center; gap: 0.4rem; }
-.guide-help-link { font-size: 0.8125rem; font-weight: 600; }
+.guide-help { display: flex; flex-direction: column; align-items: flex-start; gap: 0.25rem; margin-top: 1.1rem; padding: 0.4rem 0 0; }
+.guide-help-title { color: var(--text-primary); font-size: 0.875rem; font-weight: 700; line-height: 1.5; }
+.guide-help-links { display: flex; align-items: center; flex-wrap: wrap; gap: 0.25rem 1rem; }
+.guide-help-link { font-size: 0.8125rem; font-weight: 600; white-space: nowrap; }
 a:focus-visible, button:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 3px; }
-@media (max-width: 1050px) { .guide-platforms { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+@media (max-width: 1050px) {
+  .guide-platforms { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .guide-heading { flex-direction: column; padding-inline: 0; gap: 0.55rem; }
+  .guide-browse { position: static; transform: none; align-self: center; display: inline-flex; align-items: center; min-height: 40px; }
+}
 @media (max-width: 768px) { .guide-heading h2 { font-size: 1.5rem; } }
 @media (max-width: 640px) {
-  .stream-guide { padding-top: 1.5rem; }
-  .stream-guide-card { padding: 1.25rem; border-radius: 18px; }
-  .guide-heading { align-items: flex-start; flex-direction: column; }
-  .guide-platforms { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .guide-host-product { flex-wrap: wrap; }
-  .guide-host-actions { width: 100%; margin-left: 0; flex-wrap: wrap; justify-content: center; }
-  .guide-host-download { flex: 1 1 auto; }
-  .guide-host-actions .guide-project-link { flex: 0 1 auto; }
-  .guide-result, .guide-alternate-result { align-items: flex-start; flex-direction: column; }
-  .guide-friend-card { align-items: flex-start; flex-direction: column; }
-  .guide-result-actions { width: 100%; flex-wrap: wrap; }
-  .guide-result-actions .btn { flex: 1 1 auto; }
+  .stream-guide { padding-top: 1.25rem; scroll-margin-top: 0; }
+  .stream-guide > .container { padding-inline: 1rem; }
+  .stream-guide-card { padding: 1rem 0 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+  .guide-heading { margin-bottom: 1.25rem; }
+  .guide-heading h2 { font-size: 1.4rem; }
+  .guide-heading p { font-size: 0.875rem; line-height: 1.5; }
+  .guide-step { margin-bottom: 0.7rem; font-size: 0.875rem; }
+  .guide-host-product { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 0.65rem; padding: 0.75rem; }
+  .guide-host-product > div:nth-of-type(1) { min-width: 0; }
+  .guide-host-actions { grid-column: 1 / -1; width: 100%; margin-left: 0; flex-wrap: wrap; justify-content: stretch; gap: 0.5rem; }
+  .guide-host-download { flex: 1 1 auto; min-width: 0; }
+  .guide-requirements-toggle { min-height: 44px; padding-inline: 0.75rem; }
+  .guide-more-trigger { width: 44px; height: 44px; min-height: 44px; padding: 0; }
+  .guide-more-label,
+  .guide-more-trigger .chev { display: none; }
+  .guide-more-dots { display: block; }
+  .guide-host-actions .guide-more { flex: 0 0 auto; }
+  .guide-platforms { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .guide-platforms button { flex: 0 0 auto; flex-direction: row; justify-content: flex-start; width: auto; height: 44px; min-height: 44px; padding: 0 0.75rem; gap: 0.45rem; font-size: 0.875rem; text-align: left; white-space: nowrap; }
+  .guide-platforms svg { width: 18px; height: 18px; flex: 0 0 auto; }
+  .guide-result, .guide-alternate-result { align-items: flex-start; flex-direction: column; padding: 1rem; gap: 0.7rem; }
+  .guide-friend-card { align-items: flex-start; flex-direction: column; padding: 0.7rem 0.8rem; }
+  .guide-result-actions { width: 100%; flex-wrap: wrap; gap: 0.5rem; }
+  .guide-result-actions .btn { flex: 1 1 auto; min-height: 42px; }
+  .guide-result-actions .guide-more { flex: 0 0 44px; }
+  .guide-result-actions .guide-more-trigger { flex: 0 0 44px; }
+  .guide-client-note { font-size: 0.8125rem; }
+  .guide-help { margin-top: 0.8rem; padding-top: 0.25rem; }
+  .guide-help-links { gap: 0.25rem 0.9rem; }
 }
 </style>
