@@ -1,13 +1,12 @@
 // Download and release metadata policy.
 //
 // Chinese pages resolve release metadata through the same-origin
-// /website-release-metadata route first. That route returns the current CNB asset URL
-// and its GitHub fallback. If the proxy is unavailable, the versioned asset
-// name kept below is used to build a direct CNB URL. GitHub remains the final
-// fallback. English pages resolve directly from GitHub and never depend on the
-// release-metadata proxy.
+// website metadata -> CNB metadata -> GitHub stable releases. English pages
+// resolve directly from GitHub. Never guess a versioned installer filename:
+// if every lookup fails, let the user choose a file on the release page.
 
 export const RELEASE_METADATA_PATH = '/website-release-metadata'
+const CNB_METADATA_BASE = 'https://cnb.cool/AlkaidLab/release-metadata/-/releases/download/latest'
 
 export const CNB_RELEASE_REPOSITORIES = Object.freeze({
   sunshine: 'AlkaidLab/foundation-sunshine-release',
@@ -30,20 +29,6 @@ const RELEASE_METADATA_FILES = Object.freeze({
   'macos-enhanced': 'moonlight-macos-enhanced.json',
 })
 
-// These names are only the offline fallback used when the metadata proxy is
-// unavailable. Normal requests use the current asset URL from release JSON.
-const FALLBACK_ASSETS = Object.freeze({
-  sunshine: 'Sunshine.v2026.0925.WindowsInstaller.exe',
-  androidVplus: 'Moonlight.V+.12.12.12.apk',
-  'macos-enhanced': 'Moonlight-macOS-Enhanced-universal.dmg',
-  moonlightPc: Object.freeze({
-    windows: 'Moonlight-VPlus-Setup-6.4.5.exe',
-    macos: 'Moonlight-VPlus-6.4.5-arm64.dmg',
-    linux: 'Moonlight-VPlus-6.4.5-x86_64.AppImage',
-    steam: 'Moonlight-VPlus-SteamLink-6.4.5.zip',
-  }),
-})
-
 const PRODUCT_KEYS = Object.freeze({
   'android-vplus': 'androidVplus',
   'moonlight-pc': 'moonlightPc',
@@ -54,17 +39,7 @@ const PRE_RELEASE_PATTERN = /(?:^|[-_.])(?:alpha|beta|rc|pre)(?:[-_.]|$)/i
 const cnbReleaseUrl = (repository, assetName) =>
   `https://cnb.cool/${repository}/-/releases/latest/download/${encodeURIComponent(assetName)}`
 
-const githubReleaseUrl = (repository, assetName) =>
-  `https://github.com/${repository}/releases/latest/download/${encodeURIComponent(assetName)}`
-
 const normalizeProductKey = productKey => PRODUCT_KEYS[productKey] || productKey
-
-const getFallbackAssetName = (productKey, device = 'windows') => {
-  const key = normalizeProductKey(productKey)
-  return key === 'moonlightPc'
-    ? FALLBACK_ASSETS.moonlightPc[device]
-    : FALLBACK_ASSETS[key]
-}
 
 const getProductConfig = productKey => {
   const key = normalizeProductKey(productKey)
@@ -77,36 +52,24 @@ const getProductConfig = productKey => {
   }
 }
 
-const getDirectUrls = (productKey, device = 'windows', assetName = null) => {
-  const config = getProductConfig(productKey)
-  const name = assetName || getFallbackAssetName(productKey, device)
-  if (!config || !name) return { cnb: null, github: null, assetName: null }
-
-  return {
-    cnb: cnbReleaseUrl(config.cnbRepository, name),
-    github: githubReleaseUrl(config.githubRepository, name),
-    assetName: name,
-  }
+// Preserve the resolved release tag and filename when switching mirrors.
+const getCnbAssetUrl = (config, githubUrl) => {
+  const suffix = githubUrl?.match(/\/releases\/(latest\/download\/[^/?#]+|download\/[^/]+\/[^/?#]+)$/)?.[1]
+  return suffix ? `https://cnb.cool/${config.cnbRepository}/-/releases/${suffix}` : null
 }
 
-// Synchronous links are used immediately on first paint, before the metadata
-// request finishes. They also provide the final offline fallback.
+// Before the click-time lookup finishes, links point to release pages only.
 export const getReleaseDownloadUrls = (
   productKey,
   device = 'windows',
   githubAssetUrl = null,
   lang = 'zh',
 ) => {
-  const fallback = getDirectUrls(productKey, device)
-  const github = typeof githubAssetUrl === 'string' && githubAssetUrl
-    ? githubAssetUrl
-    : fallback.github
-  const cnb = typeof githubAssetUrl === 'string' && githubAssetUrl.includes('/download/')
-    ? cnbReleaseUrl(
-      getProductConfig(productKey)?.cnbRepository,
-      decodeURIComponent(githubAssetUrl.slice(githubAssetUrl.lastIndexOf('/') + 1)),
-    )
-    : fallback.cnb
+  const config = getProductConfig(productKey)
+  if (!config) return { official: null, mirror: null }
+  const github = githubAssetUrl || `https://github.com/${config.githubRepository}/releases/latest`
+  const cnb = getCnbAssetUrl(config, githubAssetUrl)
+    || `https://cnb.cool/${config.cnbRepository}/-/releases/latest`
 
   return lang === 'zh'
     ? { official: cnb, mirror: github }
@@ -153,25 +116,33 @@ const selectReleaseAsset = (productKey, device, assets) => {
 }
 
 const isValidReleaseMetadata = data =>
-  Boolean(data?.channels?.latest && Array.isArray(data.channels.latest.assets))
+  Boolean(data?.channels?.latest && !data.channels.latest.prerelease && Array.isArray(data.channels.latest.assets))
 
 const metadataCache = new Map()
 const METADATA_CACHE_TTL_MS = 10 * 60 * 1000
+const RELEASE_REQUEST_TIMEOUT_MS = 5000
 
-const fetchMetadata = async productKey => {
-  const url = getReleaseMetadataUrl(productKey)
-  if (!url) throw new Error(`Unknown release product: ${productKey}`)
+const fetchReleaseJson = async (url, accept = 'application/json') => {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), RELEASE_REQUEST_TIMEOUT_MS)
+  try {
+    const response = await fetch(url, {
+      cache: 'no-store',
+      headers: { Accept: accept },
+      signal: controller.signal,
+    })
+    if (!response.ok) throw new Error(`Release lookup ${response.status}`)
+    return await response.json()
+  } finally {
+    clearTimeout(timeout)
+  }
+}
 
+const fetchMetadata = async url => {
   const cached = metadataCache.get(url)
   if (cached && Date.now() - cached.timestamp < METADATA_CACHE_TTL_MS) return cached.data
 
-  const response = await fetch(url, {
-    cache: 'no-store',
-    headers: { Accept: 'application/json' },
-  })
-  if (!response.ok) throw new Error(`Release metadata ${response.status}`)
-
-  const data = await response.json()
+  const data = await fetchReleaseJson(url)
   if (!isValidReleaseMetadata(data)) throw new Error('Invalid release metadata')
 
   metadataCache.set(url, { timestamp: Date.now(), data })
@@ -190,13 +161,10 @@ const fetchGithubLatestAsset = async (productKey, device) => {
   const cached = githubReleaseCache.get(cacheKey)
   if (cached && Date.now() - cached.timestamp < GITHUB_CACHE_TTL_MS) return cached.asset
 
-  const response = await fetch(
+  const releases = await fetchReleaseJson(
     `https://api.github.com/repos/${config.githubRepository}/releases?per_page=20`,
-    { cache: 'no-store', headers: { Accept: 'application/vnd.github+json' } },
+    'application/vnd.github+json',
   )
-  if (!response.ok) throw new Error(`GitHub release API ${response.status}`)
-
-  const releases = await response.json()
   const release = Array.isArray(releases)
     ? releases.find(item => !item.draft && !item.prerelease && !PRE_RELEASE_PATTERN.test(item.tag_name || ''))
     : null
@@ -206,60 +174,61 @@ const fetchGithubLatestAsset = async (productKey, device) => {
 }
 
 // Resolve the links used by the download UI. For Chinese pages the order is:
-// same-origin metadata proxy -> direct CNB -> GitHub. For other languages the
+// same-origin metadata proxy -> CNB metadata -> GitHub. For other languages the
 // order starts at GitHub and does not request the metadata proxy.
 export const resolveReleaseDownloadUrls = async (productKey, device = 'windows', lang = 'zh') => {
   const fallback = getReleaseDownloadUrls(productKey, device, null, lang)
-  const direct = getDirectUrls(productKey, device)
+  const config = getProductConfig(productKey)
+  if (!config) return { ...fallback, source: 'release-page', version: null, candidates: [] }
 
-  if (lang !== 'zh') {
-    try {
-      const asset = await fetchGithubLatestAsset(productKey, device)
-      if (asset?.browser_download_url) {
+  if (lang === 'zh') {
+    for (const [source, url] of [
+      ['release-metadata', getReleaseMetadataUrl(productKey)],
+      ['cnb-metadata', `${CNB_METADATA_BASE}/${config.metadataFile}`],
+    ]) {
+      try {
+        const metadata = await fetchMetadata(url)
+        const channel = metadata.channels.latest
+        const asset = selectReleaseAsset(productKey, device, channel.assets)
+        if (!asset?.url) continue
+        const github = asset.fallbackUrl || `https://github.com/${config.githubRepository}/releases/latest`
         return {
-          official: asset.browser_download_url,
-          mirror: direct.cnb,
-          source: 'github',
-          version: null,
-          candidates: [asset.browser_download_url, direct.cnb].filter(Boolean),
+          official: asset.url,
+          mirror: github,
+          source,
+          version: channel.version || null,
+          candidates: [asset.url, github],
         }
+      } catch {
+        // Try the next metadata source, including malformed/HTML responses.
       }
-    } catch {
-      // The static GitHub latest-download URL remains usable as a fallback.
-    }
-
-    return {
-      ...fallback,
-      source: 'github-fallback',
-      version: null,
-      candidates: [fallback.official, direct.cnb].filter(Boolean),
     }
   }
 
   try {
-    const metadata = await fetchMetadata(productKey)
-    const channel = metadata.channels.latest
-    const asset = selectReleaseAsset(productKey, device, channel.assets)
-    if (asset?.url) {
-      const github = asset.fallbackUrl || direct.github
+    const asset = await fetchGithubLatestAsset(productKey, device)
+    if (asset?.browser_download_url) {
+      const github = asset.browser_download_url
+      const cnb = getCnbAssetUrl(config, github)
+        || `https://cnb.cool/${config.cnbRepository}/-/releases/latest`
       return {
-        official: asset.url,
-        mirror: github,
-        source: 'release-metadata',
-        version: channel.version || null,
-        candidates: [asset.url, direct.cnb, github].filter((url, index, list) => url && list.indexOf(url) === index),
+        official: github,
+        mirror: cnb,
+        source: 'github',
+        version: null,
+        candidates: [github, cnb].filter(Boolean),
       }
     }
   } catch {
-    // Fall through to direct CNB, then GitHub.
+    // No file address could be resolved. Offer release pages, never an old file.
   }
 
   return {
-    official: direct.cnb || direct.github,
-    mirror: direct.github,
-    source: direct.cnb ? 'cnb-fallback' : 'github-fallback',
+    official: `https://github.com/${config.githubRepository}/releases/latest`,
+    mirror: `https://cnb.cool/${config.cnbRepository}/-/releases/latest`,
+    source: 'release-page',
     version: null,
-    candidates: [direct.cnb, direct.github].filter(Boolean),
+    candidates: [],
   }
 }
 

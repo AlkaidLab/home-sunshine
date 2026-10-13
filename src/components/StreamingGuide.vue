@@ -111,83 +111,51 @@ const getLinkKind = url => {
   return 'file'
 }
 
-let clientResolveRequestId = 0
-const resolveClientReleaseAssets = async deviceId => {
-  const requestId = ++clientResolveRequestId
-  const requests = []
-
-  if (deviceId === 'android' || deviceId === 'android-tv' || deviceId === 'quest') {
-    requests.push(['androidVplus', 'android', 'android-vplus'])
-  } else if (deviceId === 'windows' || deviceId === 'macos' || deviceId === 'linux' || deviceId === 'steam') {
-    requests.push(['moonlightPc', deviceId, `moonlight-pc@${deviceId}`])
-    if (deviceId === 'macos') requests.push(['macos-enhanced', 'macos', 'macos-enhanced'])
-  }
-
-  if (!requests.length) return
-
-  const resolved = await Promise.allSettled(
-    requests.map(async ([productKey, device, key]) => [
-      key,
-      await resolveReleaseDownloadUrls(productKey, device, props.lang),
-    ]),
-  )
-
-  // A quick platform switch should not let an older response overwrite the
-  // links for the newly selected device.
-  if (requestId !== clientResolveRequestId) return
-
-  const urls = { ...clientReleaseUrls.value }
-  for (const result of resolved) {
-    if (result.status === 'fulfilled') {
-      const [key, value] = result.value
-      urls[key] = value
-    }
-  }
-  if (Object.keys(urls).length) clientReleaseUrls.value = urls
-  return urls
-}
 const openDownloadCard = ({ scope, icon, projectName, title, subtitle, downloadUrl, mirrorUrl = null, projectUrl = null, beforeDownload = null }) => {
   openMenu.value = null
-  modalProduct.value = { scope, icon, projectName, title, subtitle, kind: getLinkKind(downloadUrl), downloadUrl, mirrorUrl, projectUrl }
+  modalProduct.value = { scope, icon, projectName, title, subtitle, kind: getLinkKind(downloadUrl), downloadUrl, mirrorUrl, projectUrl, resolving: true }
+  // Capture this click's product. A later click or platform change must not
+  // replace the address of a download already being resolved.
+  const product = modalProduct.value
   showDownloadModal.value = true
   const beforeDownloadPromise = beforeDownload
     ? Promise.resolve().then(beforeDownload).catch(() => null)
     : null
-  // Paint the card first, then hand the request to the browser on the next frame.
+  // Start resolution immediately, but paint the card before triggering a file
+  // download or page navigation. The paint delay never bypasses resolution.
   nextTick(() => window.setTimeout(async () => {
-    if (beforeDownloadPromise) await beforeDownloadPromise
-    const current = modalProduct.value
-    if (!current?.downloadUrl) return
-    triggerDownload(current.downloadUrl, { newTab: getLinkKind(current.downloadUrl) !== 'file' })
+    const resolved = beforeDownloadPromise ? await beforeDownloadPromise : null
+    if (resolved) Object.assign(product, resolved)
+    if (product.downloadUrl) {
+      triggerDownload(product.downloadUrl, { newTab: getLinkKind(product.downloadUrl) !== 'file' })
+    }
+    product.resolving = false
   }, 150))
 }
 const refreshClientDownload = async ({ deviceId, releaseKey, channel = 'official' }) => {
-  const urls = await resolveClientReleaseAssets(deviceId)
-  const release = urls?.[releaseKey]
+  const productKey = releaseKey?.startsWith('moonlight-pc@') ? 'moonlightPc' : releaseKey
+  const device = productKey === 'android-vplus' ? 'android' : deviceId
+  // Store-based clients have no release metadata to resolve.
+  if (!getReleaseDownloadUrls(productKey, device, null, props.lang).official) return null
+  const release = await resolveReleaseDownloadUrls(productKey, device, props.lang)
+  clientReleaseUrls.value = { ...clientReleaseUrls.value, [releaseKey]: release }
   const downloadUrl = release?.[channel]
-  if (!downloadUrl || modalProduct.value?.scope !== 'client') return
-  modalProduct.value = {
-    ...modalProduct.value,
+  if (!downloadUrl) return null
+  return {
     downloadUrl,
-    mirrorUrl: release.mirror || modalProduct.value.mirrorUrl,
+    mirrorUrl: channel === 'mirror' ? release.official : release.mirror,
     kind: getLinkKind(downloadUrl),
   }
 }
 const refreshHostDownload = async preferredChannel => {
   if (!props.resolveHostDownload) return
-  try {
-    const urls = await props.resolveHostDownload()
-    if (!urls || modalProduct.value?.scope !== 'host') return
-    const downloadUrl = preferredChannel === 'mirror' ? urls.mirror : urls.official
-    if (!downloadUrl) return
-    modalProduct.value = {
-      ...modalProduct.value,
-      downloadUrl,
-      mirrorUrl: urls.mirror || modalProduct.value.mirrorUrl,
-      kind: getLinkKind(downloadUrl),
-    }
-  } catch {
-    // The synchronous CNB/GitHub fallback is already available in the modal.
+  const urls = await props.resolveHostDownload()
+  const downloadUrl = preferredChannel === 'mirror' ? urls?.mirror : urls?.official
+  if (!downloadUrl) return null
+  return {
+    downloadUrl,
+    mirrorUrl: preferredChannel === 'mirror' ? urls.official : urls.mirror,
+    kind: getLinkKind(downloadUrl),
   }
 }
 const startHostDownload = event => {
@@ -202,8 +170,8 @@ const startHostDownload = event => {
     downloadUrl: props.hostUrl,
     mirrorUrl: props.mirrorUrl,
     projectUrl: props.projectUrl,
+    beforeDownload: () => refreshHostDownload('official'),
   })
-  refreshHostDownload('official')
 }
 const startHostMirrorDownload = event => {
   event.preventDefault()
@@ -216,13 +184,15 @@ const startHostMirrorDownload = event => {
     subtitle: guide.value.downloadModal.productSubtitle,
     downloadUrl: props.mirrorUrl,
     projectUrl: props.projectUrl,
+    beforeDownload: () => refreshHostDownload('mirror'),
   })
-  refreshHostDownload('mirror')
 }
 const startClientDownload = event => {
   if (!client.value?.download || !clientCopy.value) return
   event.preventDefault()
   downloadTrigger.value = event.currentTarget
+  const deviceId = selected.value
+  const releaseKey = clientReleaseKey.value
   openDownloadCard({
     scope: 'client',
     icon: client.value.icon,
@@ -233,8 +203,8 @@ const startClientDownload = event => {
     mirrorUrl: clientMirrorUrl.value,
     projectUrl: client.value.project,
     beforeDownload: () => refreshClientDownload({
-      deviceId: selected.value,
-      releaseKey: clientReleaseKey.value,
+      deviceId,
+      releaseKey,
       channel: 'official',
     }),
   })
@@ -243,6 +213,8 @@ const startClientMirrorDownload = event => {
   if (!clientMirrorUrl.value) return
   event.preventDefault()
   downloadTrigger.value = event.currentTarget
+  const deviceId = selected.value
+  const releaseKey = clientReleaseKey.value
   openDownloadCard({
     scope: 'client',
     icon: client.value.icon,
@@ -252,8 +224,8 @@ const startClientMirrorDownload = event => {
     downloadUrl: clientMirrorUrl.value,
     projectUrl: client.value.project,
     beforeDownload: () => refreshClientDownload({
-      deviceId: selected.value,
-      releaseKey: clientReleaseKey.value,
+      deviceId,
+      releaseKey,
       channel: 'mirror',
     }),
   })
@@ -262,6 +234,7 @@ const startAlternateDownload = (event, option) => {
   if (!option?.download || !clientCopy.value) return
   event.preventDefault()
   downloadTrigger.value = event.currentTarget
+  const deviceId = selected.value
   openDownloadCard({
     scope: 'client',
     icon: option.icon,
@@ -272,13 +245,14 @@ const startAlternateDownload = (event, option) => {
     mirrorUrl: alternateDownloadUrls.value?.mirror || null,
     projectUrl: option.project,
     beforeDownload: () => refreshClientDownload({
-      deviceId: selected.value,
+      deviceId,
       releaseKey: option.id,
       channel: 'official',
     }),
   })
 }
 const retryModalDownload = () => {
+  if (modalProduct.value?.resolving) return
   const { downloadUrl } = modalProduct.value || {}
   if (downloadUrl) triggerDownload(downloadUrl, { newTab: getLinkKind(downloadUrl) !== 'file' })
 }

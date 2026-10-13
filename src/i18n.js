@@ -74,6 +74,7 @@ export const translations = {
       downloadModal: {
         productTitle: '瑶光流梦 Sunshine',
         productSubtitle: '游戏电脑串流核心',
+        statusResolving: '正在准备下载',
         status: '已发起下载请求，可能需要等待几秒钟时间开始下载',
         statusHint: '请在浏览器的下载列表中查看。',
         retryHint: '如果没有开始下载，可以尝试重新下载或使用镜像下载。',
@@ -328,6 +329,7 @@ export const translations = {
       downloadModal: {
         productTitle: 'AlkaidLab Sunshine',
         productSubtitle: 'Game streaming core for your PC',
+        statusResolving: 'Preparing download',
         status: 'Download request sent. It may take a few seconds to start.',
         statusHint: 'Check your browser’s download list.',
         retryHint: 'If the download didn’t start, try again or use the mirror.',

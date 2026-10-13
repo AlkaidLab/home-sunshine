@@ -18,6 +18,10 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      "/website-release-metadata": {
+        target: "https://www.alkaidlab.com",
+        changeOrigin: true,
+      },
       "/api": {
         target: "https://www.alkaidlab.com",
         changeOrigin: true,

@@ -14,6 +14,7 @@ let previousBodyOverflow = ''
 let previousDocumentOverflow = ''
 
 const statusTitle = computed(() => {
+  if (props.product.resolving) return props.copy.statusResolving
   const kind = props.product.kind
   if (kind === 'store') return props.copy.statusStore
   if (kind === 'page') return props.copy.statusPage
@@ -21,6 +22,7 @@ const statusTitle = computed(() => {
 })
 
 const statusHint = computed(() => {
+  if (props.product.resolving) return ''
   const kind = props.product.kind
   if (kind === 'store') return props.copy.statusStoreHint
   if (kind === 'page') return ''
@@ -35,6 +37,7 @@ const primaryActionLabel = computed(() => {
   if (props.product.kind === 'store') return props.copy.openStoreAction
   return props.copy.openPageAction
 })
+const mirrorIsFile = computed(() => /\/releases\/(?:latest\/)?download\//i.test(props.product.mirrorUrl || ''))
 
 const onKeydown = event => {
   if (event.key === 'Escape') {
@@ -92,32 +95,32 @@ onBeforeUnmount(() => {
         <div aria-live="polite">
           <p class="download-status-title">{{ statusTitle }}</p>
           <p v-if="statusHint" class="download-status-hint">{{ statusHint }}</p>
-          <p v-if="product.kind === 'file'" class="download-status-hint">{{ copy.retryHint }}</p>
+          <p v-if="!product.resolving && product.kind === 'file'" class="download-status-hint">{{ copy.retryHint }}</p>
         </div>
       </section>
 
       <nav class="download-links">
-        <a v-if="product.kind === 'file'" href="#" class="download-link" @click.prevent="emit('retry')">
+        <a v-if="!product.resolving && product.kind === 'file'" href="#" class="download-link" @click.prevent="emit('retry')">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
           {{ primaryActionLabel }}
         </a>
-        <a v-else :href="product.downloadUrl" class="download-link" target="_blank" rel="noopener noreferrer">
+        <a v-else-if="!product.resolving" :href="product.downloadUrl" class="download-link" target="_blank" rel="noopener noreferrer">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
           {{ primaryActionLabel }}
         </a>
-        <span v-if="product.mirrorUrl" class="download-link-sep" aria-hidden="true"></span>
+        <span v-if="!product.resolving && product.mirrorUrl" class="download-link-sep" aria-hidden="true"></span>
         <a
-          v-if="product.mirrorUrl"
+          v-if="!product.resolving && product.mirrorUrl"
           :href="product.mirrorUrl"
           class="download-link"
-          :target="product.kind === 'file' ? undefined : '_blank'"
-          :rel="product.kind === 'file' ? undefined : 'noopener noreferrer'"
-          :download="product.kind === 'file' || undefined"
+          :target="mirrorIsFile ? undefined : '_blank'"
+          :rel="mirrorIsFile ? undefined : 'noopener noreferrer'"
+          :download="mirrorIsFile || undefined"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
           {{ copy.mirrorAction }}
         </a>
-        <span class="download-link-sep" aria-hidden="true"></span>
+        <span v-if="!product.resolving" class="download-link-sep" aria-hidden="true"></span>
         <a :href="helpUrl" class="download-link download-link--muted" target="_blank" rel="noopener noreferrer">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
           {{ copy.helpAction }}
