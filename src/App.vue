@@ -83,6 +83,9 @@ const updatePageTitle = () => {
 
 // 当前语言的翻译内容
 const t = computed(() => translations[currentLang.value])
+const sponsorMethods = computed(() => currentLang.value === 'zh'
+  ? ['wechat', 'ifdian', 'github']
+  : ['github', 'wechat', 'ifdian'])
 const showcase = computed(() => showcaseContent[currentLang.value])
 const activeCatalogFilter = ref('all')
 // 基地版 iOS / Apple TV 尚未发布，在矩阵中并入“敬请期待”卡片；Xbox 一并预告。
@@ -831,23 +834,32 @@ const closeEggRoom = () => {
         <div class="sponsors-cta">
           <p class="sponsors-cta-label">{{ t.sponsors.becomeSponsor }}</p>
           <div class="sponsors-cta-buttons">
-            <a
-              href="https://www.ifdian.net/a/Yundi339"
-              class="btn btn-primary"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {{ t.sponsors.ifdian }}
-            </a>
+            <template v-for="method in sponsorMethods" :key="method">
             <button
+              v-if="method === 'wechat'"
               type="button"
-              class="btn btn-outline sponsor-btn-wechat"
+              class="btn sponsor-btn-wechat"
+              :class="method === sponsorMethods[0] ? 'btn-primary' : 'btn-outline'"
               @click="openWechatSponsorModal"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 0 0 .167-.054l1.903-1.114a.864.864 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178A1.17 1.17 0 0 1 4.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178A1.17 1.17 0 0 1 10.436 7.17c0-.651.52-1.18 1.162-1.18zm5.34 2.867c-1.797-.052-3.746.512-5.28 1.786-1.72 1.428-2.687 3.72-1.78 6.22.942 2.453 3.666 4.229 6.884 4.229.826 0 1.622-.12 2.361-.336a.722.722 0 0 1 .598.082l1.584.926a.272.272 0 0 0 .14.047c.134 0 .24-.11.24-.245 0-.06-.024-.12-.04-.178l-.327-1.233a.49.49 0 0 1 .177-.554C23.02 18.482 24 16.81 24 14.936c0-3.372-3.265-6.078-7.062-6.078zm-2.036 2.891c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.97-.982zm4.072 0c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.97-.982z"/></svg>
               {{ t.sponsors.wechat }}
             </button>
+            <a
+              v-else
+              :href="method === 'github' ? 'https://github.com/sponsors/qiin2333' : 'https://www.ifdian.net/a/Yundi339'"
+              class="btn"
+              :class="method === sponsorMethods[0] ? 'btn-primary' : 'btn-outline'"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <svg v-if="method === 'github'" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.17c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.75 2.69 1.25 3.34.95.1-.74.4-1.25.72-1.53-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.35.77 1.05.77 2.12v3.14c0 .3.21.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z" /></svg>
+              <svg v-else aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 2 4 14h7l-.5 8L20 10h-7l.5-8Z" /></svg>
+              {{ t.sponsors[method] }}
+            </a>
+            </template>
           </div>
+          <p v-if="currentLang !== 'zh'" class="sponsors-cta-note">{{ t.sponsors.githubNote }}</p>
           <div v-if="wechatSponsorModalOpen" class="sponsor-inline-panel">
             <div class="sponsor-inline-card">
               <div class="sponsor-inline-header">

@@ -1,13 +1,13 @@
 // Download and release metadata policy.
 //
 // Chinese pages resolve release metadata through the same-origin
-// /release-metadata route first. That route returns the current CNB asset URL
+// /website-release-metadata route first. That route returns the current CNB asset URL
 // and its GitHub fallback. If the proxy is unavailable, the versioned asset
 // name kept below is used to build a direct CNB URL. GitHub remains the final
 // fallback. English pages resolve directly from GitHub and never depend on the
 // release-metadata proxy.
 
-export const RELEASE_METADATA_PATH = '/release-metadata'
+export const RELEASE_METADATA_PATH = '/website-release-metadata'
 
 export const CNB_RELEASE_REPOSITORIES = Object.freeze({
   sunshine: 'AlkaidLab/foundation-sunshine-release',
