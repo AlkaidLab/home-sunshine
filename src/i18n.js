@@ -116,7 +116,7 @@ export const translations = {
       friends: '友情链接',
       friendProducts: {
         'voidlink-ios': { name: 'VoidLink', description: '社区独立维护的 iPhone / iPad 串流客户端，连接 Sunshine 主机，在手机或平板上游玩电脑游戏。' },
-        'voidlink-apple-tv': { name: 'VoidLink', description: '社区独立维护的 Apple TV 串流客户端，通过 TestFlight 体验，在电视上游玩电脑游戏。' }
+        'voidlink-apple-tv': { name: 'VoidLink', description: '社区独立维护的 Apple TV 串流客户端，从 App Store 安装，连接 Sunshine 主机，在电视上游玩电脑游戏。' }
       },
       friendAction: '查看 ↗',
       products: {
@@ -371,7 +371,7 @@ export const translations = {
       friends: 'Friends of AlkaidLab',
       friendProducts: {
         'voidlink-ios': { name: 'VoidLink', description: 'An independently maintained community streaming client for iPhone and iPad. Connect to a Sunshine host to play PC games on your phone or tablet.' },
-        'voidlink-apple-tv': { name: 'VoidLink', description: 'An independently maintained community streaming client for Apple TV. Try it through TestFlight to play PC games on your TV.' }
+        'voidlink-apple-tv': { name: 'VoidLink', description: 'An independently maintained community streaming client for Apple TV. Install from the App Store and connect to a Sunshine host to play PC games on your TV.' }
       },
       friendAction: 'View ↗',
       products: {

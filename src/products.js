@@ -40,8 +40,8 @@ export const FRIEND_LINKS = [
     devices: ['apple-tv'],
     name: 'VoidLink',
     urls: {
-      zh: 'https://testflight.apple.com/join/k7gs61mZ',
-      en: 'https://testflight.apple.com/join/k7gs61mZ',
+      zh: 'https://apps.apple.com/cn/app/voidlink/id6747717070',
+      en: 'https://apps.apple.com/us/app/voidlink-extreme/id6755103808',
     },
   },
 ]
