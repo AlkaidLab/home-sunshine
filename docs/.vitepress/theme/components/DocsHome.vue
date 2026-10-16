@@ -167,8 +167,8 @@ const articlePaths = [
     <div class="docs-home-footer">
       <span>{{ home.footer }}</span>
       <div>
-        <a href="https://docs.lizardbyte.dev/projects/sunshine/latest/">{{ home.upstream }} ↗</a
-        ><a href="https://github.com/AlkaidLab/foundation-sunshine/issues">{{ home.issues }} ↗</a>
+        <a href="https://docs.lizardbyte.dev/projects/sunshine/latest/">{{ home.upstream }}</a
+        ><a href="https://github.com/AlkaidLab/foundation-sunshine/issues">{{ home.issues }}</a>
       </div>
     </div>
   </div>
