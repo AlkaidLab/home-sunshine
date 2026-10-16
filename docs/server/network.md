@@ -28,7 +28,7 @@ Android Moonlight V+ 提供应用内 EasyTier 入口；其他平台是否内置�
 
 ## 如果你已经有公网方案
 
-端口映射、IPv6 和防火墙规则需要与你实际使用的 Sunshine 版本、端口配置、路由器及客户端匹配。不要混用旧教程中的固定端口表，也不要为方便而把整个主机放进路由器 DMZ。
+端口映射、IPv6 和防火墙规则需要与你实际使用的 Sunshine 版本、端口配置、路由器及客户端匹配。根据主机的实际端口配置逐项放行，不要为方便而把整个主机放进路由器 DMZ。
 
 Sunshine 的 `47990` 是管理 WebUI 的默认端口，不是要填入 Moonlight 的完整连接地址。**不要把管理 WebUI 暴露到公网**。需要高级网络部署时，按 [Sunshine 官方文档](https://docs.lizardbyte.dev/projects/sunshine/latest/)和对应组网工具说明配置。
 

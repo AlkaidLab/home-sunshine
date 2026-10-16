@@ -23,7 +23,7 @@ Moonlight V+ for HarmonyOS 当前项目要求 **HarmonyOS NEXT 5.0 或更高版�
 
 从[官网产品矩阵](https://www.alkaidlab.com/#products)进入适用于自己设备的客户端。官网列有社区项目 **VoidLink**，可查看[中国区商店](https://apps.apple.com/cn/app/voidlink/id6747717070)或[其他地区商店](https://apps.apple.com/us/app/voidlink-extreme/id6755103808)；具体设备、系统、地区和发行方式以当前商店页面为准。
 
-本轮核验的两个 VoidLink 商店页面均列出 iPhone、iPad 和 Apple TV，系统要求分别为 iOS 13、iPadOS 13、tvOS 16 或更高版本。Apple TV 可在电视的 App Store 获取对应版本，无需把早期 TestFlight 教程当作唯一入口。下载时仍需核对所在地区的当前兼容范围。
+两个 VoidLink 商店页面均列出 iPhone、iPad 和 Apple TV，系统要求分别为 iOS 13、iPadOS 13、tvOS 16 或更高版本。Apple TV 可在电视的 App Store 获取对应版本。下载时需核对所在地区的当前兼容范围。
 
 基地版客户端标为待发布时，不代表社区客户端也不可用；其他客户端的安装方式和功能条件则需分别核对。
 

@@ -62,7 +62,7 @@ Webhook 适合把配对、应用启动／终止、会话开始／结束事件交
 4. 只有需要时才扩大订阅范围。通知可能包含主机、客户端、应用与地址信息，应检查接收服务的数据范围。
 5. 停用后再产生一次事件，确认不再发送。
 
-当前格式的有效配置位于实际 `sunshine.conf` 同目录的 **`webhook_auth.json`**；旧教程把同名字段写进 `sunshine.conf` 不会配置当前实现。优先用界面编辑；手工维护时按[当前格式文档](https://github.com/AlkaidLab/foundation-sunshine/blob/04d9188a5da6985e6d2423040e8ded903d7f0365/docs/webhook_format.md)处理事件编号、超时和 URL。不要为了普通连接问题关闭 HTTPS 校验。
+Webhook 配置保存在实际 `sunshine.conf` 同目录的 **`webhook_auth.json`** 中。优先用界面编辑；手工维护时按[配置格式文档](https://github.com/AlkaidLab/foundation-sunshine/blob/04d9188a5da6985e6d2423040e8ded903d7f0365/docs/webhook_format.md)处理事件编号、超时和 URL。不要为了普通连接问题关闭 HTTPS 校验。
 
 ## 参考
 

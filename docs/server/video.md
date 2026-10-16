@@ -39,7 +39,7 @@ description: 按两端能力选择 H.264、HEVC 和 AV1，配置捕获方式、H
 | Desktop Duplication | Windows 桌面捕获与兼容性回退 |
 | Windows Graphics Capture（WGC） | 按版本支持捕获桌面或指定窗口 |
 
-WGC 的窗口捕获需要用户模式，不能在 SYSTEM 服务模式下直接使用。具体运行模式按当前 GUI 和项目说明设置，不要复制早期教程的停止服务命令当作通用安装步骤。AMD Display Capture 不适用于基地虚拟屏。
+WGC 的窗口捕获需要用户模式，不能在 SYSTEM 服务模式下直接使用。请按桌面 GUI 和项目说明设置运行模式，再验证目标窗口能否正常捕获。AMD Display Capture 不适用于基地虚拟屏。
 
 捕获失败时，先恢复默认／自动路径；选定窗口被关闭、最小化或权限不匹配时，也要回到 Desktop 对照测试。
 
