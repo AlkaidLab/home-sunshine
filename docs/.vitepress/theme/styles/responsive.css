@@ -1,0 +1,172 @@
+@media (min-width: 1440px) {
+  .VPDoc.has-sidebar.has-aside {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+@media (max-width: 1100px) {
+  .docs-hero {
+    gap: 32px;
+  }
+  .stream-visual {
+    padding: 22px;
+  }
+  .guide-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .guide-card-top {
+    margin-bottom: 18px;
+  }
+}
+@media (max-width: 767px) {
+  :root {
+    --vp-nav-height: 64px;
+  }
+  .docs-home {
+    width: calc(100% - 40px);
+    padding-top: 0;
+  }
+  .docs-hero {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 38px 0 42px;
+  }
+  .docs-home h1 {
+    font-size: clamp(36px, 8vw, 46px);
+    margin: 18px 0;
+  }
+  .hero-description {
+    font-size: 14px;
+  }
+  .hero-actions {
+    gap: 10px;
+    margin-top: 24px;
+  }
+  .docs-button {
+    font-size: 12px;
+    padding: 10px 14px;
+    gap: 8px;
+  }
+  .hero-topics {
+    font-size: 11px;
+    gap: 8px 12px;
+    margin-top: 20px;
+  }
+  .stream-visual {
+    padding: 18px 24px;
+    max-width: 440px;
+    width: 100%;
+    margin: auto;
+  }
+  .monitor {
+    width: 76%;
+    margin-top: 18px;
+  }
+  .monitor-screen {
+    height: 124px;
+  }
+  .scene-sun {
+    width: 50px;
+    height: 50px;
+    right: 30px;
+    top: 18px;
+  }
+  .scene-hill {
+    bottom: -95px;
+  }
+  .hill-front {
+    bottom: -122px;
+  }
+  .device-strip {
+    padding: 10px 14px;
+  }
+  .section-heading {
+    margin-bottom: 18px;
+  }
+  .docs-home h2 {
+    font-size: 22px;
+  }
+  .section-note {
+    display: none;
+  }
+  .guide-grid {
+    gap: 12px;
+  }
+  .guide-card {
+    padding: 18px 16px 15px;
+  }
+  .docs-home h3 {
+    font-size: 15px;
+  }
+  .guide-description {
+    font-size: 12px;
+    margin-bottom: 18px !important;
+  }
+  .guide-card-footer {
+    font-size: 10px;
+  }
+  .docs-rescue {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 21px;
+    margin: 24px 0 38px;
+  }
+  .rescue-icon {
+    display: none;
+  }
+  .docs-rescue h2 {
+    font-size: 17px;
+  }
+  .docs-rescue > a {
+    margin: 6px 0 0;
+  }
+  .article-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .article-card {
+    padding: 22px;
+  }
+  .docs-home-footer {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 35px;
+  }
+  .docs-home-footer > div {
+    gap: 18px;
+  }
+  .VPDoc .vp-doc h1 {
+    font-size: 28px;
+  }
+  .VPDoc .vp-doc h2 {
+    font-size: 20px;
+  }
+  .vp-doc th,
+  .vp-doc td {
+    min-width: 160px;
+  }
+  .vp-doc th:first-child,
+  .vp-doc td:first-child {
+    min-width: 100px;
+  }
+}
+@media (max-width: 420px) {
+  .guide-grid {
+    grid-template-columns: 1fr;
+  }
+  .guide-card-top {
+    margin-bottom: 13px;
+  }
+  .guide-card {
+    padding: 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

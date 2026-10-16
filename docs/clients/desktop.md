@@ -10,6 +10,8 @@ description: 安装 Moonlight V+ for PC 或 macOS Enhanced，选择正确架构�
 
 从 [Moonlight V+ for PC 正式发行页](https://github.com/qiin2333/moonlight-qt/releases/latest)选择 VPlus 安装程序。普通用户优先用安装版；确实需要多套独立配置或便携部署时再选 ZIP。
 
+按本轮核对的 **6.5.0** 发行资产，常见 Intel / AMD 电脑选择 x64 安装程序；Windows on ARM 设备选择 ARM64 便携包。不要因为系统同为 Windows 就忽略处理器架构。
+
 安装后启动客户端，允许适用的网络访问，添加主机并完成 PIN 配对，再用 Desktop 测试。键鼠先在客户端本机正常使用，进入串流后区分游戏的相对鼠标模式与桌面的直接鼠标模式。
 
 ### 便携版更新

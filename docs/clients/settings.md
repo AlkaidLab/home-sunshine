@@ -6,6 +6,12 @@ description: 从稳定的 SDR 基础配置开始调整分辨率、帧率、码�
 
 不同设备的最佳设置不同。用一套稳定配置作为对照，再一次改变一个选项，才能判断清晰度、延迟和稳定性的变化来自哪里。
 
+<SunshineTip title="太阳娘的画质进阶：分开调渲染尺寸与串流尺寸">
+  <p>Android V+ 12.13.0 与本页实机版本均提供“主机渲染分辨率比例”：固定串流分辨率，再提高该比例，会向兼容主机请求更大的渲染尺寸。可在 GPU 有余量时比较细节表现；高于 100% 会增加主机负载，低于 100% 可减轻负载。</p>
+  <p>先记录 100% 时的游戏帧率和编码耗时，调整后检查主机实际分辨率是否采用请求。它不是 Windows 文字缩放；出现负载或兼容问题时恢复 100%。此入口以截图所标版本为准。</p>
+  <a class="tip-source" href="./android.html#串流质量设置">查看实机版本与设置位置 →</a>
+</SunshineTip>
+
 ## 建立你的对照配置
 
 | 选项 | 对照起点 | 提高前要确认 |
@@ -20,6 +26,27 @@ description: 从稳定的 SDR 基础配置开始调整分辨率、帧率、码�
 
 码率越高不一定越流畅。超过可用链路能力会增加排队、丢包或卡顿；降低分辨率和帧率有时比继续提高码率更有效。
 
+## 实机设置示例
+
+以下截图来自魅族 17 上已安装的 **Android Moonlight V+ 12.12.13.beta.6**，拍摄于 2026-10-16。正文只展示对应设置的重点区域，点击可看原图；其他平台和正式版的布局可能不同。
+
+<div class="manual-focus-gallery">
+  <figure class="manual-figure">
+    <ScreenshotFocus :source-width="1080" :regions="[[32, 298, 1008, 180], [32, 950, 1008, 150], [32, 1148, 1008, 225]]">
+    <img src="../assets/manual/android-video-settings.png" alt="Android V+ 的串流分辨率、帧率和码率设置重点区域" width="1080" height="2340" loading="lazy" />
+    </ScreenshotFocus>
+    <figcaption>分别截取分辨率、帧率和码率。20 Mbps 是本机已有配置；首次测试可从 10 Mbps 开始，稳定后再比较。</figcaption>
+  </figure>
+  <figure class="manual-figure">
+    <ScreenshotFocus :source-width="1080" :regions="[[32, 288, 1008, 300], [32, 828, 1008, 410]]">
+    <img src="../assets/manual/android-codec-hdr.png" alt="Android V+ 的视频编解码器、HDR 与强制全范围色彩设置重点区域" width="1080" height="2340" loading="lazy" />
+    </ScreenshotFocus>
+    <figcaption>编码先用自动，建立 SDR 对照时先关闭 HDR。“强制全范围色彩”与 HDR 不同，只在确认范围不匹配时排查；实验性路径不属于入门必开项。</figcaption>
+  </figure>
+</div>
+
+截图保留实机已有状态，省略无关选项。原图中的 FEC、主机优化等高级项不作为通用推荐，参数含义和调整顺序以本页说明为准。
+
 ## 按顺序提高画质
 
 1. 固定一个有持续运动的场景，确认对照配置正常。
@@ -30,9 +57,28 @@ description: 从稳定的 SDR 基础配置开始调整分辨率、帧率、码�
 
 高刷新率屏幕可先用其支持的 60 FPS，再测试 120 FPS 等目标。主机游戏本身不稳定时，先解决游戏掉帧；客户端插帧不能修复主机输入、网络或捕获的瓶颈。
 
+## 自动码率与丢包保护（FEC）
+
+**Android V+ 12.13.0 / PC V+ 6.5.0** 提供的自动码率与 FEC 是两项独立控制，需要兼容的 Sunshine 主机支持：
+
+| 设置 | 作用 | 调整后注意 |
+| --- | --- | --- |
+| 自动调整码率（ABR） | 根据网络反馈调整码率 | 观察实际码率、丢帧与画质，不能代替网络互通 |
+| 跟随主机 | 采用主机的 FEC 设置 | FEC 更改在下次串流连接生效 |
+| 自动调整 FEC | 让兼容主机按网络反馈选择纠错比例 | 不支持时沿用主机默认行为 |
+| 固定 FEC 比例 | 指定冗余比例；0% 表示关闭纠错 | 比例越高，保护数据占用的传输预算越多 |
+
+Android 12.13 的正式版名称为“丢包保护（FEC）”，本页测试机原图仍显示旧名称“FEC 纠错”。兼容主机会在目标码率内平衡画质与纠错，固定 FEC 越高，可用于画面本身的码率可能越少；实际网络流量仍会波动。不要把 FEC 拉满当作弱网通用解法。
+
+这两版客户端还区分**推荐码率**与**手动指定码率**：手动输入后，更改分辨率或帧率会保留该数值。想恢复自动推荐时，使用“恢复推荐”或“使用推荐码率”；改完再检查实际 Mbps，避免误以为提高分辨率会自动获得更高码率。
+
 ## 打开性能统计
 
+<ManualDiagram kind="latency" />
+
 在客户端设置或串流菜单里查找**性能统计／性能浮窗**，同时查看 Sunshine 的运行状态或日志。不同客户端的名称、采样窗口和含义不完全相同。
+
+Android V+ 可结合[串流菜单与退出说明](./android.md#串流菜单与退出)操作。先打开统计，再在持续运动的场景中观察下面的项目。
 
 | 观察项目 | 用它回答什么 |
 | --- | --- |
@@ -56,3 +102,5 @@ description: 从稳定的 SDR 基础配置开始调整分辨率、帧率、码�
 
 - [Foundation Sunshine：性能排查](https://github.com/AlkaidLab/foundation-sunshine/blob/master/docs/zh-CN/faq.md)
 - [Moonlight：性能统计字段说明](https://github.com/moonlight-stream/moonlight-docs/wiki/Frequently-Asked-Questions#what-do-the-numbers-mean-in-the-on-screen-connection-statistics)
+- [Android V+ 12.13.0：设置与 FEC 文案](https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/res/values-zh-rCN/strings.xml)
+- [PC V+ 6.5.0：ABR、FEC 与码率说明](https://github.com/qiin2333/moonlight-qt/releases/tag/v6.5.0)

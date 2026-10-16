@@ -16,6 +16,34 @@ Android Moonlight V+ 面向手机、平板和兼容的电视设备。先完成�
 
 发现不到主机时，不要反复重装 APK，先看[连接排查](../troubleshooting/connection.md)。
 
+## 串流质量设置
+
+在客户端设置中找到“串流质量”，先核对**串流分辨率、串流帧率和串流码率**。下面的实机配置是 1080p、60 FPS、20 Mbps；网络不稳时，先把码率降到 10 Mbps 对比。
+
+<figure class="manual-figure">
+  <ScreenshotFocus :source-width="1080" :regions="[[32, 298, 1008, 180], [32, 950, 1008, 150], [32, 1148, 1008, 225]]">
+  <img src="../assets/manual/android-video-settings.png" alt="Android Moonlight V+ 实机串流质量页的分辨率、帧率与码率三个重点区域" width="1080" height="2340" loading="lazy" />
+  </ScreenshotFocus>
+  <figcaption>2026-10-16 在魅族 17 上拍摄，版本 12.12.13.beta.6。只展示三个基础选项，点击可看原图；正式版与其他平台的入口和可用选项可能不同。</figcaption>
+</figure>
+
+编码、HDR 和统计字段的调整顺序见[画质设置与性能统计](./settings.md#实机设置示例)。不要直接照搬截图中的 FEC、主机优化或其他高级设置。
+
+截图对应版本在同一页向下还提供“主机渲染分辨率比例”，用于改变向兼容主机请求的渲染尺寸；入门先保持 100%，进阶用途见[画质页的太阳娘提示](./settings.md)。
+
+## 串流菜单与退出
+
+进入串流后，通过客户端提供的菜单入口查看画质、触控、麦克风和性能监控选项。菜单的打开方式以安装版本的操作提示为准。
+
+Android V+ **12.13.0** 的两个入口需要区分：
+
+| 菜单名称 | 行为与检查 |
+| --- | --- |
+| 暂停串流 | 断开当前客户端的串流连接；主机游戏可能继续运行，并非暂停游戏进程 |
+| 退出串流 | 受设置中的“‘退出’操作”影响，可选择“同时结束主机应用”或“仅断开连接” |
+
+旧版本可能使用“断开连接”等名称。退出前先保存进度，并核对“退出”行为与实际确认提示；关闭串流不等于游戏已保存。性能统计只用于观察串流状态。
+
 ## 触控与王冠布局
 
 桌面操作可先使用触控板模式，射击或动作游戏再选择适合的相对鼠标、屏幕按键或实体手柄。
@@ -50,3 +78,4 @@ Android Moonlight V+ 面向手机、平板和兼容的电视设备。先完成�
 
 - [Moonlight V+ 功能指南](https://github.com/qiin2333/moonlight-vplus/blob/master/docs/VPLUS_FEATURES.md)
 - [备份、恢复与配置分享](https://github.com/qiin2333/moonlight-vplus/blob/master/docs/BACKUP_AND_MIGRATION.md)
+- [12.13.0 正式版：菜单与退出行为文案](https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/res/values-zh-rCN/strings.xml)

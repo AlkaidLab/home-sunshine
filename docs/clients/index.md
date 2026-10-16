@@ -13,7 +13,7 @@ Sunshine 安装在运行游戏的电脑上，Moonlight 安装在观看和操作�
 | Android 手机、平板 | [Moonlight V+ APK](https://github.com/qiin2333/moonlight-vplus/releases/latest) | [Android 指南](./android.md) |
 | Android TV、电视盒子 | 同一项目的 Android 安装包，按设备解码能力设置 | [电视与盒子](./android.md#tv-and-quest) |
 | Quest | 从 Android 客户端项目核对当前设备兼容与安装方式 | [Quest 使用](./android.md#tv-and-quest) |
-| Windows | [Moonlight V+ for PC](https://github.com/qiin2333/moonlight-qt/releases/latest) 安装程序 | [桌面客户端](./desktop.md#windows) |
+| Windows | [Moonlight V+ for PC](https://github.com/qiin2333/moonlight-qt/releases/latest)：x64 安装程序／ARM64 便携包，按处理器选择 | [桌面客户端](./desktop.md#windows) |
 | macOS | [Moonlight V+ for PC](https://github.com/qiin2333/moonlight-qt/releases/latest) 或 [macOS Enhanced](https://github.com/skyhua0224/moonlight-macos-enhanced/releases) | [Mac 与架构选择](./desktop.md#macos) |
 | Linux | [Moonlight V+ for PC](https://github.com/qiin2333/moonlight-qt/releases/latest) 对应架构 AppImage | [Linux 安装](./desktop.md#linux) |
 | Steam Link 设备 | PC 项目发行页中的 Steam Link 包 | [Steam Link](./desktop.md#steam-link) |

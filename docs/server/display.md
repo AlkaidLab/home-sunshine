@@ -17,7 +17,16 @@ description: 使用 ZakoDisplay 基地虚拟显示器配置无头主机、熄屏
 
 虚拟屏可能按会话创建和释放，未连接时没有常驻屏幕不一定是故障。应结合驱动状态、会话日志和连接后的 Windows 显示设置判断。
 
+<figure class="manual-figure">
+  <ScreenshotFocus :source-width="1280" :regions="[[270, 82, 970, 380]]">
+  <img src="../assets/manual/sunshine-vdd-overview.jpg" alt="新版 Sunshine 桌面控制面板中的虚拟显示器概览，提供概览、显示能力、HDR 校准和驱动与诊断四个页签" width="1280" height="800" loading="lazy" />
+  </ScreenshotFocus>
+  <figcaption>实机路径：左侧“虚拟显示器”→“概览”，取自 Foundation Sunshine 2026.1015.51059 / GUI 0.5.8。驱动安装与状态排查在“驱动与诊断”中；图中能力标记不保证所有客户端都支持对应格式或帧率。</figcaption>
+</figure>
+
 ## 选择你的使用方式
+
+<ManualDiagram kind="display" />
 
 | 目的 | 显示策略思路 | 需要验证 |
 | --- | --- | --- |
@@ -39,6 +48,19 @@ description: 使用 ZakoDisplay 基地虚拟显示器配置无头主机、熄屏
 - **Windows 缩放**：文字和界面元素的大小。
 
 三者可以不同。文字太小优先调整 Windows 缩放；画面被裁切或拉伸时，检查长宽比与显示策略；不要通过无限提高码率修正尺寸问题。
+
+<figure class="manual-figure">
+  <ScreenshotFocus :source-width="1280" :regions="[[278, 226, 685, 136], [278, 584, 685, 110]]">
+  <img src="../assets/manual/sunshine-vdd-display.jpg" alt="虚拟显示器显示能力页的分辨率预置和刷新率预置重点区域" width="1280" height="800" loading="lazy" />
+  </ScreenshotFocus>
+  <figcaption>实机路径：“虚拟显示器”→“显示能力”，分别截取分辨率和刷新率预置。这里维护虚拟屏向 Windows 声明的能力；实际串流目标仍在客户端设置。截图保留本机现值，点击可看完整页面。</figcaption>
+</figure>
+
+<SunshineTip title="太阳娘的省步骤技巧：复用每个游戏的启动配置">
+  <p>新版 Android V+ 可在应用列表的显示器选择中指定基地虚拟屏，配合屏幕组合策略启动。已有该游戏的启动记录后，长按应用，选择“使用上一次设置启动”，即可复用已记录的配置。</p>
+  <p>该长按项仅在已有记录时出现；主机仍需支持虚拟屏且驱动可用。连接后先确认选中的屏幕和布局，手机、平板分别调好各自的显示配置。</p>
+  <a class="tip-source" href="https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/java/com/limelight/AppView.kt#L1520-L1570">查看正式版长按菜单实现 ↗</a>
+</SunshineTip>
 
 ## 验证连接和恢复
 

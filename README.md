@@ -53,7 +53,7 @@ npm run preview
 
 ## 文档中心
 
-文档中心使用 VitePress 1.6.4，和官网共用根目录的 `package.json`、`package-lock.json` 与 `npm ci`，无需单独安装。根目录的 `overrides` 将 Vue 和 `@vue/shared` 统一到官网所用的 3.6 RC 版本，避免文档主题额外安装另一份 Vue。
+文档中心使用 VitePress 1.6.4 与 Teek 1.6.2，和官网共用根目录的 `package.json`、`package-lock.json` 与 `npm ci`，无需单独安装。根目录的 `overrides` 将 Vue 和 `@vue/shared` 统一到官网所用的 3.6 RC 版本，避免文档主题额外安装另一份 Vue。
 
 ```bash
 npm run docs:dev     # 本地文档服务，终端会输出 /docs/ 访问地址
@@ -67,7 +67,17 @@ Markdown 源文件保存在 `docs/`，文档首页为 `docs/index.md`。已有�
 
 新增文档时，添加 Markdown 文件并在开头设置 `description`，正文使用一个一级标题。使用手册的导航维护在 `docs/.vitepress/manual-nav.js`，技术文章导航位于 `docs/.vitepress/config.js`。搜索索引和文档 sitemap 在构建时自动生成；中文搜索使用逐字与相邻双字索引，英文按单词匹配，构建端与浏览器使用同一规则。文档主题和官网共享浅色 / 巧克力深色偏好。
 
-导航与站点配置位于 `docs/.vitepress/config.js`，样式位于 `docs/.vitepress/theme/style.css`。文档保持 `.html` URL，部署时直接提供 `dist/` 中的静态文件，确保 `/docs/` 使用自己的 `index.html`，无需将文档请求回退到官网首页。根目录的 `robots.txt` 会同时声明官网和文档的 sitemap。
+导航与站点配置位于 `docs/.vitepress/config.js`，样式位于 `docs/.vitepress/theme/style.css`。主题入口继承 Teek，`Layout.vue` 定制品牌、中文面包屑和阅读辅助入口，`components/DocsHome.vue` 渲染文档首页。仅使用 Teek 的运行时布局和样式，不启用其自动侧栏、永久链接及文章扫描插件，导航仍由手册配置维护。文档保持 `.html` URL，部署时直接提供 `dist/` 中的静态文件，确保 `/docs/` 使用自己的 `index.html`，无需将文档请求回退到官网首页。根目录的 `robots.txt` 会同时声明官网和文档的 sitemap。
+
+手册中的 `ManualDiagram` 是随明暗主题适配的流程示意，不冒充软件截图。真实界面图保存在 `docs/assets/manual/`，来源、尺寸和适用范围记录在同目录的 `sources.json`，并在正文图注中说明。更新界面截图时，应使用可核实版本的实机画面，并同步更新来源记录。
+
+主题样式由 `docs/.vitepress/theme/style.css` 按顺序引入 `styles/` 下的 `base.css`、`home.css`、`reading.css`、`responsive.css` 和 `manual.css`，分别维护基础配色／布局、首页、阅读页、响应式及手册视觉组件。修改时保留入口的加载顺序，避免改变样式覆盖关系。
+
+正文使用 `ScreenshotFocus` 展示重点区域：`source-width` 为原图宽度，`regions` 是一个或多个 `[左, 上, 宽, 高]` 原图像素区域。分辨率、帧率等不相邻的选项拆开显示，不拉伸或改写界面文字；点击仍由 Teek 查看完整原图。裁切只影响展示，原始截图与校验值保留。`SunshineTip` 用于有明确入口、适用条件和核验来源的进阶操作，避免重复正文的基础提醒。
+
+2026-10-16 补录了本机 Foundation Sunshine `2026.1015.51059`、桌面 GUI `0.5.8` 的界面：首次设置向导（独立浏览器仅重放显示状态）、PIN 空白表单、虚拟屏概览／显示能力及服务端音视频设置。取图未提交配对、安装驱动、保存或重启服务；PIN 图避开已配对设备列表。Android 旧截图已移除，改用魅族 17 上预装的 V+ `12.12.13.beta.6` 实机串流质量及编码／HDR 设置页，取图未修改客户端配置。该版本为测试机的预发布构建，不标作最新正式版。截图中的本机参数仅作界面示例。太阳娘使用项目原始透明素材，保存在 `docs/assets/branding/`，放在首页、阅读辅助及 `SunshineTip` 提示中，不改绘 IP 形象；来源记录与品牌素材放在一起。
+
+资源按用途放置：`docs/assets/manual/` 只保存正式使用的截图及来源记录，`docs/assets/branding/` 保存文档品牌素材；两者由 Markdown 或 Vue 引用，随构建处理。`public/` 保留官网需要固定地址的公共资源；文档导航标志通过构建引用复用其中同一份图标源文件，独立运行 `docs:dev` 也能显示。`docs/maintenance/` 保存手册核验记录。`output/` 是本地取图、下载和调试产物目录，已加入 Git 忽略规则；构建输出 `dist/`、临时 SSR 输出 `dist-ssr/` 和 VitePress 缓存同样不提交。
 
 ### 使用手册的来源与维护
 
@@ -91,6 +101,8 @@ Markdown 源文件保存在 `docs/`，文档首页为 `docs/index.md`。已有�
 
 核验方式为公开文档、发行资产和源码入口检查，**不代表已在所有硬件上实测**。手册不填未经核实的最低功能版本；组件、动态 HDR、触觉等能力写明双方条件，具体发布情况以目标发行说明为准。后续更新先核实发行包与 UI，再改步骤、链接及验证日期。
 
+本轮内容复核覆盖全部 19 页手册及两篇历史技术文章，记录在 [`docs/maintenance/manual-audit.json`](docs/maintenance/manual-audit.json)。复核基线为 Foundation `2026.1011`、Android V+ `12.13.0`、PC V+ `6.5.0`；手势、长按和手柄快捷键还核对了 Android 正式版标签的实现／文案。已修正或补全主机音频控制来源、暂停／退出菜单、FEC 与手动码率、PyroWave 限制、Windows ARM64 获取方式及虚拟屏系统要求的适用范围。macOS Enhanced 的 README 仍写 RC4，而发行页已提供 `v1.3.9-rc.5`，本次架构和资产核对以发行页为准；版本名中的 RC 与 GitHub 的 Pre-release 标记分别记录，不相互推断。
+
 旧文档中的固定历史下载链接改为当前官方渠道；IddSampleDriver 与手动禁用驱动的说明改为 ZakoDisplay GUI 流程；“所有笔记本都要独显直连”“所有手柄都安装同一旧驱动”“所有设置必须全开”等绝对建议改为按症状定位。每篇手册保留相关项目参考链接，便于继续核对。
 
 测试会递归覆盖全部 Markdown 页面，检查四类导航、内部链接、章节锚点、嵌套目录 canonical、搜索索引、sitemap 和中英文首页的新手册入口。
@@ -100,7 +112,11 @@ Markdown 源文件保存在 `docs/`，文档首页为 `docs/index.md`。已有�
 ```
 home-sunshine/
 ├── docs/               # Markdown 文章与文档首页
-│   └── .vitepress/     # 文档配置、搜索与主题
+│   ├── .vitepress/     # 文档配置、搜索与主题
+│   ├── assets/
+│   │   ├── manual/    # 实机截图与来源记录
+│   │   └── branding/  # 太阳娘等品牌素材与来源记录
+│   └── maintenance/   # 手册内容核验记录
 ├── src/
 │   ├── App.vue          # 主应用组件
 │   ├── main.js          # 应用入口文件

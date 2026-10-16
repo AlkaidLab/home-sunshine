@@ -26,7 +26,8 @@
     "@vitejs/plugin-vue": "^6.0.10",
     "less": "^4.2.1",
     "vite": "^8.3.4",
-    "vitepress": "1.6.4"
+    "vitepress": "1.6.4",
+    "vitepress-theme-teek": "1.6.2"
   },
   "overrides": {
     "vue": "$vue",

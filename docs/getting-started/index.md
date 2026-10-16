@@ -8,6 +8,16 @@ description: 从安装 Foundation Sunshine 和 Moonlight 到 PIN 配对、连接
 
 这份手册以 Foundation Sunshine（基地版）和配套 Moonlight 客户端为主，按 2026 年 10 月 16 日的公开文档与发行信息核对。增强功能需要双方版本、系统和硬件共同支持；先完成普通局域网串流，再逐项开启。
 
+本轮正式版基线为 [Foundation Sunshine 2026.1011](https://github.com/AlkaidLab/foundation-sunshine/releases/tag/v2026.1011.150654.%E6%9D%82%E9%B1%BC)、[Android V+ 12.13.0](https://github.com/qiin2333/moonlight-vplus/releases/tag/v12.13.0) 和 [PC V+ 6.5.0](https://github.com/qiin2333/moonlight-qt/releases/tag/v6.5.0)。截图另行标明实机版本，测试版中的布局不代表正式包完全一致；下载时仍从正式发行入口选择目标版本。
+
+<ManualDiagram kind="streaming" />
+
+<SunshineTip title="太阳娘的隐藏手势：三指唤出键盘">
+  <p>Android V+ 使用触控板模式串流时，三根手指快速轻点画面即可切换屏幕键盘，输入搜索词或游戏名称时很方便。双指轻点则可发送鼠标右键。</p>
+  <p>直接触控、分区触控或正在编辑屏幕按键时，手势路径可能不同；需要时使用串流菜单中的“屏幕键盘”。</p>
+  <a class="tip-source" href="https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/java/com/limelight/TouchInputHandler.kt">查看正式版手势实现 ↗</a>
+</SunshineTip>
+
 ## 1. 准备两台设备
 
 - 一台已登录 Windows、能正常运行游戏的电脑，安装 Sunshine。
@@ -25,6 +35,13 @@ description: 从安装 Foundation Sunshine 和 Moonlight 到 PIN 配对、连接
 3. 从 Windows 快捷方式打开 Foundation Sunshine 桌面控制面板，按新手向导选择语言、显卡和要串流的显示器。
 4. 确认服务正常运行，所选显示器可用。需要补装驱动时使用桌面 GUI 的基地显示器设置或设备中心。
 
+<figure class="manual-figure">
+  <ScreenshotFocus :source-width="1280" :regions="[[210, 190, 855, 280]]">
+  <img src="../assets/manual/sunshine-setup-gpu.png" alt="Foundation Sunshine 首次设置向导的选择显卡步骤，显卡适配器默认显示自动，下方有下一步按钮" width="1280" height="800" loading="lazy" />
+  </ScreenshotFocus>
+  <figcaption>首次设置向导 · 显卡选择区域。取自本机 Foundation Sunshine 2026.1015.51059；向导在独立浏览器中重放，未保存配置。首次可保留“自动”；点击可查看完整向导。</figcaption>
+</figure>
+
 桌面控制面板是主要管理入口。可选的浏览器 WebUI 地址是主机上的 `https://localhost:47990`；它用于管理 Sunshine，不能用来观看远程桌面。首次 WebUI 登录与证书提示见[服务端安装](../server/index.md#使用浏览器管理)。
 
 ## 3. 安装客户端
@@ -33,10 +50,25 @@ description: 从安装 Foundation Sunshine 和 Moonlight 到 PIN 配对、连接
 
 ## 4. 添加主机并输入 PIN
 
+<ManualDiagram kind="pairing" />
+
 1. 打开 Moonlight，等待主机出现在列表中，然后选择它。
 2. 客户端显示 PIN 配对码后，在主机的 Sunshine 管理界面打开 **PIN 码** 页面。
 3. 输入本次 PIN 并发送；若界面要求设备名称，填一个方便区分的名字。
 4. 返回 Moonlight，确认主机已解锁，并能看到应用列表。
+
+<figure class="manual-figure manual-figure-compact">
+  <ScreenshotFocus :source-width="1108" :regions="[[315, 0, 480, 220]]">
+  <img src="../assets/manual/sunshine-pin.png" alt="Sunshine 实机 PIN 配对表单，包含 PIN 码、设备名称两个空白输入框和发送按钮" width="1108" height="319" loading="lazy" />
+  </ScreenshotFocus>
+  <figcaption>主机端 PIN 与设备名称输入区，取自同一版本实机 WebUI。桌面控制面板的“客户端配对”也使用这张表单；输入 Moonlight 本次显示的码。仅为自己掌控的客户端配对，它将获得控制电脑的权限。</figcaption>
+</figure>
+
+<SunshineTip title="太阳娘的进阶入口：给不同设备分别校准 HDR">
+  <p>配对不只是解锁连接。Sunshine 的配对设备设置还可为每台设备配置 HDR 亮度：手机和平板可各用自己的参数，优先采用客户端上报亮度，再按需校准或绑定颜色配置文件。</p>
+  <p>先按下文完成 SDR 串流；需要 HDR 时再看<a href="../server/video.html#开启-hdr">配置步骤</a>。换一台屏幕后不要直接复用另一台设备的峰值亮度。</p>
+  <a class="tip-source" href="https://github.com/AlkaidLab/foundation-sunshine/blob/master/docs/zh-CN/features.md#hdr-与色彩">查看设备独立配置说明 ↗</a>
+</SunshineTip>
 
 如果自动发现失败，在主机按 `Win + R`，输入 `cmd`，运行：
 
@@ -77,6 +109,8 @@ ipconfig
 ## 7. 结束连接，再开始调优
 
 先保存游戏进度，再使用客户端的断开连接入口退出串流。**断开连接不一定会退出正在运行的游戏**；需要关游戏时，先在游戏内退出，或明确使用客户端提供的结束应用操作。
+
+Android V+ 12.13 的菜单使用“暂停串流”和“退出串流”两个名称，其中“退出”的行为还能单独配置，详见[串流菜单与退出](../clients/android.md#串流菜单与退出)。
 
 使用虚拟屏或熄屏策略时，确认连接结束后的 Windows 显示布局符合预期。仍有其他串流会话时，显示器可能继续为它们保留。
 

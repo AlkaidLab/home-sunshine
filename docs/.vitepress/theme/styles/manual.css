@@ -1,0 +1,220 @@
+/* Task diagrams remain readable in both palettes, without implying a software UI. */
+.vp-doc .manual-diagram {
+  margin: 26px 0;
+  padding: 22px;
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--docs-border);
+  border-radius: 14px;
+}
+.vp-doc .manual-diagram-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--vp-c-text-1);
+}
+.vp-doc .manual-diagram-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  padding: 0;
+  margin: 18px 0;
+  list-style: none;
+}
+.vp-doc .manual-diagram-steps li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0;
+  padding: 16px;
+  background: var(--docs-surface);
+  border: 1px solid var(--docs-border);
+  border-radius: 10px;
+}
+.vp-doc .manual-diagram-steps li + li::before {
+  content: '→';
+  position: absolute;
+  left: -21px;
+  top: 20px;
+  color: var(--vp-c-brand-1);
+}
+.vp-doc .diagram-streaming .manual-diagram-steps li + li::before {
+  content: '⇄';
+}
+.vp-doc .diagram-display .manual-diagram-steps li + li::before {
+  content: none;
+}
+.vp-doc .manual-diagram-steps svg {
+  width: 23px;
+  height: 23px;
+  margin-bottom: 14px;
+  color: var(--vp-c-brand-1);
+}
+.vp-doc .manual-diagram-steps .diagram-label {
+  font-size: 10px;
+  color: var(--vp-c-brand-1);
+  letter-spacing: 0.02em;
+}
+.vp-doc .manual-diagram-steps strong {
+  font-size: 13px;
+  line-height: 1.7;
+  margin: 4px 0;
+}
+.vp-doc .manual-diagram-steps p {
+  margin: 0;
+  color: var(--vp-c-text-2);
+  font-size: 12px;
+  line-height: 1.8;
+}
+.vp-doc .manual-diagram figcaption,
+.vp-doc .manual-figure figcaption {
+  color: var(--vp-c-text-2);
+  font-size: 12px;
+  line-height: 1.85;
+}
+.vp-doc .manual-figure {
+  margin: 26px 0;
+  padding: 12px;
+  border: 1px solid var(--docs-border);
+  border-radius: 14px;
+  background: var(--docs-surface);
+}
+.vp-doc .manual-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+.vp-doc .manual-figure figcaption {
+  padding: 12px 4px 2px;
+}
+.vp-doc .manual-figure-compact {
+  max-width: 504px;
+  margin-right: auto;
+  margin-left: auto;
+}
+.manual-focus-gallery {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.vp-doc .manual-focus-gallery .manual-figure {
+  min-width: 0;
+  margin: 12px 0;
+}
+.screenshot-focus {
+  display: grid;
+  gap: 12px;
+}
+.screenshot-focus-region {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+}
+.vp-doc .manual-figure .screenshot-focus-region > img {
+  position: absolute;
+  top: var(--focus-top);
+  left: var(--focus-left);
+  width: var(--focus-width);
+  max-width: none;
+  height: auto;
+  margin: 0;
+  border-radius: 0;
+}
+@media (max-width: 640px) {
+  .vp-doc .manual-diagram {
+    padding: 18px;
+  }
+  .vp-doc .manual-diagram-steps {
+    grid-template-columns: 1fr;
+  }
+  .vp-doc .manual-diagram-steps li {
+    padding: 16px;
+  }
+  .vp-doc .manual-diagram-steps svg {
+    margin-bottom: 8px;
+  }
+  .vp-doc .manual-diagram-steps li + li::before {
+    content: '↓';
+    top: -25px;
+    left: calc(50% - 6px);
+  }
+  .vp-doc .diagram-streaming .manual-diagram-steps li + li::before {
+    content: '⇅';
+  }
+  .vp-doc .diagram-display .manual-diagram-steps li + li::before {
+    content: none;
+  }
+}
+
+/* Sunshine's original mascot appears as a guide, with readable technical copy. */
+.hero-sunshine-girl {
+  position: absolute;
+  right: 14px;
+  bottom: -7px;
+  width: 156px;
+  height: 156px;
+  object-fit: contain;
+  filter: drop-shadow(0 5px 5px #263c3020);
+}
+.reading-help .reading-mascot {
+  width: 58px;
+  height: 58px;
+  margin: -4px 0 4px;
+  object-fit: contain;
+}
+.vp-doc .sunshine-tip {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 22px;
+  margin: 26px 0;
+  border: 1px solid var(--docs-border);
+  border-radius: 14px;
+  background: var(--vp-c-bg-soft);
+}
+.vp-doc .sunshine-tip > img {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.vp-doc .sunshine-tip-title {
+  color: var(--vp-c-brand-1);
+  font-size: 13px;
+  font-weight: 650;
+  margin: 0 0 5px;
+}
+.vp-doc .sunshine-tip-body {
+  color: var(--vp-c-text-2);
+  font-size: 13px;
+  line-height: 1.85;
+}
+.vp-doc .sunshine-tip-body p {
+  margin: 0;
+}
+.vp-doc .sunshine-tip-body p + p {
+  margin-top: 8px;
+}
+.vp-doc .sunshine-tip-body .tip-source {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 12px;
+}
+@media (max-width: 767px) {
+  .hero-sunshine-girl {
+    width: 112px;
+    height: 112px;
+    right: 7px;
+  }
+  .vp-doc .sunshine-tip {
+    align-items: flex-start;
+    padding: 16px;
+    gap: 12px;
+  }
+  .vp-doc .sunshine-tip > img {
+    width: 48px;
+    height: 48px;
+  }
+}

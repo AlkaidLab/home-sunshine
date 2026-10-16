@@ -18,6 +18,19 @@ description: 按两端能力选择 H.264、HEVC 和 AV1，配置捕获方式、H
 
 客户端控制分辨率、帧率和码率；服务端负责捕获与编码。首次保留自动选择，只有确认选错 GPU 或编码器时再指定。
 
+<figure class="manual-figure">
+  <ScreenshotFocus :source-width="1280" :regions="[[315, 124, 886, 126]]">
+  <img src="../assets/manual/sunshine-stream-settings.jpg" alt="Sunshine 实机串流设置中的最大比特率区域，数值 0 表示采用客户端请求值" width="1280" height="800" loading="lazy" />
+  </ScreenshotFocus>
+  <figcaption>服务端实机路径：“串流设置”→“音频/视频”。图中“最大比特率”0 表示采用客户端请求值；它不是客户端的分辨率、帧率和码率设置页。取自本机 2026.1015.51059，截图保留当时现值，没有保存更改。</figcaption>
+</figure>
+
+<SunshineTip title="太阳娘的遥控技巧：串流里调用超级指令">
+  <p>在 Foundation Sunshine 事先配置好远端命令后，Android V+ 可从“串流菜单 → 超级指令”调用，适合把常用的主机操作做成固定入口。列表为空时先检查主机端配置。</p>
+  <p>若只是网络突然变差，直接用同一菜单里的“调整码率”降低码率后观察，省去返回设置页的步骤；其他参数是否需要重连，以当前客户端提示为准。</p>
+  <a class="tip-source" href="https://github.com/qiin2333/moonlight-vplus/blob/799f50d6e7bd288cd69fe6df2081c9d9502c45b4/docs/VPLUS_FEATURES.md#串流时控制-foundation-sunshine">查看串流菜单功能说明 ↗</a>
+</SunshineTip>
+
 ## 捕获方式
 
 正常使用先保持默认设置。需要更改时，按目标选择并查看日志确认实际路径：
@@ -52,9 +65,12 @@ RTX HDR、DLSS NR、客户端超分和帧生成会引入额外处理与兼容条
 
 RTX HDR 用于将 SDR 内容转换为 HDR，不用于重复处理已有原生 HDR / HLG 输入。出现异常时先关掉新增处理，回到普通路径。实验性编码路径也应在普通串流正常后再尝试。
 
+**Android V+ 12.13.0 的 PyroWave 限制：**该版新增 Vulkan 解码与 HDR 呈现，但发行说明明确表示暂不支持 HDR10+／Dolby Vision 等动态 HDR 元数据，也不支持帧生成。不要把其他解码路径的功能直接套到 PyroWave；需要这些功能时，回到当前客户端明确支持它们的普通路径，并核对实际输出格式。后续版本按各自发行说明复核。
+
 调优方法见[画质设置与性能统计](../clients/settings.md)。
 
 ## 参考
 
 - [Foundation Sunshine：画面、捕获与编码](https://github.com/AlkaidLab/foundation-sunshine/blob/master/docs/zh-CN/features.md)
 - [Moonlight V+ for PC：格式与硬件能力](https://github.com/qiin2333/moonlight-qt#画质与性能)
+- [Android V+ 12.13.0：PyroWave 已知限制](https://github.com/qiin2333/moonlight-vplus/releases/tag/v12.13.0)

@@ -13,6 +13,7 @@ export default defineConfig({
   cleanUrls: false,
   outDir: resolve(import.meta.dirname, '../../dist/docs'),
   appearance: { initialValue: 'light' },
+  vite: { ssr: { noExternal: ['vitepress-theme-teek'] } },
   head: [
     ['script', { id: 'sync-site-theme' }, `try {
       const theme = localStorage.getItem('theme')
@@ -45,6 +46,23 @@ export default defineConfig({
   },
   sitemap: { hostname: `${SITE_URL}/docs/` },
   themeConfig: {
+    teekHome: false,
+    pageStyle: 'default',
+    themeEnhance: { enabled: false },
+    windowTransition: false,
+    viewTransition: { enabled: false },
+    anchorScroll: false,
+    breadcrumb: { enabled: false },
+    articleAnalyze: { showInfo: false },
+    articleUpdate: { enabled: false },
+    codeBlock: { enabled: true },
+    backTop: { enabled: true },
+    toComment: { enabled: false },
+    footerInfo: {
+      theme: { name: 'Teek · 瑶光定制' },
+      copyright: { show: false },
+      bottomMessage: '瑶光流梦 · AlkaidLab',
+    },
     siteTitle: '瑶光流梦 · 文档',
     nav: [
       { text: '文档中心', link: '/' },
@@ -101,6 +119,5 @@ export default defineConfig({
       linkLabel: '返回文档中心',
       linkText: '返回文档中心',
     },
-    footer: { message: '瑶光流梦 · AlkaidLab' },
   },
 })
