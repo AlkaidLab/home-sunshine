@@ -110,11 +110,11 @@ Markdown 源文件保存在 `docs/`，文档首页为 `docs/index.md`。已有�
 
 ### 使用手册的来源与维护
 
-新版手册于 **2026-10-16** 重新编写，首页的使用手册入口指向 `/docs/getting-started/`。按四类任务维护，共 19 页：
+新版手册于 **2026-10-16** 重新编写，首页的使用手册入口指向 `/docs/getting-started/`，特色功能总入口为 `/docs/getting-started/features.html`。按四类任务维护，共 28 页：
 
-- `docs/getting-started/`：第一次串流、系统与网络准备。
-- `docs/server/`：安装更新、应用、显示器、画质、音频输入与远程网络。
-- `docs/clients/`：客户端选择、各平台安装与画质统计。
+- `docs/getting-started/`：第一次串流、系统与网络准备、功能与平台支持导航。
+- `docs/server/`：安装更新、应用、显示器、HDR 校准、捕获与画质增强、音频输入、剪贴板／文件／USB、自动化、可选集成与远程网络。
+- `docs/clients/`：客户端选择、各平台安装、王冠、手柄与高级触觉、画质统计、实验视频与帧生成。
 - `docs/troubleshooting/`：连接、黑屏／503、性能、音频输入及日志反馈。
 
 已阅读[旧腾讯文档入口](https://docs.qq.com/aio/DSGdQc3htbFJjSFdO?p=YTpMj5JNNdB5hEKJhhqlSB)、其中的《Sunshine基地版使用手册初版》和《丸子君的新基地尊享版教程》主页面。它们用于确认迁移主题；旧截图、附属视频、历史网盘和安装命令未原样搬运。感谢旧版教程与社区资料的贡献者。
@@ -130,7 +130,9 @@ Markdown 源文件保存在 `docs/`，文档首页为 `docs/index.md`。已有�
 
 核验方式为公开文档、发行资产和源码入口检查，**不代表已在所有硬件上实测**。手册不填未经核实的最低功能版本；组件、动态 HDR、触觉等能力写明双方条件，具体发布情况以目标发行说明为准。后续更新先核实发行包与 UI，再改步骤、链接及验证日期。
 
-本轮内容复核覆盖全部 19 页手册及两篇历史技术文章，记录在 [`docs/maintenance/manual-audit.json`](docs/maintenance/manual-audit.json)。复核基线为 Foundation `2026.1011`、Android V+ `12.13.0`、PC V+ `6.5.0`；手势、长按和手柄快捷键还核对了 Android 正式版标签的实现／文案。已修正或补全主机音频控制来源、暂停／退出菜单、FEC 与手动码率、PyroWave 限制、Windows ARM64 获取方式及虚拟屏系统要求的适用范围。macOS Enhanced 的 README 仍写 RC4，而发行页已提供 `v1.3.9-rc.5`，本次架构和资产核对以发行页为准；版本名中的 RC 与 GitHub 的 Pre-release 标记分别记录，不相互推断。
+本轮内容复核覆盖全部 28 页手册及两篇历史技术文章，记录在 [`docs/maintenance/manual-audit.json`](docs/maintenance/manual-audit.json)。复核基线为 Foundation `2026.1011`、Android V+ `12.13.0`、PC V+ `6.5.0`；手势、长按和手柄快捷键还核对了 Android 正式版标签的实现／文案。已修正或补全主机音频控制来源、暂停／退出菜单、FEC 与手动码率、PyroWave 限制、Windows ARM64 获取方式及虚拟屏系统要求的适用范围。macOS Enhanced 的 README 仍写 RC4，而发行页已提供 `v1.3.9-rc.5`，本次架构和资产核对以发行页为准；版本名中的 RC 与 GitHub 的 Pre-release 标记分别记录，不相互推断。
+
+特色功能扩编另核对 Foundation 的 `04d9188` 与其固定 GUI 子模块 `6b5b810`，以及 Android `v12.13.0`、PC `v6.5.0`。9 个新页面包含开启、验证及回退流程；平台表区分已记录、实验性、待核实与明确不支持的路径。文件共享按当前 GUI 的只读范围描述；Android USB 转发与手动 USB/IP 的释放行为分别说明。原来只存在于太阳娘提示中的亮度校准、显示记录、超级指令、渲染比例、触控手势和手柄快捷键已进入正式章节，提示仅保留补充与教程链接。
 
 旧文档中的固定历史下载链接改为当前官方渠道；IddSampleDriver 与手动禁用驱动的说明改为 ZakoDisplay GUI 流程；“所有笔记本都要独显直连”“所有手柄都安装同一旧驱动”“所有设置必须全开”等绝对建议改为按症状定位。每篇手册保留相关项目参考链接，便于继续核对。
 

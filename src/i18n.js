@@ -132,30 +132,31 @@ export const translations = {
     },
     features: {
       title: '核心特性',
+      guideLink: '查看功能教程与平台支持 →',
       items: [
         {
-          title: 'HDR友好支持',
-          description: '经过优化的HDR处理管线，提供真正的HDR游戏流媒体体验'
+          title: 'HDR 与分设备校准',
+          description: '按客户端配置亮度与色彩，配合兼容设备探索动态 HDR'
         },
         {
           title: '虚拟显示器',
-          description: '内置虚拟显示器管理，无需额外软件即可创建和管理虚拟显示器'
+          description: '通过 ZakoDisplay 管理无头、熄屏和副屏串流，按设备调整显示配置'
         },
         {
           title: '远程麦克风',
-          description: '支持接收客户端麦克风，提供高音质的语音直通功能'
+          description: '将兼容客户端的麦克风传回主机，用于游戏语音和桌面通话'
         },
         {
-          title: '低延迟传输',
-          description: '结合最新硬件能力优化的编码处理，提供流畅的游戏体验'
+          title: '画质与网络调优',
+          description: '配合硬件捕获与编码，使用自适应码率、丢包保护和性能统计调整体验'
         },
         {
-          title: '高级控制面板',
-          description: '直观的Web控制界面，提供实时监控和配置管理'
+          title: '桌面控制面板',
+          description: '集中管理组件、游戏库、运行状态与诊断，保留 WebUI 配置入口'
         },
         {
-          title: '智能配对',
-          description: '智能管理配对设备的对应配置文件'
+          title: '输入与桌面协作',
+          description: '搭配 V+ 使用王冠、兼容手柄反馈、剪贴板和按授权开放的主机文件'
         }
       ]
     },
@@ -387,30 +388,31 @@ export const translations = {
     },
     features: {
       title: 'Core Features',
+      guideLink: 'Feature tutorials and platform support (Chinese) →',
       items: [
         {
-          title: 'HDR-Friendly Support',
-          description: 'Optimized HDR processing pipeline for true HDR game streaming experience'
+          title: 'HDR and Per-Device Calibration',
+          description: 'Tune brightness and color per client, with dynamic HDR on compatible paths'
         },
         {
           title: 'Virtual Display',
-          description: 'Built-in virtual display management without additional software'
+          description: 'Use ZakoDisplay for headless, screen-off and extended-display streaming'
         },
         {
           title: 'Remote Microphone',
-          description: 'Support client microphone with high-quality voice passthrough'
+          description: 'Send microphone audio from compatible clients to host games and desktop apps'
         },
         {
-          title: 'Low Latency',
-          description: 'Optimized encoding with latest hardware capabilities for smooth gaming'
+          title: 'Quality and Network Controls',
+          description: 'Combine hardware capture and encoding with adaptive bitrate, FEC and performance metrics'
         },
         {
-          title: 'Advanced Control Panel',
-          description: 'Intuitive web interface with real-time monitoring and configuration'
+          title: 'Desktop Control Panel',
+          description: 'Manage components, games, runtime status and diagnostics, with WebUI configuration available'
         },
         {
-          title: 'Smart Pairing',
-          description: 'Intelligently manage configuration files for paired devices'
+          title: 'Input and Desktop Collaboration',
+          description: 'Use V+ Crown layouts, compatible controller feedback, clipboard and authorized host files'
         }
       ]
     },

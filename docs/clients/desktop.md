@@ -58,6 +58,8 @@ PC V+ 的悬浮菜单可按版本提供全屏、性能统计、鼠标、麦克�
 
 剪贴板、主机文件映射、麦克风和显示控制需要兼容的 Foundation Sunshine。只授权确实需要的目录或设备，并确认服务端相应功能已开启。
 
+文字／图片双向测试、主机只读文件夹共享和撤销步骤见[桌面协作教程](../server/collaboration.md)。远程显示配置见[虚拟显示器](../server/display.md)，支持的增强范围见[功能与平台支持](../getting-started/features.md)。
+
 ## 参考
 
 - [Moonlight V+ for PC：下载与兼容性](https://github.com/qiin2333/moonlight-qt#下载)

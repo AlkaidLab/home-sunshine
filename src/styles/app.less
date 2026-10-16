@@ -611,15 +611,24 @@
   .nav-center { order: 3; width: 100%; flex-wrap: wrap; justify-content: center; }
 }
 
-.features-grid {
+.features-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  margin: -1.25rem 0 2rem;
+  text-align: center;
 
-  .features-meta {
-    margin: -1.25rem 0 2rem;
-    text-align: center;
-
-    .hero-note { margin-top: 0.6rem; }
+  .hero-note { margin: 0; }
+  .feature-guide-link {
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    text-decoration: underline;
+    text-underline-offset: 4px;
   }
+}
 
+.features-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;

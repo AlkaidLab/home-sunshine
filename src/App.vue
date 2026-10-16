@@ -664,6 +664,7 @@ const closeEggRoom = () => {
         </div>
         <div class="features-meta">
           <small class="hero-note">{{ t.hero.note }}</small>
+          <a class="feature-guide-link" href="/docs/getting-started/features.html">{{ t.features.guideLink }}</a>
         </div>
         <div class="features-grid">
           <div

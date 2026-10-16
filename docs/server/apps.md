@@ -44,6 +44,8 @@ Moonlight 中显示的应用来自 Sunshine 的应用列表。先通过 Desktop 
 
 高级的启动前后命令应在普通应用启动正常后再添加。每次只加一项，并测试断开、结束应用和异常退出时是否都能正确恢复。
 
+配置 **准备命令**、**菜单命令／超级指令**，以及测试多客户端退出行为，见[超级指令与会话自动化](./automation.md)。单应用的 RTX HDR 与 DLSS NR 默认行为见[画质增强](./enhancements.md)。
+
 ## 参考
 
 - [Foundation Sunshine：添加游戏与应用](https://github.com/AlkaidLab/foundation-sunshine#6-添加游戏或应用可选)

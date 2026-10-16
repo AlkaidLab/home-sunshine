@@ -56,11 +56,16 @@ description: 使用 ZakoDisplay 基地虚拟显示器配置无头主机、熄屏
   <figcaption>实机路径：“虚拟显示器”→“显示能力”，分别截取分辨率和刷新率预置。这里维护虚拟屏向 Windows 声明的能力；实际串流目标仍在客户端设置。截图保留本机现值，点击可看完整页面。</figcaption>
 </figure>
 
-<SunshineTip title="太阳娘的省步骤技巧：复用每个游戏的启动配置">
-  <p>新版 Android V+ 可在应用列表的显示器选择中指定基地虚拟屏，配合屏幕组合策略启动。已有该游戏的启动记录后，长按应用，选择“使用上一次设置启动”，即可复用已记录的配置。</p>
-  <p>该长按项仅在已有记录时出现；主机仍需支持虚拟屏且驱动可用。连接后先确认选中的屏幕和布局，手机、平板分别调好各自的显示配置。</p>
-  <a class="tip-source" href="https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/java/com/limelight/AppView.kt#L1520-L1570">查看正式版长按菜单实现 ↗</a>
-</SunshineTip>
+## 按设备和游戏复用显示设置 {#saved-display}
+
+1. Android V+ 12.13.0 在应用列表提供主机显示器与屏幕组合选择。选中要启动的应用，指定基地虚拟屏及所需策略，再开始串流。
+2. 在 Windows 显示设置中验证屏幕、主屏和长宽比；结束串流后检查恢复。
+3. 已有该游戏的启动记录后，长按应用选择 **使用上一次设置启动**，复用已记录配置；无记录时不会出现该菜单项。
+4. 手机和平板分别校对自己的请求，不要把一台设备的显示策略当成所有客户端的统一设置。
+
+更换显示器或修改主机拓扑后，重新进入选择流程更新记录。错误配置可重新选定物理屏／自动策略再启动；不需要删除整个配对。功能依据见[同版应用长按菜单实现](https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/java/com/limelight/AppView.kt#L1520-L1570)。
+
+主机渲染尺寸与传输尺寸可分别控制，见[渲染分辨率比例](../clients/settings.md#render-resolution)；每台设备的亮度与色彩配置见[HDR 校准](./hdr.md#per-device)。
 
 ## 验证连接和恢复
 

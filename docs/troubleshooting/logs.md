@@ -56,6 +56,10 @@ Sunshine：版本、正式版/测试版、安装版/便携版
 
 不确定归属时，先完整说明两端信息和对照结果，不必提前猜测根因。
 
+## 可选：使用 AI 日志诊断
+
+桌面 GUI 提供模型配置和日志分析辅助，步骤见[AI 日志诊断](../server/integrations.md#ai-diagnosis)。先保留原始日志和复现时间，再核对模型建议；它不替代实际验证，也不是提交问题的前提。
+
 ## 参考
 
 - [Foundation Sunshine：FAQ 与反馈](https://github.com/AlkaidLab/foundation-sunshine/blob/master/docs/zh-CN/faq.md)

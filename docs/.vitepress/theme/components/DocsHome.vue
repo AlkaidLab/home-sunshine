@@ -8,7 +8,7 @@ const guides = [
     name: 'play',
     tag: '快速开始',
     title: '第一次串流，从这里开始',
-    text: '准备设备、安装和 PIN 配对，让画面、声音与操作顺利连接。',
+    text: '准备设备、安装和 PIN 配对，再按功能与平台支持导航探索进阶用法。',
     link: '/getting-started/',
     foot: '跟着步骤，完成连接',
   },
@@ -16,7 +16,7 @@ const guides = [
     name: 'server',
     tag: '服务端',
     title: '准备好你的游戏电脑',
-    text: '安装 Sunshine，配置游戏库、虚拟显示器、音频和远程网络。',
+    text: '配置虚拟显示器、HDR、画质增强、文件共享与会话自动化。',
     link: '/server/',
     foot: 'Sunshine 配置指南',
   },
@@ -24,7 +24,7 @@ const guides = [
     name: 'devices',
     tag: '客户端',
     title: '找到适合你的游玩方式',
-    text: '在手机、平板、电视或电脑上，选择客户端并调整串流画质。',
+    text: '选择客户端，调整画质，使用王冠、手柄与兼容的增强功能。',
     link: '/clients/',
     foot: 'Moonlight 设备指南',
   },
@@ -38,8 +38,9 @@ const guides = [
   },
 ]
 const topics = [
+  ['功能与平台支持', '/getting-started/features.html'],
   ['虚拟显示器', '/server/display.html'],
-  ['画质与 HDR', '/clients/settings.html'],
+  ['HDR 与校准', '/server/hdr.html'],
   ['外网访问', '/server/network.html'],
   ['连接与配对', '/troubleshooting/connection.html'],
 ]

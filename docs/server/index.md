@@ -25,6 +25,8 @@ Foundation Sunshine（基地版）安装在运行游戏和应用的 Windows 电�
 | 设备中心 | 检查或安装手柄、麦克风等组件 |
 | 应用管理 | 添加、扫描和编辑游戏与应用 |
 | 运行与诊断 | 查看服务状态、当前连接、日志和更新 |
+| 配套增强 | [HDR 与校准](./hdr.md)、[画质增强](./enhancements.md)、[文件与 USB](./collaboration.md) |
+| 自动化与集成 | [超级指令和事件通知](./automation.md)、[AI 与 Web 串流](./integrations.md) |
 
 不同发行版的入口位置可能调整，以安装版本的页面名称为准。驱动安装、本地游戏库扫描等系统操作在 Windows 桌面 GUI 中完成；浏览器管理页不能代替所有本地操作。
 

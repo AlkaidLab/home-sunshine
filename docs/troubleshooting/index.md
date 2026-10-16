@@ -5,9 +5,7 @@ description: 从找不到主机、PIN 失败、503、黑屏、卡顿、无声音
 # 按症状查找问题
 
 <SunshineTip title="太阳娘的手柄暗号：快速切换性能统计">
-  <p>Android V+ 的手柄快捷键可用 <strong>Select + L1/LB + R1/RB + X</strong> 切换性能显示。支持“长按 Start 操作轮盘”的版本，还能长按 Start 调出轮盘，再点按十字键上打开串流菜单。</p>
-  <p>先在客户端设置的“手柄快捷键测试”中验证当前设备与输入路径；长按 Start 功能需要开启。不确定按键映射时，直接从串流菜单打开统计。</p>
-  <a class="tip-source" href="https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/res/values-zh-rCN/strings.xml#L313-L376">查看正式版快捷键与测试入口 ↗</a>
+  <p>先在客户端测试按键映射，再使用游戏内快捷操作。组合键、操作轮盘和适用条件见<a href="../clients/controllers.html#shortcuts">手柄快捷操作</a>。</p>
 </SunshineTip>
 
 先描述“在哪一步、发生了什么”，再改设置。安装、发现主机、PIN 配对、启动应用和持续串流是不同阶段，解决方法也不同。

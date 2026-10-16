@@ -1,6 +1,6 @@
 {
   "checkedOn": "2026-10-16",
-  "method": "Reviewed all 19 manual pages against official releases, pinned project documents, release-tag UI strings and relevant implementations. Checked the two technical articles for historical scope. This is a source/content review, not a claim of hardware testing on every platform.",
+  "method": "Reviewed all 28 manual pages against official releases, pinned project documents, release-tag UI strings and implementations. Added source-backed feature tutorials and platform support scope. Checked the two technical articles for historical scope. This is a source/content review, not hardware certification across all platforms.",
   "baselines": [
     {
       "project": "Foundation Sunshine",
@@ -50,6 +50,10 @@
       "section": "快速开始"
     },
     {
+      "page": "docs/getting-started/features.md",
+      "section": "快速开始"
+    },
+    {
       "page": "docs/server/index.md",
       "section": "服务端"
     },
@@ -66,7 +70,27 @@
       "section": "服务端"
     },
     {
+      "page": "docs/server/hdr.md",
+      "section": "服务端"
+    },
+    {
+      "page": "docs/server/enhancements.md",
+      "section": "服务端"
+    },
+    {
       "page": "docs/server/audio-input.md",
+      "section": "服务端"
+    },
+    {
+      "page": "docs/server/collaboration.md",
+      "section": "服务端"
+    },
+    {
+      "page": "docs/server/automation.md",
+      "section": "服务端"
+    },
+    {
+      "page": "docs/server/integrations.md",
       "section": "服务端"
     },
     {
@@ -82,6 +106,14 @@
       "section": "客户端"
     },
     {
+      "page": "docs/clients/crown.md",
+      "section": "客户端"
+    },
+    {
+      "page": "docs/clients/controllers.md",
+      "section": "客户端"
+    },
+    {
       "page": "docs/clients/desktop.md",
       "section": "客户端"
     },
@@ -91,6 +123,10 @@
     },
     {
       "page": "docs/clients/settings.md",
+      "section": "客户端"
+    },
+    {
+      "page": "docs/clients/advanced-video.md",
       "section": "客户端"
     },
     {
@@ -192,5 +228,60 @@
     "The screenshot builds are Foundation 2026.1015.51059 / GUI 0.5.8 and Android 12.12.13.beta.6, separately labelled in captions and docs/assets/manual/sources.json. They are not relabelled as the formal-release baseline.",
     "No earliest support version is invented where the official compatibility matrix still marks it unverified.",
     "Platform, codec, HDR, input and hardware-specific capabilities still require validation on the target devices and release combination."
-  ]
+  ],
+  "featureExpansion": {
+    "checkedOn": "2026-10-16",
+    "foundationCommit": "04d9188a5da6985e6d2423040e8ded903d7f0365",
+    "guiSubmoduleCommit": "6b5b810722fc589558a82d7aa0f5b3b087e540ea",
+    "androidTag": "v12.13.0",
+    "pcTag": "v6.5.0",
+    "newPages": [
+      "docs/getting-started/features.md",
+      "docs/server/hdr.md",
+      "docs/server/enhancements.md",
+      "docs/server/collaboration.md",
+      "docs/server/automation.md",
+      "docs/server/integrations.md",
+      "docs/clients/crown.md",
+      "docs/clients/controllers.md",
+      "docs/clients/advanced-video.md"
+    ],
+    "sourceDetails": [
+      {
+        "scope": "HDR brightness modes, ICC override and QR pairing",
+        "source": "https://github.com/AlkaidLab/foundation-sunshine/blob/04d9188a5da6985e6d2423040e8ded903d7f0365/src_assets/common/assets/web/views/Pin.vue"
+      },
+      {
+        "scope": "Application preparation and menu commands",
+        "source": "https://github.com/AlkaidLab/foundation-sunshine/blob/04d9188a5da6985e6d2423040e8ded903d7f0365/src_assets/common/assets/web/components/AppEditor.vue"
+      },
+      {
+        "scope": "Read-only folder sharing, USB transport, HD Haptics, AI and Web streaming labels",
+        "source": "https://github.com/qiin2333/sunshine-control-panel/blob/6b5b810722fc589558a82d7aa0f5b3b087e540ea/src/renderer/desktop/i18n/zh.js"
+      },
+      {
+        "scope": "Enhancement permission, application defaults and live control",
+        "source": "https://github.com/qiin2333/sunshine-control-panel/blob/6b5b810722fc589558a82d7aa0f5b3b087e540ea/src/renderer/composables/enhancementControls.js"
+      },
+      {
+        "scope": "Android experimental USB sharing, architecture limits and release behavior",
+        "source": "https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/res/values-zh/usb_forwarding.xml"
+      },
+      {
+        "scope": "Crown, clipboard directions, shortcuts, developer unlock, PyroWave diagnostics and frame generation",
+        "source": "https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/res/values-zh-rCN/strings.xml"
+      },
+      {
+        "scope": "Webhook config file, events, URL and TLS behavior",
+        "source": "https://github.com/AlkaidLab/foundation-sunshine/blob/04d9188a5da6985e6d2423040e8ded903d7f0365/docs/webhook_format.md"
+      }
+    ],
+    "notes": [
+      "Support labels distinguish documented capabilities, experimental behavior, unverified platforms and explicit path exclusions. No earliest release or universal platform support is inferred.",
+      "Android image clipboard is documented client-to-host; PC PNG clipboard is documented bidirectional.",
+      "The inspected GUI creates read-only folder shares; no remote write/delete workflow is promised.",
+      "Android Moonlight USB sharing is experimental and restores local use at stream end by design; independent manual USB/IP mounts require explicit release.",
+      "Core steps formerly embedded in mascot tips now have ordinary headings and navigation links."
+    ]
+  }
 }

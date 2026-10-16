@@ -12,10 +12,10 @@ description: 从安装 Foundation Sunshine 和 Moonlight 到 PIN 配对、连接
 
 <ManualDiagram kind="streaming" />
 
+想先了解基地版与配套客户端能做什么，可查看[功能与平台支持](./features.md)。先完成本页的基础串流，再选择需要的增强功能。
+
 <SunshineTip title="太阳娘的隐藏手势：三指唤出键盘">
-  <p>Android V+ 使用触控板模式串流时，三根手指快速轻点画面即可切换屏幕键盘，输入搜索词或游戏名称时很方便。双指轻点则可发送鼠标右键。</p>
-  <p>直接触控、分区触控或正在编辑屏幕按键时，手势路径可能不同；需要时使用串流菜单中的“屏幕键盘”。</p>
-  <a class="tip-source" href="https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/java/com/limelight/TouchInputHandler.kt">查看正式版手势实现 ↗</a>
+  <p>先在记事本里测试触控与键盘，再进游戏配置布局。完整操作见<a href="../clients/crown.html#gestures">触控手势与本地键盘</a>。</p>
 </SunshineTip>
 
 ## 1. 准备两台设备
@@ -65,9 +65,7 @@ description: 从安装 Foundation Sunshine 和 Moonlight 到 PIN 配对、连接
 </figure>
 
 <SunshineTip title="太阳娘的进阶入口：给不同设备分别校准 HDR">
-  <p>配对不只是解锁连接。Sunshine 的配对设备设置还可为每台设备配置 HDR 亮度：手机和平板可各用自己的参数，优先采用客户端上报亮度，再按需校准或绑定颜色配置文件。</p>
-  <p>先按下文完成 SDR 串流；需要 HDR 时再看<a href="../server/video.html#开启-hdr">配置步骤</a>。换一台屏幕后不要直接复用另一台设备的峰值亮度。</p>
-  <a class="tip-source" href="https://github.com/AlkaidLab/foundation-sunshine/blob/master/docs/zh-CN/features.md#hdr-与色彩">查看设备独立配置说明 ↗</a>
+  <p>手机与电视分别调好自己的参数，换屏后再验证。完成普通串流后，可按<a href="../server/hdr.html#per-device">分设备 HDR 亮度教程</a>操作。</p>
 </SunshineTip>
 
 如果自动发现失败，在主机按 `Win + R`，输入 `cmd`，运行：

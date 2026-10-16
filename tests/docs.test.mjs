@@ -131,6 +131,19 @@ test('the deployed search index finds Chinese text and mixed Chinese/English ter
     ['Crown', 'clients/android.html'],
     ['503', 'troubleshooting/black-screen.html'],
     ['中继', 'server/network.html'],
+    ['平台支持', 'getting-started/features.html'],
+    ['ICC', 'server/hdr.html'],
+    ['DLSS NR', 'server/enhancements.html'],
+    ['只读', 'server/collaboration.html'],
+    ['USB 转发', 'server/collaboration.html'],
+    ['超级指令', 'server/automation.html'],
+    ['Webhook', 'server/automation.html'],
+    ['AI 日志诊断', 'server/integrations.html'],
+    ['Crown', 'clients/crown.html'],
+    ['HD Haptics', 'clients/controllers.html'],
+    ['PyroWave', 'clients/advanced-video.html'],
+    ['插帧引擎', 'clients/advanced-video.html'],
+    ['渲染尺寸', 'clients/settings.html'],
   ]) {
     const results = index.search(query)
     assert.ok(results.some(result => result.id.startsWith(`${pagePath(page)}#`)), query)
@@ -159,6 +172,7 @@ test('building docs preserves both prerendered homepages', async () => {
     assert.ok(html.includes(`data-prerendered data-lang="${lang}"`), page)
     assert.ok(html.includes('href="/docs/"'), page)
     assert.ok(html.includes('href="/docs/getting-started/"'), page)
+    assert.ok(html.includes('href="/docs/getting-started/features.html"'), page)
     assert.ok(!html.includes('docs.qq.com'), page)
   }
 })

@@ -26,9 +26,7 @@ description: 按两端能力选择 H.264、HEVC 和 AV1，配置捕获方式、H
 </figure>
 
 <SunshineTip title="太阳娘的遥控技巧：串流里调用超级指令">
-  <p>在 Foundation Sunshine 事先配置好远端命令后，Android V+ 可从“串流菜单 → 超级指令”调用，适合把常用的主机操作做成固定入口。列表为空时先检查主机端配置。</p>
-  <p>若只是网络突然变差，直接用同一菜单里的“调整码率”降低码率后观察，省去返回设置页的步骤；其他参数是否需要重连，以当前客户端提示为准。</p>
-  <a class="tip-source" href="https://github.com/qiin2333/moonlight-vplus/blob/799f50d6e7bd288cd69fe6df2081c9d9502c45b4/docs/VPLUS_FEATURES.md#串流时控制-foundation-sunshine">查看串流菜单功能说明 ↗</a>
+  <p>固定的主机操作可以做成菜单按钮；先用一个简单测试确认启动应用与命令配置对应。见<a href="./automation.html#super-commands">超级指令完整教程</a>。</p>
 </SunshineTip>
 
 ## 捕获方式
@@ -57,11 +55,16 @@ WGC 的窗口捕获需要用户模式，不能在 SYSTEM 服务模式下直接�
 
 Foundation 的配对设备设置可按当前版本使用客户端上报亮度或手动配置；需要校准时，结合目标屏幕与 Windows HDR Calibration 配置处理。先保留默认值，不要照抄另一台屏幕的亮度、ICC 或黑位参数。
 
+格式选择、场景自适应、每个配对设备的具体入口和 ICC 恢复检查见[HDR、动态格式与亮度校准](./hdr.md)。
+
 出现发灰、过曝、偏色或黑屏时，先关闭 HDR 验证 SDR，再按[显示异常排查](../troubleshooting/black-screen.md)逐段定位。Dolby Vision 的开发背景可阅读[技术手记](../dolby-vision-dev-journal-zh.md)。
 
 ## 逐项尝试增强功能
 
 RTX HDR、DLSS NR、客户端超分和帧生成会引入额外处理与兼容条件。只启用当前安装版本明确提供、组件状态正常的选项，先用同一场景比较画面和延迟。
+
+- [Zako Direct、RTX HDR 与 DLSS NR](./enhancements.md)：主机捕获、组件安装、应用默认与当前会话控制。
+- [PyroWave 与客户端帧生成](../clients/advanced-video.md)：能力检测、实验路径、引擎导入与回退。
 
 RTX HDR 用于将 SDR 内容转换为 HDR，不用于重复处理已有原生 HDR / HLG 输入。出现异常时先关掉新增处理，回到普通路径。实验性编码路径也应在普通串流正常后再尝试。
 
