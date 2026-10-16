@@ -18,6 +18,21 @@
     margin-bottom: 18px;
   }
 }
+/* Keep room for translated navigation at the tablet breakpoint. */
+@media (min-width: 768px) and (max-width: 959px) {
+  .VPNavBarSearch .DocSearch-Button {
+    width: 40px;
+    padding: 0;
+    justify-content: center;
+  }
+  .VPNavBarSearch .DocSearch-Button-Placeholder,
+  .VPNavBarSearch .DocSearch-Button-Keys {
+    display: none;
+  }
+  .VPNavBarSearch .DocSearch-Search-Icon {
+    margin-right: 0;
+  }
+}
 @media (max-width: 767px) {
   :root {
     --vp-nav-height: 64px;

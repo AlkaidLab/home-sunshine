@@ -67,7 +67,7 @@ export const buildJsonLd = (lang) => {
           ? '支持硬件编码的显卡（Intel VAAPI / AMD VCE 1.0+ / NVIDIA NVENC），4GB 以上内存'
           : 'A GPU with hardware encoding (Intel VAAPI / AMD VCE 1.0+ / NVIDIA NVENC) and 4GB+ RAM',
       downloadUrl: 'https://github.com/AlkaidLab/foundation-sunshine/releases/latest',
-      softwareHelp: absoluteUrl('/docs/'),
+      softwareHelp: absoluteUrl(lang === 'en' ? '/docs/en/' : '/docs/'),
       isAccessibleForFree: true,
       offers: {
         '@type': 'Offer',

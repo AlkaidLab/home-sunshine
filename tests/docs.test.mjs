@@ -7,6 +7,7 @@ import { runInNewContext } from 'node:vm'
 import test from 'node:test'
 import config from '../docs/.vitepress/config.js'
 import { SITE_URL } from '../src/site-meta.js'
+import { docsUrl, englishDocsPaths, localizedDocPath } from '../src/docs-links.js'
 
 const rootDir = resolve(import.meta.dirname, '..')
 const docsDir = resolve(rootDir, 'dist/docs')
@@ -72,7 +73,10 @@ test('the four manual sections and every document are reachable from the sidebar
     ...(item.link ? [item.link] : []),
     ...collectLinks(item.items || []),
   ])
-  const links = new Set(collectLinks(config.themeConfig.sidebar).map(link => {
+  const links = new Set(collectLinks([
+    ...config.themeConfig.sidebar,
+    ...config.locales.en.themeConfig.sidebar,
+  ]).map(link => {
     if (link === '/') return '/docs/'
     return `/docs${link}${link.endsWith('/') || link.endsWith('.html') ? '' : '.html'}`
   }))
@@ -166,12 +170,57 @@ test('document sitemap uses /docs/ and is advertised by robots.txt', async () =>
   assert.ok(robots.includes(`Sitemap: ${SITE_URL}/docs/sitemap.xml`))
 })
 
+test('published English translations have stable routes, localized UI and reciprocal SEO links', () => {
+  const translatedPages = pages.filter(page => page.startsWith('en/'))
+  assert.deepEqual(translatedPages.map(page => pagePath(page).replace('/docs/en', '')).sort(), [...englishDocsPaths].sort())
+  assert.equal(config.themeConfig.i18nRouting, false, 'language switching must not invent untranslated routes')
+  assert.equal(docsUrl('en'), '/docs/en/')
+  assert.equal(docsUrl('en', '/getting-started/'), '/docs/en/getting-started/')
+  assert.equal(localizedDocPath('/server/hdr', 'en'), '/server/hdr')
+  assert.equal(docsUrl('zh', '/getting-started/'), '/docs/getting-started/')
+  for (const page of translatedPages) {
+    const html = htmlByPage.get(page)
+    const chinesePage = page.slice(3)
+    assert.ok(htmlByPage.has(chinesePage), page)
+    assert.match(html, /<html[^>]* lang="en"/u, page)
+    assert.ok(html.includes('Search English docs'), page)
+    assert.ok(html.includes('AlkaidLab · Docs'), page)
+    assert.ok(html.includes('property="og:locale" content="en_US"'), page)
+    for (const counterpart of [html, htmlByPage.get(chinesePage)]) {
+      assert.ok(counterpart.includes(`hreflang="en" href="${SITE_URL}${pagePath(page)}"`), page)
+      assert.ok(counterpart.includes(`hreflang="zh-CN" href="${SITE_URL}${pagePath(chinesePage)}"`), page)
+    }
+  }
+  const quickStart = htmlByPage.get('en/getting-started/index.html')
+  assert.ok(quickStart.includes('aria-label="Table"'))
+  assert.ok(quickStart.includes('View full screenshot, focus region 1'))
+  assert.ok(quickStart.includes('One stream, two ends'))
+  assert.ok(!quickStart.includes('一次串流，两端配合'))
+  assert.ok(!htmlByPage.get('server/hdr.html').includes('hreflang="en"'), 'untranslated pages must not advertise an English counterpart')
+})
+
+test('English search finds translated chapters without mixing in Chinese documents', async () => {
+  const MiniSearch = createRequire(import.meta.resolve('vitepress'))('minisearch')
+  const chunksDir = resolve(docsDir, 'assets/chunks')
+  const searchChunk = (await readdir(chunksDir)).find(file => file.startsWith('@localSearchIndexen.'))
+  assert.ok(searchChunk, 'missing English search index')
+  const { default: indexJSON } = await import(pathToFileURL(resolve(chunksDir, searchChunk)).href)
+  const { options, searchOptions } = config.themeConfig.search.options.miniSearch
+  const index = MiniSearch.loadJSON(indexJSON, { fields: ['title', 'titles', 'text'], storeFields: ['title', 'titles'], ...options, searchOptions })
+  for (const query of ['pairing', 'bitrate', 'Desktop', 'PIN']) {
+    const results = index.search(query)
+    assert.ok(results.some(result => result.id.startsWith('/docs/en/getting-started/#')), query)
+    for (const result of results) assert.ok(result.id.startsWith('/docs/en/'), result.id)
+  }
+  assert.deepEqual(index.search('虚拟显示器'), [])
+})
+
 test('building docs preserves both prerendered homepages', async () => {
   for (const [page, lang] of [['index.html', 'zh'], ['en/index.html', 'en']]) {
     const html = await readFile(resolve(rootDir, 'dist', page), 'utf8')
     assert.ok(html.includes(`data-prerendered data-lang="${lang}"`), page)
-    assert.ok(html.includes('href="/docs/"'), page)
-    assert.ok(html.includes('href="/docs/getting-started/"'), page)
+    assert.ok(html.includes(`href="${docsUrl(lang)}"`), page)
+    assert.ok(html.includes(`href="${docsUrl(lang, '/getting-started/')}"`), page)
     assert.ok(html.includes('href="/docs/getting-started/features.html"'), page)
     assert.ok(!html.includes('docs.qq.com'), page)
   }

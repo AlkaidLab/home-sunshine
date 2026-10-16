@@ -28,6 +28,15 @@
 .docs-home p {
   margin: 0;
 }
+.docs-home .translation-notice {
+  margin-bottom: 24px;
+  padding: 14px 18px;
+  border: 1px solid var(--docs-border);
+  border-radius: 12px;
+  color: var(--vp-c-text-2);
+  background: var(--docs-surface);
+  line-height: 1.7;
+}
 .docs-home h1,
 .docs-home h2,
 .docs-home h3 {

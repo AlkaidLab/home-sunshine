@@ -1,3 +1,5 @@
+import { localizedDocPath } from '../../src/docs-links.js'
+
 export const manualNavigation = [
   {
     text: '快速开始',
@@ -51,3 +53,59 @@ export const manualNavigation = [
     ],
   },
 ]
+
+const englishLabels = [
+  ['Quick start', ['Your first stream', 'Requirements', 'Features & platform support']],
+  [
+    'Server',
+    [
+      'Install, update & back up',
+      'Games & applications',
+      'Virtual displays',
+      'Encoding & video quality',
+      'HDR & calibration',
+      'Capture & NVIDIA enhancements',
+      'Audio, microphone & input',
+      'Clipboard, files & USB',
+      'Commands & automation',
+      'AI & integrations',
+      'Remote networking',
+    ],
+  ],
+  [
+    'Clients',
+    [
+      'Choose a client',
+      'Android, TV & Quest',
+      'Crown layouts & touch',
+      'Controllers & haptics',
+      'Windows, macOS & Linux',
+      'HarmonyOS & Apple',
+      'Video quality & statistics',
+      'PyroWave & frame generation',
+    ],
+  ],
+  [
+    'Troubleshooting',
+    [
+      'Find a symptom',
+      'Discovery & pairing',
+      'Black screen & display',
+      'Stuttering & latency',
+      'Audio & input',
+      'Logs & issue reports',
+    ],
+  ],
+]
+
+export const englishManualNavigation = manualNavigation.map((group, index) => ({
+  ...group,
+  text: englishLabels[index][0],
+  items: group.items.map((item, itemIndex) => {
+    const link = localizedDocPath(item.link, 'en')
+    return {
+      text: englishLabels[index][1][itemIndex] + (link === item.link ? ' (中文)' : ''),
+      link,
+    }
+  }),
+}))

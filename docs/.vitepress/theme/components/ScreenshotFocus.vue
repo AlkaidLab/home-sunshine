@@ -1,4 +1,7 @@
 <script setup>
+import { useDocsI18n } from '../i18n.js'
+
+const { copy } = useDocsI18n()
 defineProps({
   sourceWidth: { type: Number, required: true },
   regions: { type: Array, required: true },
@@ -28,7 +31,7 @@ function preview(event) {
       :key="index"
       type="button"
       class="screenshot-focus-region"
-      :aria-label="`查看完整截图，重点区域 ${index + 1}`"
+      :aria-label="`${copy.screenshot} ${index + 1}`"
       :style="regionStyle(region, sourceWidth)"
       @click="preview"
     >

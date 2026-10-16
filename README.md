@@ -87,7 +87,20 @@ Markdown 源文件保存在 `docs/`，文档首页为 `docs/index.md`。已有�
 
 新增文档时，添加 Markdown 文件并在开头设置 `description`，正文使用一个一级标题。使用手册的导航维护在 `docs/.vitepress/manual-nav.js`，技术文章导航位于 `docs/.vitepress/config.js`。搜索索引和文档 sitemap 在构建时自动生成；中文搜索使用逐字与相邻双字索引，英文按单词匹配，构建端与浏览器使用同一规则。文档主题和官网共享浅色 / 巧克力深色偏好。
 
-导航与站点配置位于 `docs/.vitepress/config.js`，样式位于 `docs/.vitepress/theme/style.css`。主题入口继承 Teek，`Layout.vue` 定制品牌、中文面包屑和阅读辅助入口，`components/DocsHome.vue` 渲染文档首页。仅使用 Teek 的运行时布局和样式，不启用其自动侧栏、永久链接及文章扫描插件，导航仍由手册配置维护。文档保持 `.html` URL，部署时直接提供 `dist/` 中的静态文件，确保 `/docs/` 使用自己的 `index.html`，无需将文档请求回退到官网首页。根目录的 `robots.txt` 会同时声明官网和文档的 sitemap。
+导航与站点配置位于 `docs/.vitepress/config.js`，样式位于 `docs/.vitepress/theme/style.css`。主题入口继承 Teek，`Layout.vue` 定制品牌、双语面包屑和阅读辅助入口，`components/DocsHome.vue` 渲染文档首页。仅使用 Teek 的运行时布局和样式，不启用其自动侧栏、永久链接及文章扫描插件，导航仍由手册配置维护。文档保持 `.html` URL，部署时直接提供 `dist/` 中的静态文件，确保 `/docs/` 使用自己的 `index.html`，无需将文档请求回退到官网首页。根目录的 `robots.txt` 会同时声明官网和文档的 sitemap。
+
+### 文档双语约定
+
+中文沿用 `/docs/`，英文入口为 `/docs/en/`，英文源文件放在 `docs/en/` 的对应目录。目前提供英文首页和快速开始，其余章节在英文导航中标注 `中文`，打开现有中文正文；不生成占位翻译页。搜索索引按语言隔离，英文页面搜索英文内容，需要查完整中文手册时切换中文。语言菜单暂时回到目标语言的文档首页，避免进入未翻译的路径。
+
+新增英文翻译时：
+
+1. 将正文放在对应相对路径，例如 `docs/server/hdr.md` 对应 `docs/en/server/hdr.md`，保留适用条件、核验版本、图片来源和有效链接。共享图片直接引用 `docs/assets/`，不复制素材；界面仍为中文时在英文图注中说明。
+2. 在 `src/docs-links.js` 的 `englishDocsPaths` 注册发布路径（目录用 `/getting-started/`，普通页用 `/server/hdr.html`）。官网入口和英文侧栏会选择已发布译文，未翻译链接继续指向中文；canonical 与 `hreflang` 只声明真实存在的译文。
+3. 在 `docs/.vitepress/manual-nav.js` 维护双语导航名称，组件文案维护在 `docs/.vitepress/theme/i18n.js`；流程图双语内容位于 `components/ManualDiagram.vue`，VitePress 界面与搜索文案位于 `config.js`。Teek 使用相应语言包。
+4. 正文链接指向已翻译页面时使用英文目录内的相对链接；指向中文页面时标注 `中文`。执行 `npm run build && npm test`，检查双语导航、搜索、图片按钮、手机布局及语言切换。
+
+测试会检查翻译注册表与实际英文源文件完全一致、译文对应的中文原文存在、双向语言元信息正确，以及未翻译路径的回退行为。完整手册翻译完成后，可在配置中启用 `i18nRouting`，让原生语言菜单直接切换对应章节。
 
 手册中的 `ManualDiagram` 是随明暗主题适配的流程示意，不冒充软件截图。真实界面图保存在 `docs/assets/manual/`，来源、尺寸和适用范围记录在同目录的 `sources.json`，并在正文图注中说明。更新界面截图时，应使用可核实版本的实机画面，并同步更新来源记录。
 
@@ -110,7 +123,7 @@ Markdown 源文件保存在 `docs/`，文档首页为 `docs/index.md`。已有�
 
 ### 使用手册的来源与维护
 
-新版手册于 **2026-10-16** 重新编写，首页的使用手册入口指向 `/docs/getting-started/`，特色功能总入口为 `/docs/getting-started/features.html`。按四类任务维护，共 28 页：
+新版手册于 **2026-10-16** 重新编写，首页的使用手册入口指向 `/docs/getting-started/`，特色功能总入口为 `/docs/getting-started/features.html`。按四类任务维护，共 28 页中文手册，另提供英文首页与快速开始：
 
 - `docs/getting-started/`：第一次串流、系统与网络准备、功能与平台支持导航。
 - `docs/server/`：安装更新、应用、显示器、HDR 校准、捕获与画质增强、音频输入、剪贴板／文件／USB、自动化、可选集成与远程网络。
@@ -130,7 +143,7 @@ Markdown 源文件保存在 `docs/`，文档首页为 `docs/index.md`。已有�
 
 核验方式为公开文档、发行资产和源码入口检查，**不代表已在所有硬件上实测**。手册不填未经核实的最低功能版本；组件、动态 HDR、触觉等能力写明双方条件，具体发布情况以目标发行说明为准。后续更新先核实发行包与 UI，再改步骤、链接及验证日期。
 
-本轮内容复核覆盖全部 28 页手册及两篇历史技术文章，记录在 [`docs/maintenance/manual-audit.json`](docs/maintenance/manual-audit.json)。复核基线为 Foundation `2026.1011`、Android V+ `12.13.0`、PC V+ `6.5.0`；手势、长按和手柄快捷键还核对了 Android 正式版标签的实现／文案。已修正或补全主机音频控制来源、暂停／退出菜单、FEC 与手动码率、PyroWave 限制、Windows ARM64 获取方式及虚拟屏系统要求的适用范围。macOS Enhanced 的 README 仍写 RC4，而发行页已提供 `v1.3.9-rc.5`，本次架构和资产核对以发行页为准；版本名中的 RC 与 GitHub 的 Pre-release 标记分别记录，不相互推断。
+本轮内容复核覆盖全部 28 页中文手册及两篇历史技术文章，记录在 [`docs/maintenance/manual-audit.json`](docs/maintenance/manual-audit.json)。复核基线为 Foundation `2026.1011`、Android V+ `12.13.0`、PC V+ `6.5.0`；手势、长按和手柄快捷键还核对了 Android 正式版标签的实现／文案。已修正或补全主机音频控制来源、暂停／退出菜单、FEC 与手动码率、PyroWave 限制、Windows ARM64 获取方式及虚拟屏系统要求的适用范围。macOS Enhanced 的 README 仍写 RC4，而发行页已提供 `v1.3.9-rc.5`，本次架构和资产核对以发行页为准；版本名中的 RC 与 GitHub 的 Pre-release 标记分别记录，不相互推断。
 
 特色功能扩编另核对 Foundation 的 `04d9188` 与其固定 GUI 子模块 `6b5b810`，以及 Android `v12.13.0`、PC `v6.5.0`。9 个新页面包含开启、验证及回退流程；平台表区分已记录、实验性、待核实与明确不支持的路径。文件共享按当前 GUI 的只读范围描述；Android USB 转发与手动 USB/IP 的释放行为分别说明。原来只存在于太阳娘提示中的亮度校准、显示记录、超级指令、渲染比例、触控手势和手柄快捷键已进入正式章节，提示仅保留补充与教程链接。
 
@@ -144,6 +157,7 @@ Markdown 源文件保存在 `docs/`，文档首页为 `docs/index.md`。已有�
 home-sunshine/
 ├── docs/               # Markdown 文章与文档首页
 │   ├── .vitepress/     # 文档配置、搜索与主题
+│   ├── en/             # 英文译文，保持与中文对应的目录结构
 │   ├── assets/
 │   │   ├── manual/    # 实机截图与来源记录
 │   │   └── branding/  # 太阳娘等品牌素材与来源记录

@@ -1,48 +1,35 @@
 <script setup>
+import { computed } from 'vue'
 import { withBase } from 'vitepress'
+import { useDocsI18n } from '../i18n.js'
 import DocIcon from './DocIcon.vue'
 import sunshineGirl from '../../../assets/branding/sunshine-girl.png'
 
-const guides = [
-  {
-    name: 'play',
-    tag: '快速开始',
-    title: '第一次串流，从这里开始',
-    text: '准备设备、安装和 PIN 配对，再按功能与平台支持导航探索进阶用法。',
-    link: '/getting-started/',
-    foot: '跟着步骤，完成连接',
-  },
-  {
-    name: 'server',
-    tag: '服务端',
-    title: '准备好你的游戏电脑',
-    text: '配置虚拟显示器、HDR、画质增强、文件共享与会话自动化。',
-    link: '/server/',
-    foot: 'Sunshine 配置指南',
-  },
-  {
-    name: 'devices',
-    tag: '客户端',
-    title: '找到适合你的游玩方式',
-    text: '选择客户端，调整画质，使用王冠、手柄与兼容的增强功能。',
-    link: '/clients/',
-    foot: 'Moonlight 设备指南',
-  },
-  {
-    name: 'tools',
-    tag: '故障排查',
-    title: '让串流重新流畅起来',
-    text: '连接失败、黑屏、卡顿或没有声音？按遇到的现象逐步排查。',
-    link: '/troubleshooting/',
-    foot: '从问题找到解决方法',
-  },
+const { copy, docPath, languageSuffix } = useDocsI18n()
+const home = computed(() => copy.value.home)
+const guidePaths = ['/getting-started/', '/server/', '/clients/', '/troubleshooting/']
+const guideIcons = ['play', 'server', 'devices', 'tools']
+const guides = computed(() =>
+  home.value.guides.map(([tag, title, text, foot], index) => ({
+    name: guideIcons[index],
+    tag,
+    title,
+    text,
+    foot,
+    link: guidePaths[index],
+  })),
+)
+const topicPaths = [
+  '/getting-started/features.html',
+  '/server/display.html',
+  '/server/hdr.html',
+  '/server/network.html',
+  '/troubleshooting/connection.html',
 ]
-const topics = [
-  ['功能与平台支持', '/getting-started/features.html'],
-  ['虚拟显示器', '/server/display.html'],
-  ['HDR 与校准', '/server/hdr.html'],
-  ['外网访问', '/server/network.html'],
-  ['连接与配对', '/troubleshooting/connection.html'],
+const topics = computed(() => home.value.topics.map((label, index) => [label, topicPaths[index]]))
+const articlePaths = [
+  '/dolby-vision-dev-journal-zh.html',
+  '/razer-haptics-sdk-announcement-zh.html',
 ]
 </script>
 
@@ -50,27 +37,29 @@ const topics = [
   <div class="docs-home">
     <section class="docs-hero" aria-labelledby="docs-title">
       <div class="hero-copy">
-        <p class="hero-eyebrow"><span></span> 瑶光流梦 · 文档中心</p>
-        <h1 id="docs-title">游戏的下一站，<br /><em>由你决定。</em></h1>
-        <p class="hero-description">
-          从游戏电脑到手边的屏幕。<br />在这里，开始串流、探索设置，让每一次游玩更自在。
-        </p>
+        <p class="hero-eyebrow"><span></span> {{ home.eyebrow }}</p>
+        <h1 id="docs-title">
+          {{ home.title }}<br /><em>{{ home.emphasis }}</em>
+        </h1>
+        <p class="hero-description">{{ home.description[0] }}<br />{{ home.description[1] }}</p>
         <div class="hero-actions">
-          <a class="docs-button primary" :href="withBase('/getting-started/')"
-            >开始第一次串流 <DocIcon name="arrow"
+          <a class="docs-button primary" :href="withBase(docPath('/getting-started/'))"
+            >{{ home.start }} <DocIcon name="arrow"
           /></a>
-          <a class="docs-button secondary" :href="withBase('/clients/')"
-            >选择客户端 <DocIcon name="devices"
+          <a class="docs-button secondary" :href="withBase(docPath('/clients/'))"
+            >{{ home.clients }}{{ languageSuffix('/clients/') }} <DocIcon name="devices"
           /></a>
         </div>
         <div class="hero-topics">
-          <span>常用内容</span
-          ><a v-for="[label, link] in topics" :key="link" :href="withBase(link)">{{ label }}</a>
+          <span>{{ home.common }}</span
+          ><a v-for="[label, link] in topics" :key="link" :href="withBase(docPath(link))"
+            >{{ label }}{{ languageSuffix(link) }}</a
+          >
         </div>
       </div>
       <div class="stream-visual" aria-hidden="true">
         <div class="visual-caption">
-          <span class="status-dot"></span> 太阳娘陪你，完成第一次串流
+          <span class="status-dot"></span> {{ home.visual }}
           <DocIcon name="spark" />
         </div>
         <div class="monitor">
@@ -95,11 +84,11 @@ const topics = [
         <div class="stream-connection"><span></span><DocIcon name="arrow" /><span></span></div>
         <div class="device-strip">
           <div>
-            <DocIcon name="server" /><span>游戏电脑<small>Sunshine</small></span>
+            <DocIcon name="server" /><span>{{ home.host }}<small>Sunshine</small></span>
           </div>
           <span class="connection-line"></span>
           <div>
-            <DocIcon name="devices" /><span>你的设备<small>Moonlight</small></span>
+            <DocIcon name="devices" /><span>{{ home.device }}<small>Moonlight</small></span>
           </div>
         </div>
         <span class="visual-corner corner-top"></span
@@ -110,27 +99,28 @@ const topics = [
     <section class="guide-section" aria-labelledby="guide-title">
       <div class="section-heading">
         <div>
-          <p class="section-kicker">一步一步，找到你的节奏</p>
-          <h2 id="guide-title">你想从哪里开始？</h2>
+          <p class="section-kicker">{{ home.kicker }}</p>
+          <h2 id="guide-title">{{ home.guideTitle }}</h2>
         </div>
-        <span class="section-note">四个章节，一份完整的使用指南</span>
+        <span class="section-note">{{ home.guideNote }}</span>
       </div>
+      <p v-if="home.translationNote" class="translation-notice">{{ home.translationNote }}</p>
       <div class="guide-grid">
         <a
           v-for="(guide, index) in guides"
           :key="guide.link"
           class="guide-card"
-          :href="withBase(guide.link)"
+          :href="withBase(docPath(guide.link))"
         >
           <div class="guide-card-top">
             <span class="guide-icon"><DocIcon :name="guide.name" /></span
             ><span class="guide-number">0{{ index + 1 }}</span>
           </div>
-          <p class="guide-tag">{{ guide.tag }}</p>
+          <p class="guide-tag">{{ guide.tag }}{{ languageSuffix(guide.link) }}</p>
           <h3>{{ guide.title }}</h3>
           <p class="guide-description">{{ guide.text }}</p>
           <div class="guide-card-footer">
-            <span>{{ guide.foot }}</span
+            <span>{{ guide.foot }}{{ languageSuffix(guide.link) }}</span
             ><DocIcon name="arrow" />
           </div>
         </a>
@@ -140,40 +130,45 @@ const topics = [
     <section class="docs-rescue" aria-labelledby="rescue-title">
       <div class="rescue-icon"><DocIcon name="tools" /></div>
       <div>
-        <h2 id="rescue-title">遇到问题，也有路可循。</h2>
-        <p>先找到现象，再检查设置。我们把常见问题整理在了一起。</p>
+        <h2 id="rescue-title">{{ home.rescueTitle }}</h2>
+        <p>{{ home.rescueText }}</p>
       </div>
-      <a :href="withBase('/troubleshooting/')">查看故障排查 <DocIcon name="arrow" /></a>
+      <a :href="withBase(docPath('/troubleshooting/'))"
+        >{{ home.rescueLink }}{{ languageSuffix('/troubleshooting/') }} <DocIcon name="arrow"
+      /></a>
     </section>
 
     <section class="articles-section" aria-labelledby="articles-title">
       <div class="section-heading">
         <div>
-          <p class="section-kicker">不止于使用</p>
-          <h2 id="articles-title">走近瑶光的开发现场</h2>
+          <p class="section-kicker">{{ home.articlesKicker }}</p>
+          <h2 id="articles-title">{{ home.articlesTitle }}</h2>
         </div>
-        <span class="section-note">开发手记与技术公告</span>
+        <span class="section-note">{{ home.articlesNote }}</span>
       </div>
       <div class="article-grid">
-        <a class="article-card" :href="withBase('/dolby-vision-dev-journal-zh.html')"
-          ><span class="article-category">开发手记 · 显示与画质</span>
-          <h3>杜比视界：从元数据到原生输出</h3>
-          <p>沿着真实的适配过程，了解原生输出与设备黑屏的排查思路。</p>
-          <span class="article-read">阅读文章 <DocIcon name="arrow" /></span
-        ></a>
-        <a class="article-card" :href="withBase('/razer-haptics-sdk-announcement-zh.html')"
-          ><span class="article-category">技术公告 · 操作与反馈</span>
-          <h3>手柄支持与自研触觉 SDK</h3>
-          <p>探索触觉支持的技术路线，以及更多设备的扩展方向。</p>
-          <span class="article-read">阅读文章 <DocIcon name="arrow" /></span
-        ></a>
+        <a
+          v-for="([category, title, description], index) in home.articles"
+          :key="articlePaths[index]"
+          class="article-card"
+          :href="withBase(docPath(articlePaths[index]))"
+        >
+          <span class="article-category"
+            >{{ category }}{{ languageSuffix(articlePaths[index]) }}</span
+          >
+          <h3>{{ title }}</h3>
+          <p>{{ description }}</p>
+          <span class="article-read"
+            >{{ home.read }}{{ languageSuffix(articlePaths[index]) }} <DocIcon name="arrow"
+          /></span>
+        </a>
       </div>
     </section>
     <div class="docs-home-footer">
-      <span>每一次连接，都离游戏更近一点。</span>
+      <span>{{ home.footer }}</span>
       <div>
-        <a href="https://docs.lizardbyte.dev/projects/sunshine/latest/">Sunshine 上游文档 ↗</a
-        ><a href="https://github.com/AlkaidLab/foundation-sunshine/issues">问题反馈 ↗</a>
+        <a href="https://docs.lizardbyte.dev/projects/sunshine/latest/">{{ home.upstream }} ↗</a
+        ><a href="https://github.com/AlkaidLab/foundation-sunshine/issues">{{ home.issues }} ↗</a>
       </div>
     </div>
   </div>

@@ -12,6 +12,7 @@ import {
   resolveReleaseDownloadUrls,
 } from './downloads.js'
 import { HTML_LANG, LANG_PATHS, siteMeta } from './site-meta.js'
+import { docsUrl } from './docs-links.js'
 
 const DEFAULT_THEME = 'gura'
 
@@ -664,7 +665,7 @@ const closeEggRoom = () => {
         </div>
         <div class="features-meta">
           <small class="hero-note">{{ t.hero.note }}</small>
-          <a class="feature-guide-link" href="/docs/getting-started/features.html">{{ t.features.guideLink }}</a>
+          <a class="feature-guide-link" :href="docsUrl(currentLang, '/getting-started/features.html')">{{ t.features.guideLink }}</a>
         </div>
         <div class="features-grid">
           <div
@@ -767,7 +768,7 @@ const closeEggRoom = () => {
               <h3>{{ t.docs.docCenter }}</h3>
               <p>{{ t.docs.docCenterDesc }}</p>
             </div>
-            <a href="/docs/" class="doc-card-action">{{ t.docs.view }} <svg class="inline-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+            <a :href="docsUrl(currentLang)" class="doc-card-action">{{ t.docs.view }} <svg class="inline-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
           </article>
           <article class="doc-card">
             <div class="doc-card-body">
@@ -775,7 +776,7 @@ const closeEggRoom = () => {
               <p>{{ t.docs.userGuideDesc }}</p>
             </div>
             <a
-              href="/docs/getting-started/"
+              :href="docsUrl(currentLang, '/getting-started/')"
               class="doc-card-action"
             >{{ t.docs.view }} <svg class="inline-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
           </article>

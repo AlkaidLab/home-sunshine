@@ -1,8 +1,10 @@
 <script setup>
 import { computed } from 'vue'
 import DocIcon from './DocIcon.vue'
+import { useDocsI18n } from '../i18n.js'
 
 const props = defineProps({ kind: { type: String, required: true } })
+const { locale } = useDocsI18n()
 const diagrams = {
   streaming: {
     title: '一次串流，两端配合',
@@ -101,7 +103,107 @@ const diagrams = {
     ],
   },
 }
-const diagram = computed(() => diagrams[props.kind])
+const englishDiagrams = {
+  streaming: {
+    title: 'One stream, two ends',
+    caption: 'Video and audio travel from the host to the client; input travels back to the host.',
+    items: [
+      {
+        icon: 'server',
+        label: 'Gaming PC',
+        name: 'Sunshine host',
+        text: 'Runs the game, captures and encodes its video and audio.',
+      },
+      {
+        icon: 'arrow',
+        label: 'Home network',
+        name: 'Start on the same LAN',
+        text: 'Prefer Ethernet for the host; keep wireless clients near the router.',
+      },
+      {
+        icon: 'devices',
+        label: 'Playing device',
+        name: 'Moonlight client',
+        text: 'Displays video, plays audio, and sends your input back.',
+      },
+    ],
+  },
+  pairing: {
+    title: 'Where does the PIN go?',
+    caption:
+      'Pairing diagram, not a software screenshot. Read the PIN on the client and enter it on the host.',
+    items: [
+      {
+        icon: 'devices',
+        label: '01 · Client',
+        name: 'Select the host, read the PIN',
+        text: 'Keep Moonlight open with the pairing code visible.',
+      },
+      {
+        icon: 'server',
+        label: '02 · Gaming PC',
+        name: 'Enter and send the PIN',
+        text: 'Use Sunshine’s PIN page on the host.',
+      },
+      {
+        icon: 'play',
+        label: '03 · Client again',
+        name: 'Open the application list',
+        text: 'Confirm pairing, then select Desktop to test the connection.',
+      },
+    ],
+  },
+  display: {
+    title: 'Choose how to use your screens',
+    caption: 'Display strategy diagram. These describe goals, rather than exact menu labels.',
+    items: [
+      {
+        icon: 'server',
+        label: 'Standard streaming',
+        name: 'Capture a physical display',
+        text: 'Leave the monitor on and stream the selected screen.',
+      },
+      {
+        icon: 'devices',
+        label: 'Extended desktop',
+        name: 'Physical + virtual display',
+        text: 'Keep the local desktop and use a virtual screen for remote play.',
+      },
+      {
+        icon: 'play',
+        label: 'Virtual display only',
+        name: 'Enable only the target screen',
+        text: 'Exclude physical screens and check layout restoration afterward.',
+      },
+    ],
+  },
+  latency: {
+    title: 'Where does the stutter begin?',
+    caption:
+      'Streaming pipeline. Statistics have different definitions; adding them does not give complete input latency.',
+    items: [
+      {
+        icon: 'server',
+        label: 'Host',
+        name: 'Run → capture → encode',
+        text: 'Check local game performance, then capture and encoding.',
+      },
+      {
+        icon: 'arrow',
+        label: 'Network',
+        name: 'Transmit and receive',
+        text: 'Check dropped frames, jitter, congestion, and relay use.',
+      },
+      {
+        icon: 'devices',
+        label: 'Client',
+        name: 'Decode → render → display',
+        text: 'Check hardware decoding, temperature, frame pacing, and display processing.',
+      },
+    ],
+  },
+}
+const diagram = computed(() => (locale.value === 'en' ? englishDiagrams : diagrams)[props.kind])
 </script>
 
 <template>
