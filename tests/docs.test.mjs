@@ -3,6 +3,7 @@ import { readFile, readdir } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
+import { runInNewContext } from 'node:vm'
 import test from 'node:test'
 import config from '../docs/.vitepress/config.js'
 import { SITE_URL } from '../src/site-meta.js'
@@ -23,6 +24,33 @@ const pagePath = page => `/docs/${page.replace(/(^|\/)index\.html$/, '$1')}`
 const htmlByPage = new Map(await Promise.all(pages.map(async page =>
   [page, await readFile(resolve(docsDir, page), 'utf8')],
 )))
+
+test('document theme bootstrap defaults to light and respects saved preferences', () => {
+  const html = htmlByPage.get('index.html')
+  const scripts = [...html.matchAll(/<script\b[^>]*\bid="(?:sync-site-theme|check-dark-mode)"[^>]*>([\s\S]*?)<\/script>/gu)]
+  assert.equal(scripts.length, 2, 'both theme bootstrap scripts must be rendered')
+  for (const systemDark of [false, true]) {
+    for (const [saved, expectedDark] of [
+      [{}, false],
+      [{ theme: 'gura', 'vitepress-theme-appearance': 'dark' }, false],
+      [{ theme: 'chocolate', 'vitepress-theme-appearance': 'light' }, true],
+      [{ 'vitepress-theme-appearance': 'dark' }, true],
+    ]) {
+      const storage = new Map(Object.entries(saved))
+      const classes = new Set()
+      const context = {
+        localStorage: {
+          getItem: key => storage.get(key) ?? null,
+          setItem: (key, value) => storage.set(key, value),
+        },
+        window: { matchMedia: () => ({ matches: systemDark }) },
+        document: { documentElement: { classList: { add: value => classes.add(value) } } },
+      }
+      for (const [, source] of scripts) runInNewContext(source, context)
+      assert.equal(classes.has('dark'), expectedDark, JSON.stringify({ saved, systemDark }))
+    }
+  }
+})
 
 test('all source documents have rendered pages, descriptions and correct canonical URLs', () => {
   for (const [page, html] of htmlByPage) {

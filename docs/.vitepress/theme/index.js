@@ -5,6 +5,7 @@ import './style.css'
 
 export default {
   extends: DefaultTheme,
+  /** Synchronize document theme changes with the homepage's saved preference. */
   setup() {
     const { isDark } = useData()
     if (typeof window !== 'undefined') {

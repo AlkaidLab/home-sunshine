@@ -12,7 +12,7 @@ export default defineConfig({
   base: '/docs/',
   cleanUrls: false,
   outDir: resolve(import.meta.dirname, '../../dist/docs'),
-  appearance: true,
+  appearance: { initialValue: 'light' },
   head: [
     ['script', { id: 'sync-site-theme' }, `try {
       const theme = localStorage.getItem('theme')
