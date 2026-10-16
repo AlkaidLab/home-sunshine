@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      '@': path.resolve(import.meta.dirname, './src'),
     },
   },
   css: {
@@ -28,7 +28,11 @@ export default defineConfig({
       },
     },
   },
-  // Vue 3.6 beta's Vapor runtime exposes ESM-only internal bindings.
+  build: {
+    // Preserve the Vite 7 browser baseline when upgrading the build tool.
+    target: ['chrome107', 'edge107', 'firefox104', 'safari16'],
+  },
+  // Vue 3.6's Vapor runtime exposes ESM-only internal bindings.
   // Bundle Vue packages for the temporary SSR build so Node does not select CJS exports.
   ssr: {
     noExternal: true,

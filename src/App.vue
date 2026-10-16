@@ -774,10 +774,8 @@ const closeEggRoom = () => {
               <p>{{ t.docs.userGuideDesc }}</p>
             </div>
             <a
-              href="https://docs.qq.com/aio/DSGdQc3htbFJjSFdO?p=YTpMj5JNNdB5hEKJhhqlSB"
+              href="/docs/getting-started/"
               class="doc-card-action"
-              target="_blank"
-              rel="noopener noreferrer"
             >{{ t.docs.view }} <svg class="inline-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
           </article>
           <article class="doc-card">
