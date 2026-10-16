@@ -60,7 +60,7 @@ npm run preview
 | 根目录 | 仓库根目录 |
 | 构建命令 | `npm run build` |
 | 输出目录 | `dist` |
-| Node.js | 满足 `package.json` 的 `^20.19.0 || >=22.12.0`；使用旧构建镜像或显式 `NODE_VERSION` 时重新核对 |
+| Node.js | 满足 `package.json` 的 `^20.19.0 \|\| >=22.12.0`；使用旧构建镜像或显式 `NODE_VERSION` 时重新核对 |
 | 构建变更检测 | 默认检测全部文件；若配置了筛选，应覆盖 `docs/**`、`public/**`、`src/**`、`scripts/**`、依赖锁文件及构建配置 |
 
 独立部署脚本在仓库根目录执行 `npm ci`、`npm run build` 和 `npm test`，成功后发布 `dist/`；不能只运行 `build:client`、`build:docs`，也不能只发布 `dist/docs/`。`dist-ssr/` 是预渲染临时目录，构建后会清理，不是服务端部署包。Cloudflare 自动安装依赖时无需重复安装；若显式启用 `SKIP_DEPENDENCY_INSTALL`，构建命令须自行包含 `npm ci`。

@@ -116,6 +116,6 @@ button {
 }
 a:focus-visible,
 button:focus-visible {
-  outline: 3px solid var(--docs-accent);
+  outline: 3px solid var(--vp-c-brand-1);
   outline-offset: 4px;
 }

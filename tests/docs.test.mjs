@@ -8,10 +8,12 @@ import test from 'node:test'
 import config from '../docs/.vitepress/config.js'
 import { SITE_URL } from '../src/site-meta.js'
 import { docsUrl, englishDocsPaths, localizedDocPath } from '../src/docs-links.js'
+import { tokenizeSearch } from '../docs/.vitepress/search.js'
 
 const rootDir = resolve(import.meta.dirname, '..')
 const docsDir = resolve(rootDir, 'dist/docs')
 const legacyPages = ['dolby-vision-dev-journal-zh.html', 'razer-haptics-sdk-announcement-zh.html']
+/** Discover published Markdown pages recursively, excluding VitePress internals. */
 async function findMarkdownPages(directory, prefix = '') {
   const entries = await readdir(directory, { withFileTypes: true })
   return (await Promise.all(entries.filter(entry => !entry.name.startsWith('.')).map(entry => {
@@ -105,6 +107,20 @@ test('document navigation, section anchors and bundled resources resolve in the 
   assert.deepEqual(brokenAnchors, [], 'internal section links must resolve')
 })
 
+test('mixed-script search treats adjacent and spaced words equivalently', () => {
+  for (const [adjacent, spaced] of [
+    ['Sunshine安装', 'Sunshine 安装'],
+    ['安装Sunshine', '安装 Sunshine'],
+    ['USB转发', 'USB 转发'],
+    ['AV1编码', 'AV1 编码'],
+    ['１２比特HDR设置', '12 比特 HDR 设置'],
+    ['游戏手柄DualSense配置', '游戏手柄 DualSense 配置'],
+    ['café设置', 'café 设置'],
+  ]) {
+    assert.deepEqual(tokenizeSearch(adjacent), tokenizeSearch(spaced), adjacent)
+  }
+})
+
 test('the deployed search index finds Chinese text and mixed Chinese/English terms', async () => {
   // Resolve the same MiniSearch version VitePress uses, including nested npm layouts.
   const MiniSearch = createRequire(import.meta.resolve('vitepress'))('minisearch')
@@ -148,6 +164,9 @@ test('the deployed search index finds Chinese text and mixed Chinese/English ter
     ['PyroWave', 'clients/advanced-video.html'],
     ['插帧引擎', 'clients/advanced-video.html'],
     ['渲染尺寸', 'clients/settings.html'],
+    ['Sunshine安装', 'server/index.html'],
+    ['USB转发', 'server/collaboration.html'],
+    ['Webhook配置', 'server/automation.html'],
   ]) {
     const results = index.search(query)
     assert.ok(results.some(result => result.id.startsWith(`${pagePath(page)}#`)), query)
