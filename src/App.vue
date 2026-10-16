@@ -108,7 +108,6 @@ const catalogFriendLinks = computed(() => FRIEND_LINKS.map(link => ({
   copy: t.value.catalog.friendProducts[link.id],
   deviceLabel: t.value.guide.platforms[link.devices[0]]?.label || link.devices[0],
 })))
-// QQ 群有两个入口链接：点击时随机选一个，用户不需要感知第二条链接的存在。
 // QQ 群有两个入口链接：点击时随机选一个跳转，用户不需要感知第二条链接的存在。
 const QQ_GROUP_LINKS = ['https://qm.qq.com/q/AfMQoyKrkc', 'https://qm.qq.com/q/vIVhpjDMic']
 const openQqGroup = event => {
@@ -150,7 +149,7 @@ const starHistoryStates = ref({})
 const GITHUB_REPO = 'AlkaidLab/foundation-sunshine'
 const GITHUB_REPO_URL = `https://github.com/${GITHUB_REPO}`
 const BILIBILI_SPACE_URL = 'https://space.bilibili.com/3690974838524514'
-const INITIAL_SUNSHINE_URLS = getReleaseDownloadUrls('sunshine', 'windows', null, currentLang.value)
+const INITIAL_SUNSHINE_URLS = getReleaseDownloadUrls('sunshine', currentLang.value)
 const STAR_REPO_URL = 'https://github.com/AlkaidLab/foundation-sunshine'
 const STAR_HISTORY_REPO = 'AlkaidLab/foundation-sunshine'
 const STAR_HISTORY_BASE_URL = '/star'
@@ -231,13 +230,11 @@ watch(currentTheme, newTheme => {
 const downloadLinks = ref({
   windows: INITIAL_SUNSHINE_URLS.official,
   mirror: INITIAL_SUNSHINE_URLS.mirror,
-  latest: INITIAL_SUNSHINE_URLS.official,
 })
 
 const resolveSunshineDownload = async () => {
   const urls = await resolveReleaseDownloadUrls('sunshine', 'windows', currentLang.value)
   downloadLinks.value.windows = urls.official
-  downloadLinks.value.latest = urls.official
   downloadLinks.value.mirror = urls.mirror
   return urls
 }
@@ -263,66 +260,6 @@ onBeforeUnmount(() => {
   document.removeEventListener('keydown', onMobileNavKeydown)
   window.removeEventListener('hashchange', alignHashTarget)
 })
-
-// 客户端推荐
-const clients = [
-  {
-    id: 'android-vplus',
-    name: {
-      zh: '安卓 Moonlight V+',
-      en: 'Android Moonlight V+',
-    },
-    platform: {
-      zh: 'Android / Android TV',
-      en: 'Android / Android TV',
-    },
-    link: 'https://github.com/qiin2333/moonlight-vplus',
-    icon: 'android',
-    type: 'android',
-  },
-  {
-    id: 'harmonyos-vplus',
-    name: {
-      zh: '鸿蒙 Moonlight V+',
-      en: 'HarmonyOS Moonlight V+',
-    },
-    platform: {
-      zh: 'HarmonyOS NEXT',
-      en: 'HarmonyOS NEXT',
-    },
-    link: 'https://appgallery.huawei.com/app/detail?id=com.alkaidlab.sdream',
-    icon: 'phone',
-    type: 'harmony',
-  },
-  {
-    id: 'moonlight-pc',
-    name: {
-      zh: 'PC Moonlight V+',
-      en: 'PC Moonlight V+',
-    },
-    platform: {
-      zh: 'Windows / macOS / Linux / Steam Link',
-      en: 'Windows / macOS / Linux / Steam Link',
-    },
-    link: 'https://github.com/qiin2333/moonlight-qt',
-    icon: 'monitor',
-    type: 'desktop',
-  },
-  {
-    id: 'macos-enhanced',
-    name: {
-      zh: 'macOS 增强版',
-      en: 'macOS Enhanced',
-    },
-    platform: {
-      zh: 'skyhua0224 · macOS 增强版',
-      en: 'skyhua0224 · macOS Enhanced',
-    },
-    link: 'https://github.com/skyhua0224/moonlight-macos-enhanced',
-    icon: 'apple',
-    type: 'apple',
-  },
-]
 
 const wechatSponsorModalOpen = ref(false)
 const studioWechatPayImage = '/studio-wechat-pay.webp'

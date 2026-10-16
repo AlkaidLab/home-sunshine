@@ -167,8 +167,7 @@ home-sunshine/
 │   ├── main.js          # 应用入口文件
 │   ├── i18n.js          # 多语言翻译配置
 │   └── styles/          # 样式文件
-│       ├── variables.less    # Less 变量
-│       ├── mixins.less      # Less 混入
+│       ├── app.less          # 官网组件与响应式样式
 │       └── global.less      # 全局样式
 ├── index.html           # HTML 模板
 ├── vite.config.js       # Vite 配置

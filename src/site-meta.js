@@ -5,7 +5,6 @@
 
 export const SITE_URL = 'https://www.alkaidlab.com'
 export const OG_IMAGE = `${SITE_URL}/log.png`
-export const DEFAULT_LANGUAGE = 'zh'
 
 export const LANGUAGES = ['zh', 'en']
 

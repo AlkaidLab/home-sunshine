@@ -1,6 +1,3 @@
-@import './variables.less';
-@import './mixins.less';
-
 // ============================================
 // 主题 CSS 变量定义
 // ============================================
@@ -11,18 +8,13 @@
   // 主色调
   --primary-color: #39c5bb;
   --primary-light: #5dd9d0;
-  --primary-dark: #2ba39a;
   --primary-hover: #2ba39a;
   --primary-strong: #0f766e;
   --primary-action: #0f766e;
   --primary-action-hover: #0b5e58;
   --primary-action-text: #ffffff;
-  --accent-color: #00d4ff;
-  --accent-secondary: #7c3aed;
   --meteor-rgb: 57, 197, 187;
   --romance-rgb: 244, 114, 182;
-  --secondary-color: #39c5bb;
-  --secondary-hover: #2ba39a;
 
   // 文字颜色
   --text-primary: #1e293b;
@@ -35,16 +27,13 @@
   --background-secondary: #f8fafc;
   --background-tertiary: #f1f5f9;
   --background-dark: #1e293b;
-  --background-darker: #0f172a;
 
   // 边框颜色
   --border-color: #e2e8f0;
   --border-light: #f1f5f9;
-  --border-dark: #334155;
 
   // 卡片样式
   --card-background: #ffffff;
-  --card-border: #e2e8f0;
   --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
@@ -53,18 +42,13 @@
   // 主色调
   --primary-color: #d4a574;
   --primary-light: #e8c9a8;
-  --primary-dark: #8b5e3c;
   --primary-hover: #c49464;
   --primary-strong: #e8c9a8;
   --primary-action: #d4a574;
   --primary-action-hover: #e8c9a8;
   --primary-action-text: #2d1b0e;
-  --accent-color: #f4a460;
-  --accent-secondary: #cd853f;
   --meteor-rgb: 244, 164, 96;
   --romance-rgb: 255, 183, 128;
-  --secondary-color: #d4a574;
-  --secondary-hover: #c49464;
 
   // 文字颜色
   --text-primary: #f5f0eb;
@@ -77,16 +61,13 @@
   --background-secondary: #231c16;
   --background-tertiary: #2d241c;
   --background-dark: #0f0b08;
-  --background-darker: #080604;
 
   // 边框颜色
   --border-color: #3d3128;
   --border-light: #4a3d32;
-  --border-dark: #2d241c;
 
   // 卡片样式
   --card-background: #231c16;
-  --card-border: #3d3128;
   --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
@@ -112,8 +93,6 @@ html {
   font-size: 16px;
   line-height: 1.5;
   scroll-padding-top: 82px;
-  /* 移除 scroll-behavior: smooth 以提升滚动性能 */
-  /* scroll-behavior: smooth; */
 }
 
 body {
@@ -279,64 +258,6 @@ img {
   border: 0;
 }
 
-.text-center { text-align: center; }
-.text-left { text-align: left; }
-.text-right { text-align: right; }
-
-.font-bold { font-weight: 700; }
-.font-semibold { font-weight: 600; }
-.font-medium { font-weight: 500; }
-.font-normal { font-weight: 400; }
-
-.text-primary-color { color: var(--primary-color); }
-.text-secondary-color { color: var(--text-secondary); }
-.text-muted-color { color: var(--text-muted); }
-
-.bg-primary { background-color: var(--primary-color); }
-.bg-secondary { background-color: var(--background-secondary); }
-
-.rounded { border-radius: 8px; }
-.rounded-md { border-radius: 12px; }
-.rounded-lg { border-radius: 16px; }
-
-.shadow { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
-.shadow-md { box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07); }
-.shadow-lg { box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); }
-
-// ============================================
-// 动画类
-// ============================================
-
-.fade-in {
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-.slide-up {
-  animation: slideUp 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
 // ============================================
 // 首屏入场动画
 // ============================================
@@ -381,17 +302,13 @@ html[data-intro='active'] {
 
   // 前景内容尽早就位（主标题是 LCP 元素，下载按钮是主 CTA）；
   // 背景三层保持长时长，"电影感"由它们承担。
-  .hero-badge,
   .hero-subtitle,
-  .hero-actions,
-  .hero-stats {
+  .hero-actions {
     animation: intro-content 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
-  .hero-badge { animation-delay: 100ms; }
   .hero-subtitle { animation-delay: 240ms; }
   .hero-actions { animation-delay: 380ms; }
-  .hero-stats { animation-delay: 500ms; }
 
   .hero-title {
     color: var(--text-primary);
@@ -474,11 +391,9 @@ html[data-intro='active'] {
 @media (prefers-reduced-motion: reduce) {
   html[data-intro='active'] {
     .header,
-    .hero-badge,
     .hero-title,
     .hero-subtitle,
-    .hero-actions,
-    .hero-stats {
+    .hero-actions {
       animation: none;
       filter: none;
       opacity: 1;
@@ -511,11 +426,9 @@ html[data-intro='active'] {
 
   html[data-intro='active'] {
     .header,
-    .hero-badge,
     .hero-title,
     .hero-subtitle,
     .hero-actions,
-    .hero-stats,
     .hero-tags,
     .hero-metrics {
       animation: none;
@@ -523,29 +436,5 @@ html[data-intro='active'] {
       opacity: 1;
       transform: none;
     }
-  }
-}
-
-// ============================================
-// 响应式工具类
-// ============================================
-
-@media (max-width: 768px) {
-  .hide-mobile {
-    display: none !important;
-  }
-
-  .show-mobile {
-    display: block !important;
-  }
-}
-
-@media (min-width: 768px) {
-  .hide-desktop {
-    display: none !important;
-  }
-
-  .show-desktop {
-    display: block !important;
   }
 }

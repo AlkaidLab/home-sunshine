@@ -22,7 +22,7 @@ test('initial links are release pages and importing does not fetch', async t => 
   const { getReleaseDownloadUrls } = await loadDownloads()
   for (const key of ['sunshine', 'android-vplus', 'moonlight-pc', 'macos-enhanced']) {
     for (const lang of ['zh', 'en']) {
-      const urls = getReleaseDownloadUrls(key, 'windows', null, lang)
+      const urls = getReleaseDownloadUrls(key, lang)
       assert.ok(urls.official.endsWith('/releases/latest'))
       assert.ok(urls.mirror.endsWith('/releases/latest'))
     }

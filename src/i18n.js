@@ -5,20 +5,15 @@
 export const translations = {
   zh: {
     title: '瑶光流梦',
-    tagline: '在手机、电视和掌机上玩电脑游戏',
-    subtitle: '用 Sunshine 串流主机连接全平台 Moonlight 客户端',
     nav: {
       brand: '瑶光流梦 · AlkaidLab',
       github: 'GitHub 仓库',
       bilibili: 'B 站频道',
       features: '特性',
-      download: '下载',
-      clients: '客户端',
       stats: '点亮Star',
       docs: '文档',
       sponsors: '赞助',
       start: '开始使用',
-      support: '文档与支持',
       toDark: '切换至深色模式',
       toLight: '切换至浅色模式',
       openMenu: '打开菜单',
@@ -30,12 +25,10 @@ export const translations = {
       start: '开始串流！',
       github: 'GitHub 仓库',
       bilibili: '关注 B 站',
-      moonlightClient: '选择客户端',
       intro: ['瑶光流梦提供增强版 Sunshine 与多平台 Moonlight 客户端，', '从游戏电脑到手边设备，持续打磨画质、操控与连接体验。'],
       tags: ['HDR 画面优化', '自定义触控', '虚拟显示器'],
       metrics: '已有 1 万+ 位玩家点亮 Star，下载量 100 万+ 次',
       note: '使用时，需要你的游戏电脑保持开机并联网。',
-      stats: ['低延迟串流', 'HDR 支持', '虚拟显示器']
     },
     guide: {
       title: '开始你的串流体验',
@@ -51,7 +44,6 @@ export const translations = {
       clientDescription: '接收画面，将你的操作传回电脑。',
       alternateHint: '两个版本都能连接主机，任选其一安装即可。',
       platformGroup: '客户端平台',
-      devicesLabel: '适配：',
       download: '获取应用',
       project: '项目主页 ↗',
       friendTitle: '友情链接',
@@ -67,8 +59,6 @@ export const translations = {
       menuMirror: '镜像下载',
       menuStar: 'Star 仓库',
       helpTitle: '需要帮助或有建议？',
-      helpAskCommunity: '需要帮助？',
-      helpAskIssue: '想要提建议？',
       communityQq: '加入交流群 ↗',
       communityIssue: '提交 Issue ↗',
       downloadModal: {
@@ -161,12 +151,6 @@ export const translations = {
       ]
     },
     download: {
-      title: '下载 瑶光流梦 Sunshine',
-      latestVersion: '最新版本',
-      checkUpdate: '检查更新',
-      checking: '正在检查最新版本...',
-      error: '无法检查版本信息，使用默认下载地址',
-      retry: '重试',
       requirements: '系统要求',
       requirementsList: [
         '系统: Windows10 22H2+',
@@ -175,23 +159,6 @@ export const translations = {
         'RAM: 4GB 或更多',
         '网络: 5GHz, 802.11ac'
       ],
-      windowsLatest: 'Windows 最新版',
-      recommended: '推荐使用',
-      allVersions: '所有版本',
-      releasesSource: '查看历史安装包',
-      mirrorDownload: '镜像下载',
-      mirrorSource: '备用下载渠道',
-      moonlightClient: '下载 Moonlight 客户端',
-      moonlightClientDesc: '查看推荐客户端',
-      prerelease: '预发布版本可用',
-      prereleaseFound: '发现新的预发布版本',
-      viewPrerelease: '查看预发布版本'
-    },
-    clients: {
-      title: '推荐的 Moonlight 客户端',
-      subtitle: '建议使用以下经过优化的客户端获得最佳的串流体验',
-      downloadBtn: '下载',
-      comingSoon: '待发布'
     },
     stats: {
       title: '点亮Star',
@@ -233,7 +200,6 @@ export const translations = {
       githubNote: '通过 GitHub Sponsors 支持我们持续开发。',
       ifdian: '爱发电赞助',
       wechat: '微信赞赏',
-      alipay: '支付宝赞赏',
       wechatModalBadge: '官方收款码',
       wechatModalTitle: '微信扫码赞赏工作室',
       wechatModalSubtitle: '支持我们持续开发与维护',
@@ -261,20 +227,15 @@ export const translations = {
   },
   en: {
     title: 'AlkaidLab Sunshine',
-    tagline: 'Play PC games on any screen',
-    subtitle: 'Connect a Sunshine host to Moonlight clients on every platform',
     nav: {
       brand: 'AlkaidLab Sunshine',
       github: 'GitHub repository',
       bilibili: 'Bilibili channel',
       features: 'Features',
-      download: 'Get App',
-      clients: 'Clients',
       stats: 'Stars',
       docs: 'Docs',
       sponsors: 'Sponsors',
       start: 'Get started',
-      support: 'Docs & support',
       toDark: 'Switch to dark mode',
       toLight: 'Switch to light mode',
       openMenu: 'Open menu',
@@ -286,12 +247,10 @@ export const translations = {
       start: 'Get the App →',
       github: 'GitHub repository',
       bilibili: 'Follow Bilibili',
-      moonlightClient: 'Choose a client',
       intro: ['AlkaidLab offers an enhanced Sunshine host and Moonlight clients for every platform,', 'polishing picture quality, controls and connectivity from your gaming PC to the device in your hand.'],
       tags: ['HDR picture', 'Custom touch controls', 'Virtual display'],
       metrics: '10k+ Stars · 1M+ downloads from players worldwide',
       note: 'Your gaming PC needs to stay on and online while you play.',
-      stats: ['Low Latency', 'HDR Support', 'Virtual Display']
     },
     guide: {
       title: 'Start your streaming experience',
@@ -307,7 +266,6 @@ export const translations = {
       clientDescription: 'Receives the picture and sends your controls back to the PC.',
       alternateHint: 'Both clients work with the host — pick either one.',
       platformGroup: 'Client platform',
-      devicesLabel: 'Supports: ',
       download: 'Get App',
       project: 'Project ↗',
       friendTitle: 'Friendly Links',
@@ -323,8 +281,6 @@ export const translations = {
       menuMirror: 'Mirror download',
       menuStar: 'Star repo',
       helpTitle: 'Need help or have a suggestion?',
-      helpAskCommunity: 'Need help?',
-      helpAskIssue: 'Have suggestions?',
       communityQq: 'Join the community ↗',
       communityIssue: 'Open an issue ↗',
       downloadModal: {
@@ -417,12 +373,6 @@ export const translations = {
       ]
     },
     download: {
-      title: 'Download AlkaidLab Sunshine',
-      latestVersion: 'Latest Version',
-      checkUpdate: 'Check Update',
-      checking: 'Checking latest version...',
-      error: 'Unable to check version info, using default download link',
-      retry: 'Retry',
       requirements: 'System Requirements',
       requirementsList: [
         'OS: Windows 10 22H2+',
@@ -431,23 +381,6 @@ export const translations = {
         'RAM: 4GB or more',
         'Network: 5GHz, 802.11ac'
       ],
-      windowsLatest: 'Windows Latest',
-      recommended: 'Recommended',
-      allVersions: 'All Versions',
-      releasesSource: 'Browse past installers',
-      mirrorDownload: 'Mirror Download',
-      mirrorSource: 'Alternate download channel',
-      moonlightClient: 'Download Moonlight Client',
-      moonlightClientDesc: 'View recommended clients',
-      prerelease: 'Pre-release Available',
-      prereleaseFound: 'New pre-release version found',
-      viewPrerelease: 'View Pre-release'
-    },
-    clients: {
-      title: 'Recommended Moonlight Clients',
-      subtitle: 'Use these optimized clients for the best streaming experience',
-      downloadBtn: 'Download',
-      comingSoon: 'Coming soon'
     },
     stats: {
       title: 'Star',
@@ -489,7 +422,6 @@ export const translations = {
       githubNote: 'Support ongoing development through GitHub Sponsors.',
       ifdian: 'Afdian (ifdian)',
       wechat: 'WeChat Pay',
-      alipay: 'Alipay',
       wechatModalBadge: 'Studio Support',
       wechatModalTitle: 'Support The Studio Via WeChat',
       wechatModalSubtitle: 'Scan with WeChat Pay to support the studio and ongoing maintenance.',

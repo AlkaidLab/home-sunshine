@@ -499,8 +499,7 @@ onUnmounted(() => {
 
 .wr-focus-avatar,
 .wr-member-avatar,
-.wr-spotlight-seat span,
-.avatar-token {
+.wr-spotlight-seat span {
   display: inline-flex;
   align-items: center;
   justify-content: center;
