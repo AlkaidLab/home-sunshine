@@ -10,13 +10,13 @@ description: 安装 Moonlight V+ for PC 或 macOS Enhanced，选择正确架构�
 
 从 [Moonlight V+ for PC 正式发行页](https://github.com/qiin2333/moonlight-qt/releases/latest)选择 VPlus 安装程序。普通用户优先用安装版；确实需要多套独立配置或便携部署时再选 ZIP。
 
-按本轮核对的 **6.5.0** 发行资产，常见 Intel / AMD 电脑选择 x64 安装程序；Windows on ARM 设备选择 ARM64 便携包。不要因为系统同为 Windows 就忽略处理器架构。
+**PC V+ 6.5.0** 提供 x64 安装程序与 ARM64 便携包：常见 Intel / AMD 电脑选择 x64，Windows on ARM 设备选择 ARM64。
 
 安装后启动客户端，允许适用的网络访问，添加主机并完成 PIN 配对，再用 Desktop 测试。键鼠先在客户端本机正常使用，进入串流后区分游戏的相对鼠标模式与桌面的直接鼠标模式。
 
 ### 便携版更新
 
-按项目说明解压到新目录，再迁移旧目录中的 `Moonlight Game Streaming Project` 设置文件夹。直接覆盖旧目录可能保留不兼容的 Qt 插件；项目特别记录过旧 `tls/qopensslbackend.dll` 引起启动崩溃的情况。先保留旧目录用于回退，不要把删除整个配置作为默认更新步骤。
+将新版解压到新目录，再迁移原目录中的 `Moonlight Game Streaming Project` 设置文件夹，并保留原目录以便回退。请保留新版自带的 Qt 插件；残留的不兼容 `tls/qopensslbackend.dll` 可能导致启动崩溃。
 
 ## macOS
 
@@ -25,15 +25,15 @@ description: 安装 Moonlight V+ for PC 或 macOS Enhanced，选择正确架构�
 | Moonlight V+ for PC | 当前预编译 DMG 为 Apple Silicon（arm64）；Intel Mac 不能直接使用该包 |
 | Moonlight macOS Enhanced | 独立的 macOS 客户端；发行页提供 universal、arm64、x86_64 等包时，按实际 Mac 选择，不确定可选 universal |
 
-从 [PC V+](https://github.com/qiin2333/moonlight-qt/releases/latest) 或 [macOS Enhanced](https://github.com/skyhua0224/moonlight-macos-enhanced/releases) 获取 DMG，打开后按安装说明将应用放入“应用程序”。Enhanced 当前项目说明要求 macOS 12 或更高版本；下载时仍需核对目标发行版要求。
+从 [PC V+](https://github.com/qiin2333/moonlight-qt/releases/latest) 或 [macOS Enhanced](https://github.com/skyhua0224/moonlight-macos-enhanced/releases) 获取 DMG，打开后按安装说明将应用放入“应用程序”。Enhanced 要求 macOS 12 或更高版本，下载前请确认目标发行版的系统要求。
 
 首次启动允许**本地网络**访问。系统拦截应用时，先核对来源，再按该项目的安装说明处理，不要全局关闭系统安全设置。
 
-两个项目的菜单与快捷键不同。使用 Enhanced 时可按项目说明用 `Ctrl + Option` 释放鼠标、`Ctrl + Option + C` 打开全屏控制中心；不要把这些快捷键直接套到 PC V+。
+两个项目的菜单与快捷键不同。Enhanced 使用 `Ctrl + Option` 释放鼠标、`Ctrl + Option + C` 打开全屏控制中心；PC V+ 请查看自己的快捷键设置。
 
 ## Linux
 
-PC V+ 当前提供 x86_64 和 aarch64 AppImage。发行包对运行库也有要求：项目目前说明 x86_64 构建需要 glibc 2.35 或更新，aarch64 构建需要 glibc 2.39 或更新。下载前同时核对目标发行版说明和自己的发行版／架构，不能只看系统是 64 位。
+PC V+ 6.5.0 提供 x86_64 和 aarch64 AppImage。x86_64 包需要 glibc 2.35 或更新版本，aarch64 包需要 glibc 2.39 或更新版本。下载前请同时确认处理器架构、Linux 发行版和运行库版本。
 
 把 AppImage 保存到自己的目录，使用文件属性中的权限选项赋予可执行权限后启动。需要用终端时，可在文件所在目录运行以下示例，替换为实际文件名：
 

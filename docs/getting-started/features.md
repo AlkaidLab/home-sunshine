@@ -1,10 +1,10 @@
 ---
-description: 按用途查找基地版特色功能，核对 Foundation Sunshine、Android V+、PC V+ 和其他客户端的平台与组件条件。
+description: 按用途查找基地版特色功能，了解 Foundation Sunshine、Android V+、PC V+ 和其他客户端的平台与组件条件。
 ---
 
 # 功能与平台支持
 
-完成[第一次串流](./index.md)后，从下面选一项增强功能。这里把“在哪里学”和“哪一端需要支持”放在一起；教程均包含开启、验证和恢复方法。
+完成[第一次串流](./index.md)后，从下面选一项增强功能。按使用场景选择教程，并先确认主机、客户端和组件条件。各章提供配置、验证和恢复步骤。
 
 ## 按你想做的事查找
 
@@ -26,12 +26,12 @@ description: 按用途查找基地版特色功能，核对 Foundation Sunshine�
 
 ## 如何阅读平台支持
 
-本轮核对基线为 Foundation Sunshine **2026.1011**、Android V+ **12.13.0**、PC V+ **6.5.0**，并结合 2026-10-16 的项目文档及桌面 GUI 源码快照。GUI、主机和可选组件有各自的版本，不能只根据一个版本号判断所有扩展都可用。
+以下说明适用于 Foundation Sunshine **2026.1011**、Android V+ **12.13.0** 和 PC V+ **6.5.0**。主机、桌面控制面板和可选组件分别更新，配置时请同时确认各自版本及组件状态。
 
-- **已记录**：项目文档或对应版本实现有依据，仍需满足教程的硬件、权限及协商条件。
-- **实验性**：可按教程测试，不作为首次连接的默认配置。
-- **待核实**：本手册没有确认该客户端的相同入口与行为，不代表永久不支持。
-- **不支持**：已核对的版本或路径明确排除；后续版本需重新核对。
+- **支持**：所列版本提供对应功能，使用前请确认教程中的硬件、权限与连接条件。
+- **实验性**：建议在普通串流稳定后单独测试，并保留原设置以便恢复。
+- **兼容性待确认**：该客户端的功能入口或行为尚未确认，请先使用已有指南的路径。
+- **不支持**：所列版本或视频路径明确不提供该功能；升级前可查看目标版本说明。
 
 ### Android V+ 与 PC V+
 
@@ -39,37 +39,35 @@ description: 按用途查找基地版特色功能，核对 Foundation Sunshine�
 
 | 功能 | Android V+ 12.13.0 | PC V+ 6.5.0 |
 | --- | --- | --- |
-| 主机显示控制、麦克风回传 | 已记录 | 已记录 |
-| ABR、FEC | 已记录 | 已记录 |
-| 文本剪贴板 | 已记录，双向 | 已记录，双向 |
-| 图片剪贴板 | 已记录，本机图片发往主机 | 已记录，双向 PNG 图片 |
-| 主机文件访问 | 待核实，不套用 PC 菜单 | 已记录；本轮 GUI 只读共享 |
-| 王冠与社区布局 | 已记录 | 待核实，不套用 Android 操作 |
-| USB 设备转发 | 实验性；ARMv7 实机支持仍待验证 | 待核实，不把 USB 隧道实现等同于完整操作入口 |
-| PyroWave | 实验性 Vulkan 路径 | 本手册未核实发行包中的相同入口 |
-| PyroWave 动态 HDR／帧生成 | 该版本不支持 | 待核实 |
-| 客户端插帧 | 实验性；普通支持路径，需设备检查与引擎 | 本手册未提供相同操作教程 |
+| 主机显示控制、麦克风回传 | 支持 | 支持 |
+| ABR、FEC | 支持 | 支持 |
+| 文本剪贴板 | 支持，双向 | 支持，双向 |
+| 图片剪贴板 | 支持，本机图片发往主机 | 支持，双向 PNG 图片 |
+| 主机文件访问 | 兼容性待确认 | 支持；桌面控制面板只读共享 |
+| 王冠与社区布局 | 支持 | 兼容性待确认 |
+| USB 设备转发 | 实验性；ARMv7 实机支持仍待验证 | 兼容性待确认 |
+| PyroWave | 实验性 Vulkan 路径 | 兼容性待确认 |
+| PyroWave 动态 HDR／帧生成 | 该版本不支持 | 兼容性待确认 |
+| 客户端插帧 | 实验性；普通支持路径，需设备检查与引擎 | 暂无对应配置指南 |
 
 ### 其他系统与客户端
 
-| 项目 | 已核对的起点 | 增强功能如何判断 |
+| 项目 | 安装与入门 | 增强功能如何判断 |
 | --- | --- | --- |
 | PC V+ 的 Windows／macOS／Linux 包 | [下载、架构与运行库](../clients/desktop.md) | 同一项目也会受系统挂载、驱动和硬解能力限制 |
-| macOS Enhanced | [独立客户端安装](../clients/desktop.md#macos) | 不继承 PC V+ 或 Android 的菜单、快捷键与扩展清单 |
-| 鸿蒙 NEXT V+ | [安装与显示能力](../clients/harmony-apple.md#鸿蒙-next) | 项目记录了 HLG／HDR Vivid 等方向，具体设备与路径仍需验证 |
+| macOS Enhanced | [独立客户端安装](../clients/desktop.md#macos) | 使用独立的菜单、快捷键与扩展功能 |
+| 鸿蒙 NEXT V+ | [安装与显示能力](../clients/harmony-apple.md#鸿蒙-next) | HLG／HDR Vivid 需配套主机、解码及显示路径，使用前请验证设备兼容性 |
 | VoidLink／其他 Apple 客户端 | [iPhone、iPad 与 Apple TV](../clients/harmony-apple.md#apple-devices) | 动态 HDR、麦克风及高级反馈分别按所选应用说明确认 |
-| 普通 Moonlight | 对应平台的基础串流 | 不能将“能配对”视为支持剪贴板、USB、超级指令等扩展 |
+| 普通 Moonlight | 对应平台的基础串流 | 剪贴板、USB、超级指令等扩展需另查对应客户端支持范围 |
 
 ## 开启后如何确认
 
-每次只增加一项功能，保存原配置。先看主机的组件与当前会话状态，再看客户端的实际格式、性能数据或外设行为，最后测试断开重连及结束后的恢复。菜单有开关、能力检测通过、主机宣布已注入元数据，分别都不能替代实际效果验证。
+每次只增加一项功能，保存原配置。先看主机的组件与当前会话状态，再看客户端的实际格式、性能数据或外设行为，最后测试断开重连及结束后的恢复。设置开关和能力检测可用于准备配置，最终请以实际画面、声音或外设行为确认效果。
 
 找不到入口时，先核对项目名、版本和教程标注的平台；[故障排查](../troubleshooting/index.md)保留了普通 SDR 对照配置。无需为了尝试所有功能同时安装全部组件。
 
-## 依据与维护
+## 参考
 
-- [Foundation 功能说明快照](https://github.com/AlkaidLab/foundation-sunshine/blob/04d9188a5da6985e6d2423040e8ded903d7f0365/docs/zh-CN/features.md)
+- [Foundation Sunshine 功能说明](https://github.com/AlkaidLab/foundation-sunshine/blob/04d9188a5da6985e6d2423040e8ded903d7f0365/docs/zh-CN/features.md)
 - [Android 12.13.0 功能指南](https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/docs/VPLUS_FEATURES.md)与[兼容说明](https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/docs/COMPATIBILITY.md)
 - [PC V+ 6.5.0 增强说明](https://github.com/qiin2333/moonlight-qt/blob/v6.5.0/README.md)
-
-本页是文档与实现核对，不是所有设备的实测认证；最早支持版本没有充分依据时保持待核实。更新依据见仓库中的 `docs/maintenance/manual-audit.json`。

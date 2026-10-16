@@ -4,7 +4,7 @@ description: 配置可选 AI 日志诊断、Moonlight Web 网页串流和局域�
 
 # AI 与可选集成
 
-下面的工具不影响基础串流，可以按需要单独配置。桌面 GUI、Sunshine 管理 WebUI 和浏览器串流客户端是不同入口，功能与权限不能混用。
+下面的工具不影响基础串流，可以按需要单独配置。桌面 GUI、Sunshine 管理 WebUI 和浏览器串流客户端是不同入口，请按使用目的选择对应入口。
 
 ## AI 日志诊断与配置辅助 {#ai-diagnosis}
 
@@ -34,11 +34,11 @@ HTTPS、自签名证书、浏览器权限和网络访问还需与该网页服务
 
 ## 局域网二维码配对 {#qr-pairing}
 
-此功能在主机界面明确标为**实验性、仅局域网**，还需要客户端具备扫码配对入口。没有该入口的应用继续使用 [PIN 配对](../getting-started/index.md#_4-添加主机并输入-pin)，不能把系统相机扫描当作已确认兼容。
+二维码配对为**实验性功能，仅限局域网**，需要客户端提供扫码配对入口。请在客户端内扫描；没有该入口时，使用 [PIN 配对](../getting-started/index.md#_4-添加主机并输入-pin)。
 
 1. 让主机与扫码客户端位于可互访的局域网，在 Sunshine **PIN 码** 页打开 **二维码配对 → 生成二维码**。
 2. 使用目标客户端自己的配对扫描入口扫描，观察过期时间；过期后在主机刷新二维码。
-3. 在双方确认配对结果，再用 Desktop 检查连接与输入；不能只凭扫码器识别了内容就认为配对成功。
+3. 在主机与客户端确认配对成功，再连接 Desktop 检查画面与输入。
 4. 扫码失败、客户端不支持或不在局域网时，回到手动 PIN；不需要更改主机服务模式。
 
 配对材料只用于自己控制的设备，不公开二维码或用作教程示例。误配时在主机配对列表撤销该设备，再验证它不再获准连接。
@@ -46,5 +46,5 @@ HTTPS、自签名证书、浏览器权限和网络访问还需与该网页服务
 ## 参考
 
 - [Foundation：桌面 GUI 与实验集成](https://github.com/AlkaidLab/foundation-sunshine/blob/04d9188a5da6985e6d2423040e8ded903d7f0365/docs/zh-CN/features.md)
-- [固定 GUI 快照的模型配置与 Web 串流文案](https://github.com/qiin2333/sunshine-control-panel/blob/6b5b810722fc589558a82d7aa0f5b3b087e540ea/src/renderer/desktop/i18n/zh.js)
+- [桌面控制面板：模型配置与 Web 串流](https://github.com/qiin2333/sunshine-control-panel/blob/6b5b810722fc589558a82d7aa0f5b3b087e540ea/src/renderer/desktop/i18n/zh.js)
 - [主机二维码配对界面](https://github.com/AlkaidLab/foundation-sunshine/blob/04d9188a5da6985e6d2423040e8ded903d7f0365/src_assets/common/assets/web/views/Pin.vue)

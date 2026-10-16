@@ -21,7 +21,7 @@ description: 使用 ZakoDisplay 基地虚拟显示器配置无头主机、熄屏
   <ScreenshotFocus :source-width="1280" :regions="[[270, 82, 970, 380]]">
   <img src="../assets/manual/sunshine-vdd-overview.jpg" alt="新版 Sunshine 桌面控制面板中的虚拟显示器概览，提供概览、显示能力、HDR 校准和驱动与诊断四个页签" width="1280" height="800" loading="lazy" />
   </ScreenshotFocus>
-  <figcaption>实机路径：左侧“虚拟显示器”→“概览”，取自 Foundation Sunshine 2026.1015.51059 / GUI 0.5.8。驱动安装与状态排查在“驱动与诊断”中；图中能力标记不保证所有客户端都支持对应格式或帧率。</figcaption>
+  <figcaption>“虚拟显示器 → 概览”（Foundation Sunshine 2026.1015.51059 / GUI 0.5.8）。驱动安装与排查位于“驱动与诊断”。可用格式和帧率还取决于客户端的解码及显示能力。</figcaption>
 </figure>
 
 ## 选择你的使用方式
@@ -47,13 +47,13 @@ description: 使用 ZakoDisplay 基地虚拟显示器配置无头主机、熄屏
 - **串流分辨率**：编码传输的画面尺寸。
 - **Windows 缩放**：文字和界面元素的大小。
 
-三者可以不同。文字太小优先调整 Windows 缩放；画面被裁切或拉伸时，检查长宽比与显示策略；不要通过无限提高码率修正尺寸问题。
+三者可以不同。文字太小优先调整 Windows 缩放；画面被裁切或拉伸时，检查长宽比与显示策略。码率控制画面压缩质量，尺寸问题请通过分辨率与缩放设置调整。
 
 <figure class="manual-figure">
   <ScreenshotFocus :source-width="1280" :regions="[[278, 226, 685, 136], [278, 584, 685, 110]]">
   <img src="../assets/manual/sunshine-vdd-display.jpg" alt="虚拟显示器显示能力页的分辨率预置和刷新率预置重点区域" width="1280" height="800" loading="lazy" />
   </ScreenshotFocus>
-  <figcaption>实机路径：“虚拟显示器”→“显示能力”，分别截取分辨率和刷新率预置。这里维护虚拟屏向 Windows 声明的能力；实际串流目标仍在客户端设置。截图保留本机现值，点击可看完整页面。</figcaption>
+  <figcaption>“虚拟显示器 → 显示能力”的分辨率与刷新率预置（同一版本）。这里设置虚拟屏向 Windows 声明的能力；串流目标在客户端设置。点击可查看完整页面。</figcaption>
 </figure>
 
 ## 按设备和游戏复用显示设置 {#saved-display}
@@ -61,9 +61,9 @@ description: 使用 ZakoDisplay 基地虚拟显示器配置无头主机、熄屏
 1. Android V+ 12.13.0 在应用列表提供主机显示器与屏幕组合选择。选中要启动的应用，指定基地虚拟屏及所需策略，再开始串流。
 2. 在 Windows 显示设置中验证屏幕、主屏和长宽比；结束串流后检查恢复。
 3. 已有该游戏的启动记录后，长按应用选择 **使用上一次设置启动**，复用已记录配置；无记录时不会出现该菜单项。
-4. 手机和平板分别校对自己的请求，不要把一台设备的显示策略当成所有客户端的统一设置。
+4. 为手机和平板分别设置显示请求，按各自的屏幕尺寸和使用方式选择策略。
 
-更换显示器或修改主机拓扑后，重新进入选择流程更新记录。错误配置可重新选定物理屏／自动策略再启动；不需要删除整个配对。功能依据见[同版应用长按菜单实现](https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/java/com/limelight/AppView.kt#L1520-L1570)。
+更换显示器或修改主机拓扑后，重新进入选择流程更新记录。配置异常时，重新选择物理屏或自动策略后启动即可，原有配对可以保留。
 
 主机渲染尺寸与传输尺寸可分别控制，见[渲染分辨率比例](../clients/settings.md#render-resolution)；每台设备的亮度与色彩配置见[HDR 校准](./hdr.md#per-device)。
 
@@ -76,11 +76,12 @@ description: 使用 ZakoDisplay 基地虚拟显示器配置无头主机、熄屏
 3. 结束串流，检查物理屏和显示布局是否恢复。
 4. 再测试熄屏策略、自定义长宽比或 HDR，每次只改一项。
 
-仍有其他会话时，虚拟屏可能继续使用。异常后先保存日志，再使用 GUI 的显示恢复／故障排除入口；不要把卸载驱动和清空全部配对作为第一步。
+仍有其他会话时，虚拟屏可能继续使用。异常后先保存日志，再使用 GUI 的显示恢复／故障排除入口，并保留现有配置和配对。
 
 黑屏、503 和混合显卡问题见[显示异常排查](../troubleshooting/black-screen.md)。
 
 ## 参考
 
 - [Foundation Sunshine：基地虚拟显示器](https://github.com/AlkaidLab/foundation-sunshine/blob/master/docs/zh-CN/features.md#基地虚拟显示器-zakodisplay)
+- [Android 12.13.0：应用显示设置与启动菜单](https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/java/com/limelight/AppView.kt#L1520-L1570)
 - [ZakoDisplay 项目](https://github.com/qiin2333/zako-vdd)

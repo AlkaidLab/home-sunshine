@@ -6,9 +6,9 @@ description: 从安装 Foundation Sunshine 和 Moonlight 到 PIN 配对、连接
 
 游戏运行在 Windows 电脑上，Sunshine 把画面和声音发给手机、平板、电视或另一台电脑；Moonlight 把你的操作传回去。下文把 Windows 电脑叫作**主机／服务端**，手边游玩的设备叫作**客户端**。
 
-这份手册以 Foundation Sunshine（基地版）和配套 Moonlight 客户端为主，按 2026 年 10 月 16 日的公开文档与发行信息核对。增强功能需要双方版本、系统和硬件共同支持；先完成普通局域网串流，再逐项开启。
+欢迎使用 Foundation Sunshine（基地版）和配套 Moonlight 客户端。先按本章完成局域网串流，确认画面、声音和操作正常，再按设备条件开启增强功能。
 
-本轮正式版基线为 [Foundation Sunshine 2026.1011](https://github.com/AlkaidLab/foundation-sunshine/releases/tag/v2026.1011.150654.%E6%9D%82%E9%B1%BC)、[Android V+ 12.13.0](https://github.com/qiin2333/moonlight-vplus/releases/tag/v12.13.0) 和 [PC V+ 6.5.0](https://github.com/qiin2333/moonlight-qt/releases/tag/v6.5.0)。截图另行标明实机版本，测试版中的布局不代表正式包完全一致；下载时仍从正式发行入口选择目标版本。
+本手册适用于 [Foundation Sunshine 2026.1011](https://github.com/AlkaidLab/foundation-sunshine/releases/tag/v2026.1011.150654.%E6%9D%82%E9%B1%BC)、[Android V+ 12.13.0](https://github.com/qiin2333/moonlight-vplus/releases/tag/v12.13.0) 和 [PC V+ 6.5.0](https://github.com/qiin2333/moonlight-qt/releases/tag/v6.5.0)。截图在图注中标明版本，测试版界面可能与正式版略有不同。日常使用建议从正式发行入口下载安装包。
 
 <ManualDiagram kind="streaming" />
 
@@ -24,7 +24,7 @@ description: 从安装 Foundation Sunshine 和 Moonlight 到 PIN 配对、连接
 - 一台手机、平板、电视或其他电脑，安装对应的 Moonlight。
 - 两端接入同一个家庭网络。主机优先接网线，无线客户端靠近路由器。
 
-首次测试先用物理屏幕；没有物理屏幕时，按[虚拟显示器](../server/display.md)安装并选择基地显示器。不要在第一次连接时同时测试外网、HDR、高帧率和熄屏策略。
+首次测试先用物理屏幕；没有物理屏幕时，按[虚拟显示器](../server/display.md)安装并选择基地显示器。外网、HDR、高帧率和熄屏策略可在基础连接成功后逐项配置。
 
 系统、显卡和网络条件见[开始前的准备](./requirements.md)。
 
@@ -39,7 +39,7 @@ description: 从安装 Foundation Sunshine 和 Moonlight 到 PIN 配对、连接
   <ScreenshotFocus :source-width="1280" :regions="[[210, 190, 855, 280]]">
   <img src="../assets/manual/sunshine-setup-gpu.png" alt="Foundation Sunshine 首次设置向导的选择显卡步骤，显卡适配器默认显示自动，下方有下一步按钮" width="1280" height="800" loading="lazy" />
   </ScreenshotFocus>
-  <figcaption>首次设置向导 · 显卡选择区域。取自本机 Foundation Sunshine 2026.1015.51059；向导在独立浏览器中重放，未保存配置。首次可保留“自动”；点击可查看完整向导。</figcaption>
+  <figcaption>首次设置向导的显卡选择示例（Foundation Sunshine 2026.1015.51059，界面状态重放）。首次配置可保留“自动”；点击可查看完整向导。</figcaption>
 </figure>
 
 桌面控制面板是主要管理入口。可选的浏览器 WebUI 地址是主机上的 `https://localhost:47990`；它用于管理 Sunshine，不能用来观看远程桌面。首次 WebUI 登录与证书提示见[服务端安装](../server/index.md#使用浏览器管理)。
@@ -61,7 +61,7 @@ description: 从安装 Foundation Sunshine 和 Moonlight 到 PIN 配对、连接
   <ScreenshotFocus :source-width="1108" :regions="[[315, 0, 480, 220]]">
   <img src="../assets/manual/sunshine-pin.png" alt="Sunshine 实机 PIN 配对表单，包含 PIN 码、设备名称两个空白输入框和发送按钮" width="1108" height="319" loading="lazy" />
   </ScreenshotFocus>
-  <figcaption>主机端 PIN 与设备名称输入区，取自同一版本实机 WebUI。桌面控制面板的“客户端配对”也使用这张表单；输入 Moonlight 本次显示的码。仅为自己掌控的客户端配对，它将获得控制电脑的权限。</figcaption>
+  <figcaption>主机端 PIN 配对表单（Foundation Sunshine 2026.1015.51059）。桌面控制面板的“客户端配对”使用同一表单。输入 Moonlight 当前显示的 PIN；配对后，该客户端将获得控制主机的权限，请只为自己信任的设备配对。</figcaption>
 </figure>
 
 <SunshineTip title="太阳娘的进阶入口：给不同设备分别校准 HDR">
@@ -92,7 +92,7 @@ ipconfig
 | 音频 | 立体声 / Opus |
 | 插帧、超分及画质增强 | 先关闭 |
 
-这是一套排查用起点，不是所有设备的最佳画质。成功连接后可按[画质设置](../clients/settings.md)逐项提高。
+这套设置便于确认基础连接。成功后，可根据设备性能和网络条件，按[画质设置](../clients/settings.md)逐项提高。
 
 ## 6. 连接 Desktop 并确认三件事
 
@@ -102,7 +102,7 @@ ipconfig
 2. **操作**：鼠标、触控或手柄能控制主机。
 3. **声音**：主机播放音频后，客户端能听到声音。
 
-没有 Desktop 时，见[恢复内置应用](../server/apps.md#先连接-desktop)。只在游戏里黑屏时，先回到 Desktop 验证，不要立刻重装服务端。
+没有 Desktop 时，见[恢复内置应用](../server/apps.md#先连接-desktop)。只在游戏里黑屏时，先回到 Desktop 验证，再检查游戏启动与捕获设置。
 
 ## 7. 结束连接，再开始调优
 

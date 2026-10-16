@@ -24,14 +24,14 @@ description: 从稳定的 SDR 基础配置开始调整分辨率、帧率、码�
 
 ## 实机设置示例
 
-以下截图来自魅族 17 上已安装的 **Android Moonlight V+ 12.12.13.beta.6**，拍摄于 2026-10-16。正文只展示对应设置的重点区域，点击可看原图；其他平台和正式版的布局可能不同。
+以下截图展示魅族 17 上的 **Android Moonlight V+ 12.12.13.beta.6**。正文只展示对应设置的重点区域，点击可看原图；其他平台和正式版的布局可能不同。
 
 <div class="manual-focus-gallery">
   <figure class="manual-figure manual-figure-portrait">
     <ScreenshotFocus :source-width="1080" :regions="[[32, 298, 1008, 180], [32, 950, 1008, 150], [32, 1148, 1008, 225]]">
     <img src="../assets/manual/android-video-settings.png" alt="Android V+ 的串流分辨率、帧率和码率设置重点区域" width="1080" height="2340" loading="lazy" />
     </ScreenshotFocus>
-    <figcaption>分别截取分辨率、帧率和码率。20 Mbps 是本机已有配置；首次测试可从 10 Mbps 开始，稳定后再比较。</figcaption>
+    <figcaption>分别截取分辨率、帧率和码率。图中码率为 20 Mbps；首次测试可从 10 Mbps 开始，稳定后再比较。</figcaption>
   </figure>
   <figure class="manual-figure manual-figure-portrait">
     <ScreenshotFocus :source-width="1080" :regions="[[32, 288, 1008, 300], [32, 828, 1008, 410]]">
@@ -41,7 +41,7 @@ description: 从稳定的 SDR 基础配置开始调整分辨率、帧率、码�
   </figure>
 </div>
 
-截图保留实机已有状态，省略无关选项。原图中的 FEC、主机优化等高级项不作为通用推荐，参数含义和调整顺序以本页说明为准。
+请按下面的步骤选择参数。原图中的 FEC、主机优化等高级选项需要结合网络与设备单独配置，建议先完成基础画质测试。
 
 ## 按顺序提高画质
 
@@ -55,14 +55,14 @@ description: 从稳定的 SDR 基础配置开始调整分辨率、帧率、码�
 
 ## 主机渲染尺寸与串流尺寸 {#render-resolution}
 
-Android V+ 12.13.0 与本页实机版本提供 **主机渲染分辨率比例**，PC V+ 也记录了远程分辨率解耦与 AppView 显示控制；两端菜单不同，不能互相套用路径。
+Android V+ 12.13.0 及图示版本提供 **主机渲染分辨率比例**；PC V+ 可通过远程分辨率与 AppView 显示控制分别调整渲染和串流尺寸。两端的菜单入口不同，请按所用客户端操作。
 
 1. 先固定串流分辨率和帧率，保持主机比例 **100%**，记录游戏帧率、实际主机分辨率及编码耗时。
 2. Android 在串流质量页查找 **主机渲染分辨率比例**，提高一档后重新连接；PC 使用自己的远程分辨率／显示控制入口。
 3. 在主机 Windows 显示设置与游戏中确认请求实际生效，再对比细节、帧率和负载。主机渲染更大、传输仍保持原尺寸时，可能以更多 GPU 负载换取细节。
 4. GPU 余量不足可尝试更低比例；尺寸异常、裁切或兼容问题时恢复 100% 和原显示策略，重连验证。
 
-这不是 Windows 文字缩放，也不是客户端插帧的自定义渲染比例。若只是文字太小，先按[显示缩放说明](../server/display.md)调整；不要靠不断加码率修正尺寸问题。设置依据见[Android 正式版文案](https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/res/values-zh-rCN/strings.xml)与[PC V+ 的显示控制](https://github.com/qiin2333/moonlight-qt/blob/v6.5.0/README.md#协议与串流能力)。
+主机渲染比例控制主机画面尺寸，与 Windows 文字缩放、客户端插帧的渲染比例分别设置。若只是文字太小，先按[显示缩放说明](../server/display.md)调整。
 
 ## 自动码率与丢包保护（FEC）
 
@@ -75,7 +75,7 @@ Android V+ 12.13.0 与本页实机版本提供 **主机渲染分辨率比例**�
 | 自动调整 FEC | 让兼容主机按网络反馈选择纠错比例 | 不支持时沿用主机默认行为 |
 | 固定 FEC 比例 | 指定冗余比例；0% 表示关闭纠错 | 比例越高，保护数据占用的传输预算越多 |
 
-Android 12.13 的正式版名称为“丢包保护（FEC）”，本页测试机截图中的对应名称为“FEC 纠错”。兼容主机会在目标码率内平衡画质与纠错，固定 FEC 越高，可用于画面本身的码率可能越少；实际网络流量仍会波动。不要把 FEC 拉满当作弱网通用解法。
+Android 12.13 的正式版名称为“丢包保护（FEC）”，图示测试版中的对应名称为“FEC 纠错”。兼容主机会在目标码率内平衡画质与纠错，固定 FEC 越高，可用于画面本身的码率可能越少；实际网络流量仍会波动。建议从跟随主机或自动 FEC 开始，再根据丢包和画质调整。
 
 这两版客户端还区分**推荐码率**与**手动指定码率**：手动输入后，更改分辨率或帧率会保留该数值。想恢复自动推荐时，使用“恢复推荐”或“使用推荐码率”；改完再检查实际 Mbps，避免误以为提高分辨率会自动获得更高码率。
 
@@ -101,7 +101,7 @@ Android V+ 可结合[串流菜单与退出说明](./android.md#串流菜单与�
 
 ## 默认设置不合适时
 
-出现周期性顿挫时，先让游戏帧率与串流目标稳定，再比较客户端默认的同步／帧节奏选项。不要同时关闭所有同步、把队列调到极限，又提高码率；这样无法判断是哪一项产生变化。
+出现周期性顿挫时，先让游戏帧率与串流目标稳定，再比较客户端默认的同步／帧节奏选项。每次只调整一项，并记录丢帧和延迟变化，再决定是否保留。
 
 已确认是网络瓶颈时，兼容版本可尝试自适应码率，但它不能替代可达性配置，也不能让不足的带宽变大。更多按症状定位的方法见[卡顿与延迟排查](../troubleshooting/performance.md)。
 
@@ -109,5 +109,6 @@ Android V+ 可结合[串流菜单与退出说明](./android.md#串流菜单与�
 
 - [Foundation Sunshine：性能排查](https://github.com/AlkaidLab/foundation-sunshine/blob/master/docs/zh-CN/faq.md)
 - [Moonlight：性能统计字段说明](https://github.com/moonlight-stream/moonlight-docs/wiki/Frequently-Asked-Questions#what-do-the-numbers-mean-in-the-on-screen-connection-statistics)
-- [Android V+ 12.13.0：设置与 FEC 文案](https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/res/values-zh-rCN/strings.xml)
+- [Android V+ 12.13.0：画质与 FEC 设置](https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/res/values-zh-rCN/strings.xml)
+- [PC V+ 6.5.0：远程分辨率与显示控制](https://github.com/qiin2333/moonlight-qt/blob/v6.5.0/README.md#协议与串流能力)
 - [PC V+ 6.5.0：ABR、FEC 与码率说明](https://github.com/qiin2333/moonlight-qt/releases/tag/v6.5.0)

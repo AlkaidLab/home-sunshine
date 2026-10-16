@@ -8,7 +8,7 @@ description: 在 HarmonyOS NEXT、iPhone、iPad 和 Apple TV 上选择兼容客�
 
 ## 鸿蒙 NEXT
 
-Moonlight V+ for HarmonyOS 当前项目要求 **HarmonyOS NEXT 5.0 或更高版本**。在应用市场搜索 **Moonlight V+**，或打开[应用详情页](https://appgallery.huawei.com/app/detail?id=com.alkaidlab.sdream)。无法唤起市场时，回到设备的应用市场内搜索。
+Moonlight V+ for HarmonyOS 需要 **HarmonyOS NEXT 5.0 或更高版本**。在应用市场搜索 **Moonlight V+**，或打开[应用详情页](https://appgallery.huawei.com/app/detail?id=com.alkaidlab.sdream)。无法唤起市场时，回到设备的应用市场内搜索。
 
 1. 安装并打开应用，让设备与 Sunshine 主机处于同一局域网。
 2. 选择发现的主机，或手动添加主机地址。
@@ -17,15 +17,15 @@ Moonlight V+ for HarmonyOS 当前项目要求 **HarmonyOS NEXT 5.0 或更高版�
 
 支持的设备可继续尝试 HLG / HDR Vivid、主机显示控制等功能，但需要配套服务端和终端支持。客户端性能浮窗提供格式信息时，用它确认实际路径，不只看设置是否勾选。
 
-部分实验性设置可能被当前版本的开发者入口隐藏。普通串流不需要开启这些选项；Android 的 APK、菜单路径和扩展条件也不能直接套到鸿蒙 NEXT。
+部分实验性设置位于当前版本的开发者入口中，普通串流保持默认即可。鸿蒙 NEXT 使用独立的安装包、菜单与扩展配置，请按鸿蒙客户端的操作提示设置。
 
 ## iPhone、iPad 与 Apple TV {#apple-devices}
 
-从[官网产品矩阵](https://www.alkaidlab.com/#products)进入适用于自己设备的客户端。官网列有社区项目 **VoidLink**，可查看[中国区商店](https://apps.apple.com/cn/app/voidlink/id6747717070)或[其他地区商店](https://apps.apple.com/us/app/voidlink-extreme/id6755103808)；具体设备、系统、地区和发行方式以当前商店页面为准。
+你可以使用社区维护的 **VoidLink**，通过[中国区商店](https://apps.apple.com/cn/app/voidlink/id6747717070)或[其他地区商店](https://apps.apple.com/us/app/voidlink-extreme/id6755103808)获取适合自己设备的版本，也可从[产品矩阵](https://www.alkaidlab.com/#products)查看其他客户端。具体设备、地区和发行方式请查看商店页面。
 
-两个 VoidLink 商店页面均列出 iPhone、iPad 和 Apple TV，系统要求分别为 iOS 13、iPadOS 13、tvOS 16 或更高版本。Apple TV 可在电视的 App Store 获取对应版本。下载时需核对所在地区的当前兼容范围。
+VoidLink 的上述商店版本面向 iPhone、iPad 和 Apple TV，分别需要 iOS 13、iPadOS 13、tvOS 16 或更高版本。Apple TV 可在电视的 App Store 获取对应版本。下载时需核对所在地区的当前兼容范围。
 
-基地版客户端标为待发布时，不代表社区客户端也不可用；其他客户端的安装方式和功能条件则需分别核对。
+基地版 iOS 与 Apple TV 客户端暂未发布，现阶段可选用上述社区客户端。各应用的安装方式、增强功能和支持渠道独立。
 
 1. 首次启动允许**本地网络**访问；此前拒绝过时，回到系统隐私设置检查该应用的权限。
 2. 先与主机连同一个可互访的家庭网络，手动添加时填主机 IP。

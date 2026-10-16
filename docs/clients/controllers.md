@@ -4,7 +4,7 @@ description: 配置 DualSense 虚拟设备、自适应扳机、HD Haptics 与音
 
 # 手柄、DualSense 与高级触觉
 
-先完成[基础手柄输入](../server/audio-input.md#基础手柄输入)。按钮、传统振动、体感、自适应扳机和原生音频触觉是分别验证的能力；不能因为一项正常就推断全部支持。
+先完成[基础手柄输入](../server/audio-input.md#基础手柄输入)。按钮、传统振动、体感、自适应扳机和原生音频触觉各有兼容条件，请逐项测试。
 
 ## 配置主机 DualSense 组件 {#dualsense}
 
@@ -18,7 +18,7 @@ GUI 的普通手柄测试可用于检查设备识别、输入和基础振动，*
 
 ## HD Haptics 与传输组件 {#hd-haptics}
 
-核对的 GUI 将普通手柄功能与 **HD Haptics（四声道）** 分开：普通路径包含按键、摇杆等能力，HD Haptics 还需额外音频设备与可用 USB/IP 共享传输。
+设备中心分别管理普通手柄功能与 **HD Haptics（四声道）**：普通路径包含按键、摇杆等能力，HD Haptics 还需额外音频设备与可用 USB/IP 共享传输。
 
 1. 在主机组件管理确认共享 USB 驱动已就绪，再查看 **HD Haptics** 是否可用；普通按键正常但该项不可用时，只排查这条附加路径。
 2. 按当前组件选择 HD Haptics 能力，重连以创建相应设备；若游戏在设备创建前已启动，完全退出游戏后再打开测试。
@@ -40,7 +40,7 @@ Android V+ 的 **设置 → 音频 → 音频模拟振动输出**根据声音生
 
 ## Android 手柄快捷操作 {#shortcuts}
 
-- **Select + L1/LB + R1/RB + X**：12.13.0 记录的性能显示切换组合。
+- **Select + L1/LB + R1/RB + X**：在 Android V+ 12.13.0 中切换性能显示。
 - **长按 Start 操作轮盘**：需要启用对应设置；轮盘出现后点按十字键上可打开串流菜单。具体动作按当前输入路径的提示确认。
 
 先使用设置中的 **手柄快捷键测试** 核对按钮映射、连接路径和是否启用长按操作，再进入游戏。测试中识别不到时，用触摸／鼠标直接打开串流菜单，不要持续在游戏中试组合键造成误操作。PC V+ 的退出组合键和手柄鼠标切换使用自己的设置，不能套用 Android 全部组合。
@@ -51,5 +51,5 @@ Android V+ 的 **设置 → 音频 → 音频模拟振动输出**根据声音生
 
 - [Foundation：DualSense 与虚拟手柄](https://github.com/AlkaidLab/foundation-sunshine/blob/04d9188a5da6985e6d2423040e8ded903d7f0365/docs/zh-CN/features.md#dualsense-与虚拟手柄)
 - [GUI 普通手柄与 HD Haptics 能力说明](https://github.com/qiin2333/sunshine-control-panel/blob/6b5b810722fc589558a82d7aa0f5b3b087e540ea/src/renderer/desktop/i18n/zh.js)
-- [Android 12.13.0 快捷键及音频振动文案](https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/res/values-zh-rCN/strings.xml)
+- [Android 12.13.0：快捷键与音频振动设置](https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/res/values-zh-rCN/strings.xml)
 - [PC V+：手柄与悬浮菜单](https://github.com/qiin2333/moonlight-qt/blob/v6.5.0/README.md#客户端体验)

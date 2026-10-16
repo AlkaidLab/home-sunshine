@@ -4,7 +4,7 @@ description: 在 Android V+ 检测并尝试 PyroWave Vulkan 视频路径、客�
 
 # PyroWave 与客户端帧生成
 
-本页以 **Android V+ 12.13.0** 为基线，两条路径都在普通串流稳定后单独测试。它们不代表所有 Moonlight 平台的相同能力，先查[平台支持导航](../getting-started/features.md)。
+以下步骤适用于 **Android V+ 12.13.0**。请在普通串流稳定后，分别测试 PyroWave 与客户端帧生成；其他平台的可用功能见[平台支持导航](../getting-started/features.md)。
 
 ## PyroWave Vulkan 路径 {#pyrowave}
 
@@ -22,7 +22,7 @@ description: 在 Android V+ 检测并尝试 PyroWave Vulkan 视频路径、客�
 3. 用持续运动场景观察解码、渲染和丢帧，再比较相同设置下的普通路径。普通 SDR 正常后，才单独验证该版本允许的 HDR 呈现。
 4. 黑屏、异常颜色或性能下降时，恢复之前的视频格式，重连确认普通路径恢复，再提供能力报告与双方日志。
 
-**12.13.0 明确不支持 PyroWave 的 HDR10+／Dolby Vision 动态元数据，也不支持该路径下的帧生成。** 需要这些能力时分别选择有明确支持依据的其他路径，不能通过同时开启几个开关绕过限制。
+**12.13.0 明确不支持 PyroWave 的 HDR10+／Dolby Vision 动态元数据，也不支持该路径下的帧生成。** 需要这些能力时，请选择当前客户端支持它们的其他视频路径。
 
 ## 客户端插帧 {#frame-generation}
 
@@ -30,7 +30,7 @@ description: 在 Android V+ 检测并尝试 PyroWave Vulkan 视频路径、客�
 
 ### 准备设备与引擎
 
-1. 在 **设置 → 解锁开发者功能** 按客户端提示完成验证。12.13.0 的该入口使用 GitHub 登录并检查项目 Star；基础串流不要求解锁。
+1. 在 **设置 → 解锁开发者功能** 按客户端提示完成验证。12.13.0 需要通过 GitHub 登录并验证项目 Star；基础串流不要求解锁。
 2. 进入 **帧生成 → 检查设备支持**。该版要求 Android 10+、64 位 ARM 与 Vulkan 1.1 等条件；仍以检测结果和串流实测为准。
 3. 从自己 Windows 电脑上已安装的 **Lossless Scaling** 中取得 `Lossless.dll` 并复制到手机，在 **导入插帧引擎文件** 中选择。先检查导入结果，不从不明来源获取 DLL。
 4. 选择普通支持路径，关闭 PyroWave，先让真实串流帧率稳定；记录设备温度与解码／渲染耗时。
@@ -54,4 +54,4 @@ description: 在 Android V+ 检测并尝试 PyroWave Vulkan 视频路径、客�
 
 - [Android 12.13.0：PyroWave 及已知限制](https://github.com/qiin2333/moonlight-vplus/releases/tag/v12.13.0)
 - [同版特色指南：插帧](https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/docs/VPLUS_FEATURES.md#插帧进阶功能)
-- [同版设备检测、开发者入口和引擎导入文案](https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/res/values-zh-rCN/strings.xml)
+- [Android 12.13.0：设备检测与引擎导入设置](https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/res/values-zh-rCN/strings.xml)

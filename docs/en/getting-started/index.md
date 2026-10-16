@@ -8,7 +8,7 @@ next: false
 
 Your game runs on a Windows PC. Sunshine sends its video and audio to a phone, tablet, TV, or another computer, while Moonlight sends your input back. This guide calls the Windows PC the **host** and your playing device the **client**.
 
-This manual focuses on Foundation Sunshine and the companion Moonlight clients. The instructions were checked against public documentation and releases on **October 16, 2026**: [Foundation Sunshine 2026.1011](https://github.com/AlkaidLab/foundation-sunshine/releases/tag/v2026.1011.150654.%E6%9D%82%E9%B1%BC), [Android V+ 12.13.0](https://github.com/qiin2333/moonlight-vplus/releases/tag/v12.13.0), and [PC V+ 6.5.0](https://github.com/qiin2333/moonlight-qt/releases/tag/v6.5.0). Advanced features depend on both apps, the operating systems, and the hardware. Establish a basic local stream first.
+Welcome to Foundation Sunshine and the companion Moonlight clients. This guide covers [Foundation Sunshine 2026.1011](https://github.com/AlkaidLab/foundation-sunshine/releases/tag/v2026.1011.150654.%E6%9D%82%E9%B1%BC), [Android V+ 12.13.0](https://github.com/qiin2333/moonlight-vplus/releases/tag/v12.13.0), and [PC V+ 6.5.0](https://github.com/qiin2333/moonlight-qt/releases/tag/v6.5.0). Follow the steps below to get video, audio, and input working on your local network. Then enable advanced features supported by your apps, operating systems, and hardware.
 
 ::: info Translation availability
 English chapters are being added. Links marked **中文** open the Chinese manual. Search covers the current language; switch to 简体中文 to search all Chinese chapters. The language menu opens the documentation home in the selected language.
@@ -35,7 +35,7 @@ For the first test, use a physical monitor. For a headless host, install and sel
   <ScreenshotFocus :source-width="1280" :regions="[[210, 190, 855, 280]]">
     <img src="../../assets/manual/sunshine-setup-gpu.png" alt="Foundation Sunshine GPU selection step with the adapter set to Automatic and a Next button; interface shown in Chinese" width="1280" height="800" loading="lazy" />
   </ScreenshotFocus>
-  <figcaption>GPU selection in Foundation Sunshine 2026.1015.51059. The wizard’s display state was replayed in a separate browser without saving settings. Automatic is a suitable starting point. Open the image to see the full wizard; its interface is in Chinese.</figcaption>
+  <figcaption>GPU selection example (Foundation Sunshine 2026.1015.51059, replayed interface state). Start with Automatic. Open the image to see the full wizard; its interface is in Chinese.</figcaption>
 </figure>
 
 The desktop control panel is the main management interface. The optional browser WebUI is available at `https://localhost:47990` on the host. It manages Sunshine; it does not show the streamed desktop. See [WebUI login and certificate handling (中文)](../../server/index.md#使用浏览器管理).
@@ -57,7 +57,7 @@ Use the [client selection guide (中文)](../../clients/index.md) to choose a cl
   <ScreenshotFocus :source-width="1108" :regions="[[315, 0, 480, 220]]">
     <img src="../../assets/manual/sunshine-pin.png" alt="Sunshine host pairing form with empty PIN and device-name fields and a Send button; interface shown in Chinese" width="1108" height="319" loading="lazy" />
   </ScreenshotFocus>
-  <figcaption>The host-side pairing form from the same build. The desktop control panel’s client pairing view also uses this form. Enter the current PIN from Moonlight. Only pair devices you control: pairing grants access to control the host.</figcaption>
+  <figcaption>Host pairing form (Foundation Sunshine 2026.1015.51059), also used by the desktop control panel. Enter the current PIN from Moonlight. Pair only devices you trust: a paired client can control your host.</figcaption>
 </figure>
 
 If discovery fails, press `Win + R` on the host, enter `cmd`, and run:
@@ -84,7 +84,7 @@ Use these client settings while leaving host encoding and capture on their defau
 | Audio                                     | Stereo / Opus                                       |
 | Frame generation, upscaling, enhancements | Off initially                                       |
 
-These are troubleshooting starting points. After connecting successfully, adjust one setting at a time using the [video quality guide (中文)](../../clients/settings.md).
+These settings help you verify the basic connection. Once it works, adjust one setting at a time for your device and network using the [video quality guide (中文)](../../clients/settings.md).
 
 ## 6. Open Desktop and check three things
 

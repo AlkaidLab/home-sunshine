@@ -266,5 +266,49 @@
       "Android Moonlight USB sharing is experimental and restores local use at stream end by design; independent manual USB/IP mounts require explicit release.",
       "Core steps formerly embedded in mascot tips now have ordinary headings and navigation links."
     ]
+  },
+  "editorialReview": {
+    "reviewedOn": "2026-10-16",
+    "scope": "All 28 Chinese manual chapters and the English quick-start chapter.",
+    "voice": "Official development team addressing end users: direct actions, expected results, version scope and recovery steps.",
+    "rules": [
+      "Keep source-audit methodology and implementation-evidence explanations in this maintenance record rather than reader instructions.",
+      "Use 支持 only for capabilities already documented in the pinned release sources, subject to the tutorial conditions; it is not hardware certification. Keep unverified compatibility distinct from explicit unsupported paths.",
+      "Retain release and screenshot version boundaries, experimental labels, component requirements and directional restrictions. Do not convert missing evidence into support promises.",
+      "Keep setup-wizard captions explicitly labelled as replayed interface state. Capture procedures and original asset provenance remain in docs/assets/manual/sources.json.",
+      "Prefer actionable configuration and recovery guidance over repeated corrective prohibitions. Preserve concrete security and data-loss warnings.",
+      "Leave the two separately authored technical articles unchanged; they are not manual chapters."
+    ],
+    "pages": [
+      "docs/clients/advanced-video.md",
+      "docs/clients/android.md",
+      "docs/clients/controllers.md",
+      "docs/clients/crown.md",
+      "docs/clients/desktop.md",
+      "docs/clients/harmony-apple.md",
+      "docs/clients/index.md",
+      "docs/clients/settings.md",
+      "docs/en/getting-started/index.md",
+      "docs/getting-started/features.md",
+      "docs/getting-started/index.md",
+      "docs/getting-started/requirements.md",
+      "docs/server/apps.md",
+      "docs/server/audio-input.md",
+      "docs/server/automation.md",
+      "docs/server/collaboration.md",
+      "docs/server/display.md",
+      "docs/server/enhancements.md",
+      "docs/server/hdr.md",
+      "docs/server/index.md",
+      "docs/server/integrations.md",
+      "docs/server/network.md",
+      "docs/server/video.md",
+      "docs/troubleshooting/audio-input.md",
+      "docs/troubleshooting/black-screen.md",
+      "docs/troubleshooting/connection.md",
+      "docs/troubleshooting/index.md",
+      "docs/troubleshooting/logs.md",
+      "docs/troubleshooting/performance.md"
+    ]
   }
 }

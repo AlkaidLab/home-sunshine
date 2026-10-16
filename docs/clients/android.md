@@ -14,7 +14,7 @@ Android Moonlight V+ 面向手机、平板和兼容的电视设备。先完成�
 4. 将客户端显示的 PIN 输入 Sunshine 的 PIN 码页面。
 5. 选择 Desktop，用基础画质检查画面、声音和操作。
 
-发现不到主机时，不要反复重装 APK，先看[连接排查](../troubleshooting/connection.md)。
+找不到主机时，先检查本地网络权限与设备互通，见[连接排查](../troubleshooting/connection.md)。
 
 ## 串流质量设置
 
@@ -24,12 +24,12 @@ Android Moonlight V+ 面向手机、平板和兼容的电视设备。先完成�
   <ScreenshotFocus :source-width="1080" :regions="[[32, 298, 1008, 180], [32, 950, 1008, 150], [32, 1148, 1008, 225]]">
   <img src="../assets/manual/android-video-settings.png" alt="Android Moonlight V+ 实机串流质量页的分辨率、帧率与码率三个重点区域" width="1080" height="2340" loading="lazy" />
   </ScreenshotFocus>
-  <figcaption>2026-10-16 在魅族 17 上拍摄，版本 12.12.13.beta.6。只展示三个基础选项，点击可看原图；正式版与其他平台的入口和可用选项可能不同。</figcaption>
+  <figcaption>串流质量设置（魅族 17，Android V+ 12.12.13.beta.6）。点击可看原图；正式版和其他平台的入口可能不同。</figcaption>
 </figure>
 
-编码、HDR 和统计字段的调整顺序见[画质设置与性能统计](./settings.md#实机设置示例)。不要直接照搬截图中的 FEC、主机优化或其他高级设置。
+编码、HDR 和统计字段的调整顺序见[画质设置与性能统计](./settings.md#实机设置示例)。FEC、主机优化等高级选项请按对应章节单独配置。
 
-截图对应版本在同一页向下还提供“主机渲染分辨率比例”，用于改变向兼容主机请求的渲染尺寸；入门先保持 100%，操作与验证见[渲染尺寸与串流尺寸](./settings.md#render-resolution)。
+同一页向下还可找到“主机渲染分辨率比例”，用于改变向兼容主机请求的渲染尺寸；入门先保持 100%，操作与验证见[渲染尺寸与串流尺寸](./settings.md#render-resolution)。
 
 ## 串流菜单与退出
 
@@ -42,7 +42,7 @@ Android V+ **12.13.0** 的两个入口需要区分：
 | 暂停串流 | 断开当前客户端的串流连接；主机游戏可能继续运行，并非暂停游戏进程 |
 | 退出串流 | 受设置中的“‘退出’操作”影响，可选择“同时结束主机应用”或“仅断开连接” |
 
-旧版本可能使用“断开连接”等名称。退出前先保存进度，并核对“退出”行为与实际确认提示；关闭串流不等于游戏已保存。性能统计只用于观察串流状态。
+不同版本的菜单名称可能有所变化。退出前请保存游戏进度，再按“退出”设置与确认提示选择是否结束主机应用。
 
 ## 触控与王冠布局
 
@@ -50,7 +50,7 @@ Android V+ **12.13.0** 的两个入口需要区分：
 
 当前 V+ 的 **设置 → 王冠 → 管理 Crown 配置** 可建立触屏按键布局。先创建一套适合当前屏幕与游戏的配置，在串流中测试移动、视角、按键和多指操作，再微调。
 
-使用 **超市王冠** 中的社区布局前，核对适配的游戏与设备。屏幕尺寸、长宽比和操作习惯不同，导入后仍可能需要调整；不要把别人的整份客户端备份当作按键布局导入。
+使用 **超市王冠** 中的社区布局前，核对适配的游戏与设备。屏幕尺寸、长宽比和操作习惯不同，导入后仍可能需要调整；迁移按键布局请使用 Crown 导入入口，完整客户端备份可能包含其他设备的设置和配对身份。
 
 创建、编辑、切换、导出分享及三指键盘手势，按[王冠布局与触控操作](./crown.md)逐步配置。
 
@@ -86,4 +86,4 @@ PyroWave 能力检测、Vulkan 路径、客户端插帧及弱网补帧见[进阶
 
 - [Moonlight V+ 功能指南](https://github.com/qiin2333/moonlight-vplus/blob/master/docs/VPLUS_FEATURES.md)
 - [备份、恢复与配置分享](https://github.com/qiin2333/moonlight-vplus/blob/master/docs/BACKUP_AND_MIGRATION.md)
-- [12.13.0 正式版：菜单与退出行为文案](https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/res/values-zh-rCN/strings.xml)
+- [12.13.0 正式版：菜单与退出设置](https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/res/values-zh-rCN/strings.xml)

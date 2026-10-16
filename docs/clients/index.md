@@ -20,7 +20,7 @@ Sunshine 安装在运行游戏的电脑上，Moonlight 安装在观看和操作�
 | HarmonyOS NEXT | 应用市场中的 [Moonlight V+](https://appgallery.huawei.com/app/detail?id=com.alkaidlab.sdream) | [鸿蒙指南](./harmony-apple.md#鸿蒙-next) |
 | iPhone、iPad、Apple TV | VoidLink：[中国区](https://apps.apple.com/cn/app/voidlink/id6747717070)／[其他地区](https://apps.apple.com/us/app/voidlink-extreme/id6755103808)商店 | [Apple 设备](./harmony-apple.md#apple-devices) |
 
-官网中标为待发布的基地版客户端，不应被当成已经可下载的产品；可以使用产品矩阵中列出的社区项目。应用商店地区、系统支持与收费以对应发行页为准。
+标为“待发布”的基地版客户端暂未提供下载，现阶段可选择产品矩阵中列出的社区客户端。应用商店地区、系统支持与收费以对应发行页为准。
 
 ## 每个平台都先做这几步
 
@@ -35,7 +35,7 @@ Sunshine 安装在运行游戏的电脑上，Moonlight 安装在观看和操作�
 
 普通 Moonlight / Sunshine 协议可以提供基础画面、声音和输入。麦克风回传、主机显示控制、实时调码率、剪贴板、文件映射和高级触觉等功能，需要主机与客户端都实现对应扩展。
 
-菜单没有出现或功能回退时，先检查双方版本和功能说明；不要因为 Android 有某个设置，就推断 Apple 或鸿蒙客户端也有同名选项。可用性也不能仅凭“版本更新”来保证。
+菜单没有出现或功能回退时，先检查双方版本和对应平台的功能说明。Android、Apple 和鸿蒙的菜单与扩展范围各不相同，升级前可先查看[功能与平台支持](../getting-started/features.md)。
 
 ## 参考
 
