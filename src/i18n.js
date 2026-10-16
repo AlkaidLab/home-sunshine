@@ -5,20 +5,15 @@
 export const translations = {
   zh: {
     title: '瑶光流梦',
-    tagline: '在手机、电视和掌机上玩电脑游戏',
-    subtitle: '用 Sunshine 串流主机连接全平台 Moonlight 客户端',
     nav: {
       brand: '瑶光流梦 · AlkaidLab',
       github: 'GitHub 仓库',
       bilibili: 'B 站频道',
       features: '特性',
-      download: '下载',
-      clients: '客户端',
       stats: '点亮Star',
       docs: '文档',
       sponsors: '赞助',
       start: '开始使用',
-      support: '文档与支持',
       toDark: '切换至深色模式',
       toLight: '切换至浅色模式',
       openMenu: '打开菜单',
@@ -30,12 +25,10 @@ export const translations = {
       start: '开始串流！',
       github: 'GitHub 仓库',
       bilibili: '关注 B 站',
-      moonlightClient: '选择客户端',
       intro: ['瑶光流梦提供增强版 Sunshine 与多平台 Moonlight 客户端，', '从游戏电脑到手边设备，持续打磨画质、操控与连接体验。'],
       tags: ['HDR 画面优化', '自定义触控', '虚拟显示器'],
       metrics: '已有 1 万+ 位玩家点亮 Star，下载量 100 万+ 次',
       note: '使用时，需要你的游戏电脑保持开机并联网。',
-      stats: ['低延迟串流', 'HDR 支持', '虚拟显示器']
     },
     guide: {
       title: '开始你的串流体验',
@@ -51,7 +44,6 @@ export const translations = {
       clientDescription: '接收画面，将你的操作传回电脑。',
       alternateHint: '两个版本都能连接主机，任选其一安装即可。',
       platformGroup: '客户端平台',
-      devicesLabel: '适配：',
       download: '获取应用',
       project: '项目主页 ↗',
       friendTitle: '友情链接',
@@ -67,8 +59,6 @@ export const translations = {
       menuMirror: '镜像下载',
       menuStar: 'Star 仓库',
       helpTitle: '需要帮助或有建议？',
-      helpAskCommunity: '需要帮助？',
-      helpAskIssue: '想要提建议？',
       communityQq: '加入交流群 ↗',
       communityIssue: '提交 Issue ↗',
       downloadModal: {
@@ -132,40 +122,35 @@ export const translations = {
     },
     features: {
       title: '核心特性',
+      guideLink: '查看功能教程与平台支持 →',
       items: [
         {
-          title: 'HDR友好支持',
-          description: '经过优化的HDR处理管线，提供真正的HDR游戏流媒体体验'
+          title: 'HDR 与分设备校准',
+          description: '按客户端配置亮度与色彩，配合兼容设备探索动态 HDR'
         },
         {
           title: '虚拟显示器',
-          description: '内置虚拟显示器管理，无需额外软件即可创建和管理虚拟显示器'
+          description: '通过 ZakoDisplay 管理无头、熄屏和副屏串流，按设备调整显示配置'
         },
         {
           title: '远程麦克风',
-          description: '支持接收客户端麦克风，提供高音质的语音直通功能'
+          description: '将兼容客户端的麦克风传回主机，用于游戏语音和桌面通话'
         },
         {
-          title: '低延迟传输',
-          description: '结合最新硬件能力优化的编码处理，提供流畅的游戏体验'
+          title: '画质与网络调优',
+          description: '配合硬件捕获与编码，使用自适应码率、丢包保护和性能统计调整体验'
         },
         {
-          title: '高级控制面板',
-          description: '直观的Web控制界面，提供实时监控和配置管理'
+          title: '桌面控制面板',
+          description: '集中管理组件、游戏库、运行状态与诊断，保留 WebUI 配置入口'
         },
         {
-          title: '智能配对',
-          description: '智能管理配对设备的对应配置文件'
+          title: '输入与桌面协作',
+          description: '搭配 V+ 使用王冠、兼容手柄反馈、剪贴板和按授权开放的主机文件'
         }
       ]
     },
     download: {
-      title: '下载 瑶光流梦 Sunshine',
-      latestVersion: '最新版本',
-      checkUpdate: '检查更新',
-      checking: '正在检查最新版本...',
-      error: '无法检查版本信息，使用默认下载地址',
-      retry: '重试',
       requirements: '系统要求',
       requirementsList: [
         '系统: Windows10 22H2+',
@@ -174,23 +159,6 @@ export const translations = {
         'RAM: 4GB 或更多',
         '网络: 5GHz, 802.11ac'
       ],
-      windowsLatest: 'Windows 最新版',
-      recommended: '推荐使用',
-      allVersions: '所有版本',
-      releasesSource: '查看历史安装包',
-      mirrorDownload: '镜像下载',
-      mirrorSource: '备用下载渠道',
-      moonlightClient: '下载 Moonlight 客户端',
-      moonlightClientDesc: '查看推荐客户端',
-      prerelease: '预发布版本可用',
-      prereleaseFound: '发现新的预发布版本',
-      viewPrerelease: '查看预发布版本'
-    },
-    clients: {
-      title: '推荐的 Moonlight 客户端',
-      subtitle: '建议使用以下经过优化的客户端获得最佳的串流体验',
-      downloadBtn: '下载',
-      comingSoon: '待发布'
     },
     stats: {
       title: '点亮Star',
@@ -213,8 +181,8 @@ export const translations = {
     docs: {
       title: '文档与支持',
       view: '查看',
-      userGuide: '使用文档',
-      userGuideDesc: '详细的使用指南和配置说明',
+      userGuide: '使用手册',
+      userGuideDesc: '从第一次串流到配置与故障排查',
       docCenter: '文档中心',
       docCenterDesc: '技术公告与项目说明合集',
       officialDocs: '官方文档',
@@ -232,7 +200,6 @@ export const translations = {
       githubNote: '通过 GitHub Sponsors 支持我们持续开发。',
       ifdian: '爱发电赞助',
       wechat: '微信赞赏',
-      alipay: '支付宝赞赏',
       wechatModalBadge: '官方收款码',
       wechatModalTitle: '微信扫码赞赏工作室',
       wechatModalSubtitle: '支持我们持续开发与维护',
@@ -260,20 +227,15 @@ export const translations = {
   },
   en: {
     title: 'AlkaidLab Sunshine',
-    tagline: 'Play PC games on any screen',
-    subtitle: 'Connect a Sunshine host to Moonlight clients on every platform',
     nav: {
       brand: 'AlkaidLab Sunshine',
       github: 'GitHub repository',
       bilibili: 'Bilibili channel',
       features: 'Features',
-      download: 'Get App',
-      clients: 'Clients',
       stats: 'Stars',
       docs: 'Docs',
       sponsors: 'Sponsors',
       start: 'Get started',
-      support: 'Docs & support',
       toDark: 'Switch to dark mode',
       toLight: 'Switch to light mode',
       openMenu: 'Open menu',
@@ -285,12 +247,10 @@ export const translations = {
       start: 'Get the App →',
       github: 'GitHub repository',
       bilibili: 'Follow Bilibili',
-      moonlightClient: 'Choose a client',
       intro: ['AlkaidLab offers an enhanced Sunshine host and Moonlight clients for every platform,', 'polishing picture quality, controls and connectivity from your gaming PC to the device in your hand.'],
       tags: ['HDR picture', 'Custom touch controls', 'Virtual display'],
       metrics: '10k+ Stars · 1M+ downloads from players worldwide',
       note: 'Your gaming PC needs to stay on and online while you play.',
-      stats: ['Low Latency', 'HDR Support', 'Virtual Display']
     },
     guide: {
       title: 'Start your streaming experience',
@@ -306,7 +266,6 @@ export const translations = {
       clientDescription: 'Receives the picture and sends your controls back to the PC.',
       alternateHint: 'Both clients work with the host — pick either one.',
       platformGroup: 'Client platform',
-      devicesLabel: 'Supports: ',
       download: 'Get App',
       project: 'Project ↗',
       friendTitle: 'Friendly Links',
@@ -322,8 +281,6 @@ export const translations = {
       menuMirror: 'Mirror download',
       menuStar: 'Star repo',
       helpTitle: 'Need help or have a suggestion?',
-      helpAskCommunity: 'Need help?',
-      helpAskIssue: 'Have suggestions?',
       communityQq: 'Join the community ↗',
       communityIssue: 'Open an issue ↗',
       downloadModal: {
@@ -387,40 +344,35 @@ export const translations = {
     },
     features: {
       title: 'Core Features',
+      guideLink: 'Feature tutorials and platform support (Chinese) →',
       items: [
         {
-          title: 'HDR-Friendly Support',
-          description: 'Optimized HDR processing pipeline for true HDR game streaming experience'
+          title: 'HDR and Per-Device Calibration',
+          description: 'Tune brightness and color per client, with dynamic HDR on compatible paths'
         },
         {
           title: 'Virtual Display',
-          description: 'Built-in virtual display management without additional software'
+          description: 'Use ZakoDisplay for headless, screen-off and extended-display streaming'
         },
         {
           title: 'Remote Microphone',
-          description: 'Support client microphone with high-quality voice passthrough'
+          description: 'Send microphone audio from compatible clients to host games and desktop apps'
         },
         {
-          title: 'Low Latency',
-          description: 'Optimized encoding with latest hardware capabilities for smooth gaming'
+          title: 'Quality and Network Controls',
+          description: 'Combine hardware capture and encoding with adaptive bitrate, FEC and performance metrics'
         },
         {
-          title: 'Advanced Control Panel',
-          description: 'Intuitive web interface with real-time monitoring and configuration'
+          title: 'Desktop Control Panel',
+          description: 'Manage components, games, runtime status and diagnostics, with WebUI configuration available'
         },
         {
-          title: 'Smart Pairing',
-          description: 'Intelligently manage configuration files for paired devices'
+          title: 'Input and Desktop Collaboration',
+          description: 'Use V+ Crown layouts, compatible controller feedback, clipboard and authorized host files'
         }
       ]
     },
     download: {
-      title: 'Download AlkaidLab Sunshine',
-      latestVersion: 'Latest Version',
-      checkUpdate: 'Check Update',
-      checking: 'Checking latest version...',
-      error: 'Unable to check version info, using default download link',
-      retry: 'Retry',
       requirements: 'System Requirements',
       requirementsList: [
         'OS: Windows 10 22H2+',
@@ -429,23 +381,6 @@ export const translations = {
         'RAM: 4GB or more',
         'Network: 5GHz, 802.11ac'
       ],
-      windowsLatest: 'Windows Latest',
-      recommended: 'Recommended',
-      allVersions: 'All Versions',
-      releasesSource: 'Browse past installers',
-      mirrorDownload: 'Mirror Download',
-      mirrorSource: 'Alternate download channel',
-      moonlightClient: 'Download Moonlight Client',
-      moonlightClientDesc: 'View recommended clients',
-      prerelease: 'Pre-release Available',
-      prereleaseFound: 'New pre-release version found',
-      viewPrerelease: 'View Pre-release'
-    },
-    clients: {
-      title: 'Recommended Moonlight Clients',
-      subtitle: 'Use these optimized clients for the best streaming experience',
-      downloadBtn: 'Download',
-      comingSoon: 'Coming soon'
     },
     stats: {
       title: 'Star',
@@ -469,9 +404,9 @@ export const translations = {
       title: 'Documentation & Support',
       view: 'View',
       userGuide: 'User Guide',
-      userGuideDesc: 'Detailed usage guide and configuration instructions',
+      userGuideDesc: 'Start in English; advanced chapters available in Chinese',
       docCenter: 'Doc Center',
-      docCenterDesc: 'Technical announcements and project write-ups',
+      docCenterDesc: 'Guides, technical announcements and project write-ups',
       officialDocs: 'Official Docs',
       officialDocsDesc: 'LizardByte official documentation reference',
       bilibili: 'Bilibili Channel',
@@ -487,7 +422,6 @@ export const translations = {
       githubNote: 'Support ongoing development through GitHub Sponsors.',
       ifdian: 'Afdian (ifdian)',
       wechat: 'WeChat Pay',
-      alipay: 'Alipay',
       wechatModalBadge: 'Studio Support',
       wechatModalTitle: 'Support The Studio Via WeChat',
       wechatModalSubtitle: 'Scan with WeChat Pay to support the studio and ongoing maintenance.',

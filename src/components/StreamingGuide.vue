@@ -1,5 +1,5 @@
 <script setup vapor>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { translations } from '../i18n.js'
 import DeviceIcon from './DeviceIcon.vue'
 import DownloadModal from './DownloadModal.vue'
@@ -55,22 +55,16 @@ const clientReleaseKey = computed(() => {
 const clientReleaseDownloadUrls = computed(() => {
   const key = clientReleaseKey.value
   if (!key || (key !== 'android-vplus' && key !== 'macos-enhanced' && !key.startsWith('moonlight-pc@'))) return null
-  const [productKey, device] = key.startsWith('moonlight-pc@')
-    ? ['moonlightPc', key.split('@')[1]]
-    : [key]
-  return clientReleaseUrls.value[key] || getReleaseDownloadUrls(productKey, device, null, props.lang)
+  const productKey = key.startsWith('moonlight-pc@') ? 'moonlightPc' : key
+  return clientReleaseUrls.value[key] || getReleaseDownloadUrls(productKey, props.lang)
 })
-const clientDirectUrl = computed(() => {
-  return clientReleaseDownloadUrls.value?.official || null
-})
-const clientDownloadUrl = computed(() => clientDirectUrl.value || client.value?.download || null)
+const clientDownloadUrl = computed(() => clientReleaseDownloadUrls.value?.official || client.value?.download || null)
 const clientMirrorUrl = computed(() => clientReleaseDownloadUrls.value?.mirror || null)
 const alternateDownloadUrls = computed(() => {
   const option = clientOtherOptions.value[0]
   if (!option || option.id !== 'macos-enhanced') return null
-  return clientReleaseUrls.value['macos-enhanced'] || getReleaseDownloadUrls('macos-enhanced', 'macos', null, props.lang)
+  return clientReleaseUrls.value['macos-enhanced'] || getReleaseDownloadUrls('macos-enhanced', props.lang)
 })
-const clientUrl = computed(() => clientDownloadUrl.value)
 const issueProjectUrl = computed(() => client.value?.project || props.projectUrl)
 const issueUrl = computed(() => `${issueProjectUrl.value}/issues`)
 // QQ 群两个入口链接：点击时随机选择一个，对用户保持单一入口。
@@ -136,7 +130,7 @@ const refreshClientDownload = async ({ deviceId, releaseKey, channel = 'official
   const productKey = releaseKey?.startsWith('moonlight-pc@') ? 'moonlightPc' : releaseKey
   const device = productKey === 'android-vplus' ? 'android' : deviceId
   // Store-based clients have no release metadata to resolve.
-  if (!getReleaseDownloadUrls(productKey, device, null, props.lang).official) return null
+  if (!getReleaseDownloadUrls(productKey, props.lang).official) return null
   const release = await resolveReleaseDownloadUrls(productKey, device, props.lang)
   clientReleaseUrls.value = { ...clientReleaseUrls.value, [releaseKey]: release }
   const downloadUrl = release?.[channel]
@@ -389,7 +383,7 @@ onBeforeUnmount(() => {
               </small>
             </div>
             <div v-if="client.download" class="guide-result-actions">
-              <a :href="clientUrl" class="btn btn-primary" target="_blank" rel="noopener noreferrer" @click="startClientDownload">
+              <a :href="clientDownloadUrl" class="btn btn-primary" target="_blank" rel="noopener noreferrer" @click="startClientDownload">
                 <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
                 {{ client.store ? guide.store : guide.download }}
               </a>
@@ -512,11 +506,7 @@ small { display: block; margin-top: 0.3rem; color: var(--text-secondary); font-f
 .guide-result { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 0.9rem; padding: 1rem; border: 1px solid color-mix(in srgb, var(--primary-color) 35%, var(--border-color)); border-radius: 12px; background: color-mix(in srgb, var(--primary-color) 10%, var(--background-secondary)); }
 .guide-result-info { display: flex; flex-direction: column; min-width: 0; }
 .guide-result-subtitle { margin-top: 0.25rem; color: var(--text-secondary); font-weight: 500; }
-.guide-result-devices { color: var(--text-secondary); }
 .guide-result-actions { display: flex; align-items: center; gap: 0.75rem; }
-.guide-project-link, .guide-star-link { white-space: nowrap; }
-.guide-star-link { color: var(--text-secondary); }
-[data-theme="chocolate"] .guide-star-link { color: var(--text-secondary); }
 .guide-more { position: relative; }
 .guide-more-trigger { display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; min-height: 36px; padding: 0.55rem 0.9rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--background-secondary); color: var(--text-secondary); font-family: var(--font-sans); font-size: 0.875rem; font-weight: 600; line-height: 1.25; cursor: pointer; white-space: nowrap; transition: border-color 0.2s, color 0.2s; &:hover { border-color: var(--primary-strong); color: var(--primary-strong); } &[aria-expanded="true"] { border-color: var(--primary-strong); color: var(--primary-strong); } }
 .guide-more-dots { display: none; font-size: 1.45rem; line-height: 1; }

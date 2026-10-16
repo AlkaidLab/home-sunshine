@@ -36,9 +36,6 @@ const PRODUCT_KEYS = Object.freeze({
 
 const PRE_RELEASE_PATTERN = /(?:^|[-_.])(?:alpha|beta|rc|pre)(?:[-_.]|$)/i
 
-const cnbReleaseUrl = (repository, assetName) =>
-  `https://cnb.cool/${repository}/-/releases/latest/download/${encodeURIComponent(assetName)}`
-
 const normalizeProductKey = productKey => PRODUCT_KEYS[productKey] || productKey
 
 const getProductConfig = productKey => {
@@ -59,17 +56,11 @@ const getCnbAssetUrl = (config, githubUrl) => {
 }
 
 // Before the click-time lookup finishes, links point to release pages only.
-export const getReleaseDownloadUrls = (
-  productKey,
-  device = 'windows',
-  githubAssetUrl = null,
-  lang = 'zh',
-) => {
+export const getReleaseDownloadUrls = (productKey, lang = 'zh') => {
   const config = getProductConfig(productKey)
   if (!config) return { official: null, mirror: null }
-  const github = githubAssetUrl || `https://github.com/${config.githubRepository}/releases/latest`
-  const cnb = getCnbAssetUrl(config, githubAssetUrl)
-    || `https://cnb.cool/${config.cnbRepository}/-/releases/latest`
+  const github = `https://github.com/${config.githubRepository}/releases/latest`
+  const cnb = `https://cnb.cool/${config.cnbRepository}/-/releases/latest`
 
   return lang === 'zh'
     ? { official: cnb, mirror: github }
@@ -177,7 +168,7 @@ const fetchGithubLatestAsset = async (productKey, device) => {
 // same-origin metadata proxy -> CNB metadata -> GitHub. For other languages the
 // order starts at GitHub and does not request the metadata proxy.
 export const resolveReleaseDownloadUrls = async (productKey, device = 'windows', lang = 'zh') => {
-  const fallback = getReleaseDownloadUrls(productKey, device, null, lang)
+  const fallback = getReleaseDownloadUrls(productKey, lang)
   const config = getProductConfig(productKey)
   if (!config) return { ...fallback, source: 'release-page', version: null, candidates: [] }
 
@@ -231,32 +222,3 @@ export const resolveReleaseDownloadUrls = async (productKey, device = 'windows',
     candidates: [],
   }
 }
-
-export const buildCnbUrl = (repositoryKey, assetName) => {
-  const repository = CNB_RELEASE_REPOSITORIES[repositoryKey]
-  return repository && assetName ? cnbReleaseUrl(repository, assetName) : null
-}
-
-export const CNB_DOWNLOADS = Object.freeze({
-  sunshine: getReleaseDownloadUrls('sunshine', 'windows').official,
-  androidVplus: getReleaseDownloadUrls('androidVplus', 'android').official,
-  'macos-enhanced': getReleaseDownloadUrls('macos-enhanced', 'macos').official,
-  moonlightPc: Object.freeze({
-    windows: getReleaseDownloadUrls('moonlightPc', 'windows').official,
-    macos: getReleaseDownloadUrls('moonlightPc', 'macos').official,
-    linux: getReleaseDownloadUrls('moonlightPc', 'linux').official,
-    steam: getReleaseDownloadUrls('moonlightPc', 'steam').official,
-  }),
-})
-
-export const GITHUB_DOWNLOADS = Object.freeze({
-  sunshine: getReleaseDownloadUrls('sunshine', 'windows', null, 'en').official,
-  androidVplus: getReleaseDownloadUrls('androidVplus', 'android', null, 'en').official,
-  'macos-enhanced': getReleaseDownloadUrls('macos-enhanced', 'macos', null, 'en').official,
-  moonlightPc: Object.freeze({
-    windows: getReleaseDownloadUrls('moonlightPc', 'windows', null, 'en').official,
-    macos: getReleaseDownloadUrls('moonlightPc', 'macos', null, 'en').official,
-    linux: getReleaseDownloadUrls('moonlightPc', 'linux', null, 'en').official,
-    steam: getReleaseDownloadUrls('moonlightPc', 'steam', null, 'en').official,
-  }),
-})

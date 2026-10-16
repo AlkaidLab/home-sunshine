@@ -1,0 +1,89 @@
+{
+  "capturedOn": "2026-10-16",
+  "presentation": "ScreenshotFocus displays selected rectangular regions in source-image pixels. Disjoint settings are presented as separate crops. The stored screenshot pixels and SHA-256 hashes remain unchanged; clicking a crop opens the source screenshot in the image viewer.",
+  "scope": "Screenshots of the explicitly named installed builds. Historical Android screenshots were replaced with physical-device settings captures. Screenshot values are not universal recommendations. No simulated product interfaces or AI-generated UI screenshots.",
+  "images": [
+    {
+      "file": "sunshine-setup-gpu.png",
+      "kind": "screenshot",
+      "software": "Foundation Sunshine",
+      "version": "2026.1015.51059",
+      "view": "First-run setup: GPU selection",
+      "capture": "Installed WebUI on the capture machine. Only setup_wizard_completed was set false in the browser GET response to replay onboarding; all other response fields came from the live server. All non-read network requests were blocked. No configuration was saved.",
+      "sha256": "89dfb246f5819fc90af98c52325e1ab29a9225cab0ea49042cb7183ffdd6f0b9",
+      "width": 1280,
+      "height": 800
+    },
+    {
+      "file": "sunshine-pin.png",
+      "kind": "screenshot",
+      "software": "Foundation Sunshine",
+      "version": "2026.1015.51059",
+      "view": "PIN pairing form",
+      "capture": "Live installed WebUI. Element screenshot of the empty form; no PIN entered or submitted. Paired devices are outside the captured area.",
+      "sha256": "8e4548616a50e8996d27e0a58afe75f6552b27d1818110b33c380934c25ad6fe",
+      "width": 1108,
+      "height": 319
+    },
+    {
+      "file": "sunshine-vdd-overview.jpg",
+      "kind": "screenshot",
+      "software": "Foundation Sunshine desktop GUI",
+      "version": "2026.1015.51059",
+      "guiVersion": "0.5.8",
+      "view": "Virtual display overview",
+      "capture": "Unmodified native window screenshot. Read-only navigation; no driver installation, settings save or service restart.",
+      "sha256": "54a1c8f831bfc61eac716315bb08e321b5c33451ac3fa3a0bfe2eef522ebb810",
+      "width": 1280,
+      "height": 800
+    },
+    {
+      "file": "sunshine-vdd-display.jpg",
+      "kind": "screenshot",
+      "software": "Foundation Sunshine desktop GUI",
+      "version": "2026.1015.51059",
+      "guiVersion": "0.5.8",
+      "view": "Virtual display capabilities",
+      "capture": "Unmodified native window screenshot. Existing values are examples, not recommended settings.",
+      "sha256": "858325415b633f6ad5410721ce979873b00b6a858743019703f13b9b16c127da",
+      "width": 1280,
+      "height": 800
+    },
+    {
+      "file": "sunshine-stream-settings.jpg",
+      "kind": "screenshot",
+      "software": "Foundation Sunshine desktop GUI",
+      "version": "2026.1015.51059",
+      "guiVersion": "0.5.8",
+      "view": "Audio/video: server bitrate ceiling and output display",
+      "capture": "Unmodified native window screenshot. This is a server settings page, not Moonlight client video settings.",
+      "sha256": "a29107b36d29fd48b2175f73ef621f5ca7f37083b682be505299d70c4d736a84",
+      "width": 1280,
+      "height": 800
+    },
+    {
+      "file": "android-video-settings.png",
+      "kind": "screenshot",
+      "software": "Android Moonlight V+",
+      "version": "12.12.13.beta.6",
+      "device": "Meizu 17 (physical device)",
+      "view": "Stream quality: resolution, frame rate and bitrate",
+      "capture": "Original ADB screen capture of the preinstalled app on an authorized USB-connected physical phone. No preferences changed, host connected or pairing submitted. This installed beta build is not labelled as the latest stable release.",
+      "sha256": "462732692c84692eb3595fad3b240a79aeffa09a7a146f9501fadafa024ca588",
+      "width": 1080,
+      "height": 2340
+    },
+    {
+      "file": "android-codec-hdr.png",
+      "kind": "screenshot",
+      "software": "Android Moonlight V+",
+      "version": "12.12.13.beta.6",
+      "device": "Meizu 17 (physical device)",
+      "view": "Stream quality: codec and HDR",
+      "capture": "Original ADB screen capture after scrolling the same settings page. Existing preference values are examples, not universal recommendations. No preferences changed.",
+      "sha256": "5aa88267f9733240391cbfd71cc26cdd8163d8bb8c4e4eff1d4fad1a36ecdf66",
+      "width": 1080,
+      "height": 2340
+    }
+  ]
+}

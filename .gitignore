@@ -10,7 +10,11 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+docs/.vitepress/cache
 *.local
+
+# Local screenshots, downloads, research snapshots and verification artifacts
+/output/
 
 # Editor directories and files
 .vscode/*

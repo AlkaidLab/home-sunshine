@@ -102,7 +102,7 @@ const buildSitemap = () => {
       `  <url>\n    <loc>${absoluteUrl(LANG_PATHS[lang])}</loc>\n${alternates}\n  </url>`,
   )
 
-  const standalonePages = ['/docs/', '/audio-haptics-demo.html'].map(
+  const standalonePages = ['/audio-haptics-demo.html'].map(
     path => `  <url>\n    <loc>${absoluteUrl(path)}</loc>\n  </url>`,
   )
 
@@ -137,7 +137,7 @@ try {
   await writeFile(resolve(distDir, 'sitemap.xml'), buildSitemap(), 'utf8')
   await writeFile(
     resolve(distDir, 'robots.txt'),
-    `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`,
+    `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\nSitemap: ${SITE_URL}/docs/sitemap.xml\n`,
     'utf8',
   )
   console.log('Wrote sitemap.xml and robots.txt')

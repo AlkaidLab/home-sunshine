@@ -1,0 +1,121 @@
+@font-face {
+  font-family: 'Plus Jakarta Sans Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url('../../../../public/fonts/plus-jakarta-sans-latin-variable.woff2') format('woff2');
+}
+
+:root {
+  --vp-font-family-base:
+    'Plus Jakarta Sans Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Microsoft YaHei', sans-serif;
+  --vp-c-brand-1: #0c766e;
+  --vp-c-brand-2: #14857c;
+  --vp-c-brand-3: #168b82;
+  --vp-c-brand-soft: #39c5bb14;
+  --vp-c-bg: #fcfdfd;
+  --vp-c-bg-alt: #f3f7f7;
+  --vp-c-bg-soft: #f0f6f5;
+  --vp-c-bg-elv: #ffffff;
+  --vp-c-divider: #e1e9e7;
+  --vp-c-text-1: #1b3435;
+  --vp-c-text-2: #52696b;
+  --vp-c-text-3: #627879;
+  --vp-button-brand-bg: #107e76;
+  --vp-button-brand-hover-bg: #096a63;
+  --vp-nav-height: 72px;
+  --vp-layout-max-width: 1480px;
+  --vp-sidebar-width: 276px;
+  --docs-accent: #39c5bb;
+  --docs-accent-bright: #00b6ce;
+  --docs-surface: #ffffff;
+  --docs-border: #d8e8e4;
+  --docs-shadow: 0 12px 40px #1b595b08;
+  --docs-hero-bg: #eaf6f1;
+  --docs-scene-bg: #d4ece4;
+  --docs-scene-hill: #76b9ad;
+  --docs-scene-front: #3d8d83;
+  --docs-scene-sun: #f4eec8;
+  --tk-bg-color: var(--vp-c-bg);
+  --tk-bg-color-elm: var(--docs-surface);
+  --tk-bg-color-page: var(--vp-c-bg-alt);
+  --tk-text-color-regular: var(--vp-c-text-2);
+  --tk-border-color: var(--vp-c-divider);
+}
+
+.dark {
+  --vp-c-brand-1: #e8c9a8;
+  --vp-c-brand-2: #d4a574;
+  --vp-c-brand-3: #c49464;
+  --vp-c-brand-soft: #d4a57414;
+  --vp-c-bg: #1a1410;
+  --vp-c-bg-alt: #211a15;
+  --vp-c-bg-elv: #2d241c;
+  --vp-c-bg-soft: #2a211a;
+  --vp-c-text-1: #f5f0eb;
+  --vp-c-text-2: #c4b8ab;
+  --vp-c-text-3: #ad9f90;
+  --vp-c-divider: #40342a;
+  --vp-c-gutter: #352a22;
+  --vp-button-brand-bg: #d4a574;
+  --vp-button-brand-hover-bg: #e8c9a8;
+  --vp-button-brand-text: #21180f;
+  --vp-button-brand-hover-text: #21180f;
+  --docs-accent: #d4a574;
+  --docs-accent-bright: #f4a460;
+  --docs-surface: #231c16;
+  --docs-border: #4a3b2d;
+  --docs-shadow: 0 12px 40px #00000018;
+  --docs-hero-bg: #2e241b;
+  --docs-scene-bg: #493626;
+  --docs-scene-hill: #8d6545;
+  --docs-scene-front: #63442d;
+  --docs-scene-sun: #ebc494;
+  --vp-c-tip-1: #e8c9a8;
+  --vp-c-tip-2: #d4a574;
+  --vp-c-tip-soft: #d4a57414;
+}
+
+/* Shared chrome: Teek layout with the website's two brand palettes. */
+.docs-brand-mark {
+  margin-right: 10px;
+  border-radius: 8px;
+}
+.VPNavBarTitle .title {
+  letter-spacing: -0.5px;
+  font-weight: 750;
+}
+.VPNavBar .content-body {
+  background: var(--vp-c-bg);
+}
+.VPNavBarSearch .DocSearch-Button {
+  border-radius: 10px;
+  border: 1px solid var(--vp-c-divider);
+  background: var(--docs-surface);
+}
+.VPNavBarMenuLink.active {
+  position: relative;
+}
+.VPNavBarMenuLink.active::after {
+  content: '';
+  position: absolute;
+  bottom: 14px;
+  left: 12px;
+  right: 12px;
+  height: 2px;
+  background: var(--docs-accent);
+  border-radius: 2px;
+}
+.VPNavBarAppearance {
+  margin-left: 12px;
+}
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--vp-c-brand-1);
+  outline-offset: 4px;
+}

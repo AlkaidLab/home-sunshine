@@ -1,6 +1,10 @@
+---
+description: 关于雷蛇手柄触觉支持的技术路线说明，介绍自研开放触觉 SDK 的架构、同步能力与设备扩展计划。
+---
+
 # 关于雷蛇手柄支持与自研触觉 SDK 的公告
 
-> 更新日期：2026 年 7 月 23 日
+> 历史公告日期：2026 年 7 月 23 日。本文记录当时的技术路线、判断与计划，不作为当前设备支持清单；当前使用步骤见[声音、麦克风与手柄手册](./server/audio-input.md)。
 
 近期有不少用户催促我们支持雷蛇手柄，尤其希望在远程串流中使用 Razer Sensa HD Haptics 等专有触觉能力。我们理解这个需求，也已经对雷蛇公开的 Remote Play 工程、Android 振动调用链以及相关二进制 SDK 进行了技术分析。
 
@@ -130,7 +134,7 @@ Remote Play → 两个电机强度值 → AIDL → Nexus 闭源服务 → 雷蛇
 - [Google Play：Razer PC Remote Play 当前发行页面](https://play.google.com/store/apps/details?id=com.razer.neuron)
 - [Razer PC Remote Play Android GPL-3.0 仓库](https://github.com/razerofficial/Razer-PC-Remote-Play-android)
 - [Android 公开仓库提交时间线](https://github.com/razerofficial/Razer-PC-Remote-Play-android/commits/main/)
-- [最后一次提交：2.0.0/2.0.1 相关修改](https://github.com/razerofficial/Razer-PC-Remote-Play-android/commit/0809ee2aee2e00b337791332aeff9755ead10e33)
+- [最后一次提交：2.0.0/2.0.1 相关修改](https://github.com/razerofficial/Razer-PC-Remote-Play-android/commit/0809ee2aee2bcdc503d6aaef56f245a9a5dd747f)
 - [公开 app/build.gradle：当前仍声明 0.5.1](https://github.com/razerofficial/Razer-PC-Remote-Play-android/blob/main/app/build.gradle)
 - [RumbleManager：雷蛇手柄识别与振动调用](https://github.com/razerofficial/Razer-PC-Remote-Play-android/blob/main/app/src/neuron/java/com/razer/neuron/managers/RumbleManager.kt)
 - [AIDLManager：与 Nexus 服务的跨应用绑定](https://github.com/razerofficial/Razer-PC-Remote-Play-android/blob/main/app/src/neuron/java/com/razer/neuron/managers/AIDLManager.kt)

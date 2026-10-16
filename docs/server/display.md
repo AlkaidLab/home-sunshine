@@ -1,0 +1,87 @@
+---
+description: 使用 ZakoDisplay 基地虚拟显示器配置无头主机、熄屏串流和扩展副屏，并验证分辨率、刷新率和退出恢复。
+---
+
+# 虚拟显示器与熄屏串流
+
+虚拟显示器为主机提供一块可采集的屏幕。它适合没有物理显示器、希望使用手机长宽比、保留桌面副屏或串流时停用物理屏幕的场景。
+
+基地版使用 **ZakoDisplay**。通过桌面 GUI 安装和管理虚拟显示器，并在对应设置中调整分辨率与刷新率。
+
+## 安装并检查驱动
+
+1. 在主机的桌面 GUI 打开**基地显示器设置**，检查驱动状态。
+2. 如果安装 Sunshine 时没有选择 Zako Display Driver，使用该入口安装；已有驱动异常时按界面提示修复。
+3. 如果提示需要重启，先完成 Windows 重启，再回来确认组件可用。
+4. 在新手向导或显示设置中选择基地显示器，再从客户端发起连接。
+
+虚拟屏可能按会话创建和释放，未连接时没有常驻屏幕不一定是故障。应结合驱动状态、会话日志和连接后的 Windows 显示设置判断。
+
+<figure class="manual-figure">
+  <ScreenshotFocus :source-width="1280" :regions="[[270, 82, 970, 380]]">
+  <img src="../assets/manual/sunshine-vdd-overview.jpg" alt="新版 Sunshine 桌面控制面板中的虚拟显示器概览，提供概览、显示能力、HDR 校准和驱动与诊断四个页签" width="1280" height="800" loading="lazy" />
+  </ScreenshotFocus>
+  <figcaption>“虚拟显示器 → 概览”（Foundation Sunshine 2026.1015.51059 / GUI 0.5.8）。驱动安装与排查位于“驱动与诊断”。可用格式和帧率还取决于客户端的解码及显示能力。</figcaption>
+</figure>
+
+## 选择你的使用方式
+
+<ManualDiagram kind="display" />
+
+| 目的 | 显示策略思路 | 需要验证 |
+| --- | --- | --- |
+| 先完成普通串流 | 使用已开启的物理屏 | 客户端看到正确屏幕 |
+| 无物理屏使用电脑 | 选择基地虚拟屏 | 连接后能创建并采集虚拟屏 |
+| 本地继续工作，远程作副屏 | 保留物理屏，扩展基地虚拟屏 | Windows 布局、主屏与鼠标跨屏方向 |
+| 串流时让物理屏不参与桌面 | 使用虚拟屏，并选择只启用目标屏的策略 | 连接与退出后物理屏状态都正确 |
+
+按希望保留的屏幕组合选择策略，并在串流结束后检查显示拓扑是否恢复。停用显示器是改变 Windows 显示拓扑，不等同于让显示器进入断电状态。
+
+## 分辨率、刷新率与缩放
+
+先在客户端设置目标分辨率和帧率，再确认主机显示策略是否采用客户端请求。需要时，在兼容客户端的主机显示控制或 Sunshine 显示设置中调整远程分辨率、旋转和缩放。
+
+分清三种设置：
+
+- **主机显示分辨率**：Windows 桌面的尺寸。
+- **串流分辨率**：编码传输的画面尺寸。
+- **Windows 缩放**：文字和界面元素的大小。
+
+三者可以不同。文字太小优先调整 Windows 缩放；画面被裁切或拉伸时，检查长宽比与显示策略。码率控制画面压缩质量，尺寸问题请通过分辨率与缩放设置调整。
+
+<figure class="manual-figure">
+  <ScreenshotFocus :source-width="1280" :regions="[[278, 226, 685, 136], [278, 584, 685, 110]]">
+  <img src="../assets/manual/sunshine-vdd-display.jpg" alt="虚拟显示器显示能力页的分辨率预置和刷新率预置重点区域" width="1280" height="800" loading="lazy" />
+  </ScreenshotFocus>
+  <figcaption>“虚拟显示器 → 显示能力”的分辨率与刷新率预置（同一版本）。这里设置虚拟屏向 Windows 声明的能力；串流目标在客户端设置。点击可查看完整页面。</figcaption>
+</figure>
+
+## 按设备和游戏复用显示设置 {#saved-display}
+
+1. Android V+ 12.13.0 在应用列表提供主机显示器与屏幕组合选择。选中要启动的应用，指定基地虚拟屏及所需策略，再开始串流。
+2. 在 Windows 显示设置中验证屏幕、主屏和长宽比；结束串流后检查恢复。
+3. 已有该游戏的启动记录后，长按应用选择 **使用上一次设置启动**，复用已记录配置；无记录时不会出现该菜单项。
+4. 为手机和平板分别设置显示请求，按各自的屏幕尺寸和使用方式选择策略。
+
+更换显示器或修改主机拓扑后，重新进入选择流程更新记录。配置异常时，重新选择物理屏或自动策略后启动即可，原有配对可以保留。
+
+主机渲染尺寸与传输尺寸可分别控制，见[渲染分辨率比例](../clients/settings.md#render-resolution)；每台设备的亮度与色彩配置见[HDR 校准](./hdr.md#per-device)。
+
+## 验证连接和恢复
+
+第一次测试保留本地操作方式，先用 SDR、1080p、60 FPS 连接 Desktop：
+
+1. 查看 Windows 显示设置，确认选中的是目标屏幕。
+2. 拖动窗口、移动鼠标，确认主屏和跨屏方向符合预期。
+3. 结束串流，检查物理屏和显示布局是否恢复。
+4. 再测试熄屏策略、自定义长宽比或 HDR，每次只改一项。
+
+仍有其他会话时，虚拟屏可能继续使用。异常后先保存日志，再使用 GUI 的显示恢复／故障排除入口，并保留现有配置和配对。
+
+黑屏、503 和混合显卡问题见[显示异常排查](../troubleshooting/black-screen.md)。
+
+## 参考
+
+- [Foundation Sunshine：基地虚拟显示器](https://github.com/AlkaidLab/foundation-sunshine/blob/master/docs/zh-CN/features.md#基地虚拟显示器-zakodisplay)
+- [Android 12.13.0：应用显示设置与启动菜单](https://github.com/qiin2333/moonlight-vplus/blob/v12.13.0/app/src/main/java/com/limelight/AppView.kt#L1520-L1570)
+- [ZakoDisplay 项目](https://github.com/qiin2333/zako-vdd)
