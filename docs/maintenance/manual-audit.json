@@ -156,51 +156,37 @@
   ],
   "corrections": [
     {
-      "pages": [
-        "docs/server/audio-input.md"
-      ],
+      "pages": ["docs/server/audio-input.md"],
       "finding": "Host speaker playback was attributed only to server settings.",
       "resolution": "Included the client request, including the Android option to play audio on the host, and kept client mute separate.",
       "evidence": "Android v12.13.0 strings.xml: title_checkbox_host_audio, summary_checkbox_host_audio."
     },
     {
-      "pages": [
-        "docs/clients/android.md",
-        "docs/getting-started/index.md"
-      ],
+      "pages": ["docs/clients/android.md", "docs/getting-started/index.md"],
       "finding": "Generic disconnect/quit language did not identify the current menu labels or configurable quit behavior.",
       "resolution": "Documented Pause streaming, Quit streaming, and the stop-host-app/disconnect-only setting.",
       "evidence": "Android v12.13.0 strings.xml: game_menu_disconnect, game_menu_disconnect_and_quit, title_quit_behavior and quit_behavior_*."
     },
     {
-      "pages": [
-        "docs/clients/settings.md"
-      ],
+      "pages": ["docs/clients/settings.md"],
       "finding": "The latest FEC settings, reconnect requirement and persistent manual bitrate behavior were not covered.",
       "resolution": "Added independent ABR/FEC controls, protection/quality budget implications, next-connection behavior, and restore-recommended-bitrate actions.",
       "evidence": "Android v12.13.0 strings.xml FEC/bitrate descriptions; PC v6.5.0 release notes."
     },
     {
-      "pages": [
-        "docs/server/video.md"
-      ],
+      "pages": ["docs/server/video.md"],
       "finding": "PyroWave guidance omitted the current Android release limits.",
       "resolution": "Explicitly scoped HDR10+/Dolby Vision dynamic-metadata and frame-generation exclusions to Android v12.13.0.",
       "evidence": "Android v12.13.0 release notes."
     },
     {
-      "pages": [
-        "docs/clients/desktop.md",
-        "docs/clients/index.md"
-      ],
+      "pages": ["docs/clients/desktop.md", "docs/clients/index.md"],
       "finding": "The Windows entry only directed users to an installer, omitting the ARM64 portable asset.",
       "resolution": "Distinguished x64 installers from ARM64 portable packages.",
       "evidence": "PC v6.5.0 release assets."
     },
     {
-      "pages": [
-        "docs/getting-started/requirements.md"
-      ],
+      "pages": ["docs/getting-started/requirements.md"],
       "finding": "Windows 10 22H2 wording could be read as the minimum requirement for every Sunshine component.",
       "resolution": "Scoped the requirement specifically to ZakoDisplay.",
       "evidence": "Foundation v2026.1011 release notes."
@@ -216,10 +202,7 @@
       "evidence": "Android v12.13.0 TouchInputHandler.kt, AppView.kt and strings.xml."
     },
     {
-      "pages": [
-        "docs/dolby-vision-dev-journal-zh.md",
-        "docs/razer-haptics-sdk-announcement-zh.md"
-      ],
+      "pages": ["docs/dolby-vision-dev-journal-zh.md", "docs/razer-haptics-sdk-announcement-zh.md"],
       "finding": "Historical results and plans could be mistaken for current installation or device-support guidance.",
       "resolution": "Preserved dated technical history and linked current HDR/input manuals."
     }
