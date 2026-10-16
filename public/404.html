@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="gura">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>页面未找到 - 瑶光流梦</title>
+    <link rel="icon" type="image/webp" href="/favicon.webp" />
+    <script>
+      try {
+        if (localStorage.getItem('theme') === 'chocolate') {
+          document.documentElement.dataset.theme = 'chocolate'
+        }
+      } catch {}
+    </script>
+    <style>
+      :root {
+        color-scheme: light;
+        --background: #fcfdfd;
+        --surface: #f0f6f5;
+        --text: #1b3435;
+        --muted: #52696b;
+        --accent: #0c766e;
+        --border: #d8e8e4;
+      }
+      [data-theme='chocolate'] {
+        color-scheme: dark;
+        --background: #1a1410;
+        --surface: #2a211a;
+        --text: #f5f0eb;
+        --muted: #c4b8ab;
+        --accent: #e8c9a8;
+        --border: #4a3b2d;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: var(--background);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        line-height: 1.8;
+      }
+      main {
+        width: min(100%, 560px);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 600;
+      }
+      .brand img {
+        border-radius: 10px;
+      }
+      .status {
+        margin: 40px 0 0;
+        color: var(--accent);
+        font-size: 72px;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+      h1 {
+        margin: 16px 0;
+        font-size: clamp(28px, 7vw, 36px);
+        line-height: 1.4;
+      }
+      p {
+        color: var(--muted);
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 28px;
+      }
+      a {
+        color: var(--accent);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 8px 16px;
+        text-decoration: none;
+      }
+      a:hover {
+        background: var(--surface);
+      }
+      a:focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="brand"><img src="/favicon.webp" width="40" height="40" alt="" />瑶光流梦</div>
+      <p class="status">404</p>
+      <h1>这个页面暂时找不到了</h1>
+      <p>地址可能已变更。你可以从官网或文档中心继续查找。</p>
+      <p lang="en">Page not found. Continue from the homepage or documentation center.</p>
+      <nav aria-label="继续浏览">
+        <a href="/">返回官网</a>
+        <a href="/docs/">打开文档中心</a>
+        <a href="/en/" lang="en">English</a>
+      </nav>
+    </main>
+  </body>
+</html>

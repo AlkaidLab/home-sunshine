@@ -51,6 +51,26 @@ npm run build
 npm run preview
 ```
 
+## 部署
+
+官网和文档共用一次完整构建，发布整个 `dist/`。当前 Cloudflare Pages 的配置应保持：
+
+| 项目 | 配置 |
+| --- | --- |
+| 根目录 | 仓库根目录 |
+| 构建命令 | `npm run build` |
+| 输出目录 | `dist` |
+| Node.js | 满足 `package.json` 的 `^20.19.0 || >=22.12.0`；使用旧构建镜像或显式 `NODE_VERSION` 时重新核对 |
+| 构建变更检测 | 默认检测全部文件；若配置了筛选，应覆盖 `docs/**`、`public/**`、`src/**`、`scripts/**`、依赖锁文件及构建配置 |
+
+独立部署脚本在仓库根目录执行 `npm ci`、`npm run build` 和 `npm test`，成功后发布 `dist/`；不能只运行 `build:client`、`build:docs`，也不能只发布 `dist/docs/`。`dist-ssr/` 是预渲染临时目录，构建后会清理，不是服务端部署包。Cloudflare 自动安装依赖时无需重复安装；若显式启用 `SKIP_DEPENDENCY_INSTALL`，构建命令须自行包含 `npm ci`。
+
+`public/404.html` 会进入发布根目录，关闭 Cloudflare 默认的 SPA 首页回退；`docs/404.html` 由 VitePress 生成，用于文档目录的错误地址。保留这两份文件，确保不存在的路径返回 HTTP 404。新站点已经预渲染为静态页，部署时不需要把所有未知路径重写到 `/index.html`。
+
+Cloudflare Pages 会将 `.html` 请求重定向到无扩展名地址，例如旧文章和 `/docs/clients/settings.html`；这是平台默认行为，旧链接仍可到达对应文章。当前源码保留 `.html` 链接，以兼容普通静态服务器；自建服务器需直接提供现有 HTML／目录索引，文档错误路径使用文档 404。缓存沿用 Pages 默认策略，避免把 HTML 或 `docs/hashmap.json` 设为长期不可变缓存。
+
+参考：[Cloudflare 构建配置](https://developers.cloudflare.com/pages/configuration/build-configuration/)、[静态路由与 404 行为](https://developers.cloudflare.com/pages/configuration/serving-pages/)、[Node 版本和构建镜像](https://developers.cloudflare.com/pages/configuration/build-image/)。控制台设置未保存在本仓库；上表是部署要求，实际配置需与所用 Pages 项目核对。
+
 ## 文档中心
 
 文档中心使用 VitePress 1.6.4 与 Teek 1.6.2，和官网共用根目录的 `package.json`、`package-lock.json` 与 `npm ci`，无需单独安装。根目录的 `overrides` 将 Vue 和 `@vue/shared` 统一到官网所用的 3.6 RC 版本，避免文档主题额外安装另一份 Vue。

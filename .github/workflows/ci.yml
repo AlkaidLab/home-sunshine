@@ -30,5 +30,5 @@ jobs:
       - name: Build site and static documents
         run: npm run build
 
-      - name: Verify downloads, document links and search
+      - name: Verify downloads, deployment output, document links and search
         run: npm test

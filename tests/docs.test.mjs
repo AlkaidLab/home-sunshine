@@ -162,3 +162,18 @@ test('building docs preserves both prerendered homepages', async () => {
     assert.ok(!html.includes('docs.qq.com'), page)
   }
 })
+
+test('deployment has root and document 404 pages with valid recovery routes', async () => {
+  // Cloudflare Pages uses a top-level 404.html to disable its implicit SPA fallback.
+  const root404 = await readFile(resolve(rootDir, 'dist/404.html'), 'utf8')
+  const docs404 = await readFile(resolve(docsDir, '404.html'), 'utf8')
+  for (const html of [root404, docs404]) {
+    assert.ok(html.includes('404'))
+    assert.ok(!html.includes('data-prerendered data-lang='), '404 must not be the home page')
+  }
+  assert.match(root404, /<meta name="robots" content="noindex"/u)
+  for (const pathname of ['/', '/en/', '/docs/']) {
+    assert.ok(root404.includes(`href="${pathname}"`), pathname)
+    await readFile(resolve(rootDir, 'dist', `.${pathname}`, 'index.html'))
+  }
+})
