@@ -130,19 +130,35 @@
 .vp-doc .custom-block.danger {
   border-left-color: #d85b67;
 }
-.vp-doc table {
-  display: block;
+.vp-doc .docs-table {
   width: 100%;
+  margin: 20px 0;
   border-radius: 10px;
   border: 1px solid var(--vp-c-divider);
   overflow-x: auto;
+}
+.vp-doc .docs-table:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 3px;
+}
+.vp-doc .docs-table > table {
+  display: table;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 14px;
+}
+.vp-doc .docs-table tr {
+  border: 0;
 }
 .vp-doc th,
 .vp-doc td {
   border: 0;
   border-bottom: 1px solid var(--vp-c-divider);
   padding: 12px 16px;
+  vertical-align: top;
 }
 .vp-doc th {
   background: var(--vp-c-bg-soft);

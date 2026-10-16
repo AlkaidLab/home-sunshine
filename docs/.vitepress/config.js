@@ -13,6 +13,16 @@ export default defineConfig({
   cleanUrls: false,
   outDir: resolve(import.meta.dirname, '../../dist/docs'),
   appearance: { initialValue: 'light' },
+  markdown: {
+    config(md) {
+      // Keep native table layout inside a separate keyboard-scrollable viewport.
+      md.renderer.rules.table_open = (tokens, index, options, env, self) =>
+        '<div class="docs-table" role="region" aria-label="表格" tabindex="0">' +
+        self.renderToken(tokens, index, options)
+      md.renderer.rules.table_close = (tokens, index, options, env, self) =>
+        self.renderToken(tokens, index, options) + '</div>\n'
+    },
+  },
   vite: { ssr: { noExternal: ['vitepress-theme-teek'] } },
   head: [
     ['script', { id: 'sync-site-theme' }, `try {
