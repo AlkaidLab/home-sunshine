@@ -20,7 +20,7 @@ Android Moonlight V+ 面向手机、平板和兼容的电视设备。先完成�
 
 在客户端设置中找到“串流质量”，先核对**串流分辨率、串流帧率和串流码率**。下面的实机配置是 1080p、60 FPS、20 Mbps；网络不稳时，先把码率降到 10 Mbps 对比。
 
-<figure class="manual-figure">
+<figure class="manual-figure manual-figure-portrait">
   <ScreenshotFocus :source-width="1080" :regions="[[32, 298, 1008, 180], [32, 950, 1008, 150], [32, 1148, 1008, 225]]">
   <img src="../assets/manual/android-video-settings.png" alt="Android Moonlight V+ 实机串流质量页的分辨率、帧率与码率三个重点区域" width="1080" height="2340" loading="lazy" />
   </ScreenshotFocus>

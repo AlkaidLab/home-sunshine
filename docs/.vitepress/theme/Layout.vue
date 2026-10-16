@@ -42,9 +42,13 @@ const sectionName = computed(
     </template>
     <template #aside-bottom>
       <a class="reading-help" :href="withBase('/troubleshooting/')"
-        ><img class="reading-mascot" :src="sunshineGirl" alt="" width="58" height="58" /><strong
-          >太阳娘陪你排查</strong
-        ><span>别着急，我们从现象开始。</span
+        ><img
+          class="reading-mascot no-preview"
+          :src="sunshineGirl"
+          alt=""
+          width="40"
+          height="40"
+        /><strong>太阳娘陪你排查</strong><span>别着急，我们从现象开始。</span
         ><span class="help-link">打开故障排查 <span aria-hidden="true">↗</span></span></a
       >
     </template>

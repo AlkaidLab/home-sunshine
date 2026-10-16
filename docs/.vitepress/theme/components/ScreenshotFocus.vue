@@ -14,17 +14,25 @@ function regionStyle([left, top, width, height], sourceWidth) {
     '--focus-top': `${(-top / height) * 100}%`,
   }
 }
+
+function preview(event) {
+  // Teek opens the viewer from image clicks; forward button/keyboard activation once.
+  if (event.target.tagName !== 'IMG') event.currentTarget.querySelector('img')?.click()
+}
 </script>
 
 <template>
   <div class="screenshot-focus">
-    <div
+    <button
       v-for="(region, index) in regions"
       :key="index"
+      type="button"
       class="screenshot-focus-region"
+      :aria-label="`查看完整截图，重点区域 ${index + 1}`"
       :style="regionStyle(region, sourceWidth)"
+      @click="preview"
     >
       <slot />
-    </div>
+    </button>
   </div>
 </template>

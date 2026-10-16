@@ -6,10 +6,10 @@ defineProps({ title: { type: String, default: '太阳娘的进阶技巧' } })
 
 <template>
   <aside class="sunshine-tip" role="note">
-    <img :src="sunshineGirl" alt="" width="72" height="72" loading="lazy" />
-    <div>
+    <div class="sunshine-tip-heading">
+      <img class="no-preview" :src="sunshineGirl" alt="" width="40" height="40" loading="lazy" />
       <p class="sunshine-tip-title">{{ title }}</p>
-      <div class="sunshine-tip-body"><slot /></div>
     </div>
+    <div class="sunshine-tip-body"><slot /></div>
   </aside>
 </template>

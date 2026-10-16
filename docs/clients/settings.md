@@ -31,13 +31,13 @@ description: 从稳定的 SDR 基础配置开始调整分辨率、帧率、码�
 以下截图来自魅族 17 上已安装的 **Android Moonlight V+ 12.12.13.beta.6**，拍摄于 2026-10-16。正文只展示对应设置的重点区域，点击可看原图；其他平台和正式版的布局可能不同。
 
 <div class="manual-focus-gallery">
-  <figure class="manual-figure">
+  <figure class="manual-figure manual-figure-portrait">
     <ScreenshotFocus :source-width="1080" :regions="[[32, 298, 1008, 180], [32, 950, 1008, 150], [32, 1148, 1008, 225]]">
     <img src="../assets/manual/android-video-settings.png" alt="Android V+ 的串流分辨率、帧率和码率设置重点区域" width="1080" height="2340" loading="lazy" />
     </ScreenshotFocus>
     <figcaption>分别截取分辨率、帧率和码率。20 Mbps 是本机已有配置；首次测试可从 10 Mbps 开始，稳定后再比较。</figcaption>
   </figure>
-  <figure class="manual-figure">
+  <figure class="manual-figure manual-figure-portrait">
     <ScreenshotFocus :source-width="1080" :regions="[[32, 288, 1008, 300], [32, 828, 1008, 410]]">
     <img src="../assets/manual/android-codec-hdr.png" alt="Android V+ 的视频编解码器、HDR 与强制全范围色彩设置重点区域" width="1080" height="2340" loading="lazy" />
     </ScreenshotFocus>

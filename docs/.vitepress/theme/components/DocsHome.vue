@@ -69,7 +69,8 @@ const topics = [
       </div>
       <div class="stream-visual" aria-hidden="true">
         <div class="visual-caption">
-          <span class="status-dot"></span> 太阳娘陪你，完成第一次串流 <DocIcon name="spark" />
+          <span class="status-dot"></span> 太阳娘陪你，完成第一次串流
+          <DocIcon name="spark" />
         </div>
         <div class="monitor">
           <div class="monitor-screen">
@@ -78,7 +79,13 @@ const topics = [
             <div class="scene-sun"></div>
             <div class="scene-hill hill-back"></div>
             <div class="scene-hill hill-front"></div>
-            <img class="hero-sunshine-girl" :src="sunshineGirl" alt="" width="156" height="156" />
+            <img
+              class="hero-sunshine-girl no-preview"
+              :src="sunshineGirl"
+              alt=""
+              width="156"
+              height="156"
+            />
             <span class="screen-label">PLAY BEYOND.</span>
           </div>
           <div class="monitor-chin"><span></span></div>
