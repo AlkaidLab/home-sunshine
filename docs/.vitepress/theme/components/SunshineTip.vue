@@ -1,5 +1,5 @@
 <script setup>
-import sunshineGirl from '../../../assets/branding/sunshine-girl.png'
+import sunshineGirl from '../../../assets/branding/sunshine-girl.webp'
 import { useDocsI18n } from '../i18n.js'
 
 defineProps({ title: { type: String, default: '' } })

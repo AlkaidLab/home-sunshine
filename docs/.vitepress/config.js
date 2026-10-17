@@ -1,4 +1,5 @@
 import { resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitepress'
 import { SITE_URL, OG_IMAGE } from '../../src/site-meta.js'
 import { tokenizeSearch } from './search.js'
@@ -82,7 +83,17 @@ export default defineConfig({
         self.renderToken(tokens, index, options) + '</div>\n'
     },
   },
-  vite: { ssr: { noExternal: ['vitepress-theme-teek'] } },
+  vite: {
+    // Teek's layout also imports the VitePress base theme. Route those imports
+    // to the font-free entry so Inter is neither bundled nor preloaded.
+    resolve: {
+      alias: [{
+        find: /^vitepress\/theme$/,
+        replacement: fileURLToPath(import.meta.resolve('vitepress/theme-without-fonts')),
+      }],
+    },
+    ssr: { noExternal: ['vitepress-theme-teek'] },
+  },
   head: [
     [
       'script',

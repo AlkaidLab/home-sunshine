@@ -1,0 +1,9 @@
+// Teek exposes these shared controls as Sass rather than individual CSS files.
+// Keep the original viewer, tooltips and copy feedback without the blog styles.
+@use 'vitepress-theme-teek/theme-chalk/src/components/common/icon';
+@use 'vitepress-theme-teek/theme-chalk/src/components/common/image-viewer';
+@use 'vitepress-theme-teek/theme-chalk/src/components/common/message';
+@use 'vitepress-theme-teek/theme-chalk/src/components/common/popover';
+@use 'vitepress-theme-teek/theme-chalk/src/components/common/title-tag';
+@use 'vitepress-theme-teek/theme-chalk/src/components/common/transition-collapse';
+@use 'vitepress-theme-teek/theme-chalk/src/components/common/vp-container';

@@ -37,7 +37,7 @@ description: 从安装 Foundation Sunshine 和 Moonlight 到 PIN 配对、连接
 
 <figure class="manual-figure">
   <ScreenshotFocus :source-width="1280" :regions="[[210, 190, 855, 280]]">
-  <img src="../assets/manual/sunshine-setup-gpu.png" alt="Foundation Sunshine 首次设置向导的选择显卡步骤，显卡适配器默认显示自动，下方有下一步按钮" width="1280" height="800" loading="lazy" />
+  <img src="../assets/manual/sunshine-setup-gpu.webp" alt="Foundation Sunshine 首次设置向导的选择显卡步骤，显卡适配器默认显示自动，下方有下一步按钮" width="1280" height="800" loading="lazy" decoding="async" />
   </ScreenshotFocus>
   <figcaption>首次设置向导的显卡选择示例（Foundation Sunshine 2026.1015.51059，界面状态重放）。首次配置可保留“自动”；点击可查看完整向导。</figcaption>
 </figure>
@@ -59,7 +59,7 @@ description: 从安装 Foundation Sunshine 和 Moonlight 到 PIN 配对、连接
 
 <figure class="manual-figure manual-figure-compact">
   <ScreenshotFocus :source-width="1108" :regions="[[315, 0, 480, 220]]">
-  <img src="../assets/manual/sunshine-pin.png" alt="Sunshine 实机 PIN 配对表单，包含 PIN 码、设备名称两个空白输入框和发送按钮" width="1108" height="319" loading="lazy" />
+  <img src="../assets/manual/sunshine-pin.webp" alt="Sunshine 实机 PIN 配对表单，包含 PIN 码、设备名称两个空白输入框和发送按钮" width="1108" height="319" loading="lazy" decoding="async" />
   </ScreenshotFocus>
   <figcaption>主机端 PIN 配对表单（Foundation Sunshine 2026.1015.51059）。桌面控制面板的“客户端配对”使用同一表单。输入 Moonlight 当前显示的 PIN；配对后，该客户端将获得控制主机的权限，请只为自己信任的设备配对。</figcaption>
 </figure>

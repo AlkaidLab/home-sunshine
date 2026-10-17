@@ -1,10 +1,11 @@
 {
   "capturedOn": "2026-10-16",
-  "presentation": "ScreenshotFocus displays selected rectangular regions in source-image pixels. Disjoint settings are presented as separate crops. The stored screenshot pixels and SHA-256 hashes remain unchanged; clicking a crop opens the source screenshot in the image viewer.",
+  "presentation": "ScreenshotFocus displays selected rectangular regions in source-image pixels. Disjoint settings are presented as separate crops. Original captures and their SHA-256 hashes remain unchanged. PNG captures have pixel-identical lossless WebP delivery copies; clicking a crop opens the full-resolution delivery image in the viewer.",
   "scope": "Screenshots of the explicitly named installed builds. Historical Android screenshots were replaced with physical-device settings captures. Screenshot values are not universal recommendations. No simulated product interfaces or AI-generated UI screenshots.",
   "images": [
     {
       "file": "sunshine-setup-gpu.png",
+      "delivery": { "file": "sunshine-setup-gpu.webp", "encoding": "lossless WebP", "sha256": "ac89f6f789b7e3b8f2fbbd108368e68e1e21d7672e4a8a092809082133ff9486" },
       "kind": "screenshot",
       "software": "Foundation Sunshine",
       "version": "2026.1015.51059",
@@ -16,6 +17,7 @@
     },
     {
       "file": "sunshine-pin.png",
+      "delivery": { "file": "sunshine-pin.webp", "encoding": "lossless WebP", "sha256": "43a2b526c2873681504f33895ed4e76cac4cb18e9c2817ad43929635462b5b96" },
       "kind": "screenshot",
       "software": "Foundation Sunshine",
       "version": "2026.1015.51059",
@@ -63,6 +65,7 @@
     },
     {
       "file": "android-video-settings.png",
+      "delivery": { "file": "android-video-settings.webp", "encoding": "lossless WebP", "sha256": "60815dd3faae7246d4e4dd5525865fd94bf4d6cff8cc50d0f5f0672257ceab37" },
       "kind": "screenshot",
       "software": "Android Moonlight V+",
       "version": "12.12.13.beta.6",
@@ -75,6 +78,7 @@
     },
     {
       "file": "android-codec-hdr.png",
+      "delivery": { "file": "android-codec-hdr.webp", "encoding": "lossless WebP", "sha256": "814d111068cb2d7b033007d856920c028620a93a0427b99afb6917460a3c7ca3" },
       "kind": "screenshot",
       "software": "Android Moonlight V+",
       "version": "12.12.13.beta.6",

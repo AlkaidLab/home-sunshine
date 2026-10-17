@@ -145,6 +145,9 @@ const STAR_HISTORY_REPOS = [
 
 const activeStarRepoId = ref('sunshine')
 const starHistoryStates = ref({})
+const starSection = ref(null)
+const starHistoryReady = ref(false)
+let starSectionObserver = null
 
 const GITHUB_REPO = 'AlkaidLab/foundation-sunshine'
 const GITHUB_REPO_URL = `https://github.com/${GITHUB_REPO}`
@@ -180,7 +183,7 @@ const getStarHistoryImageUrl = (repo, theme = currentTheme.value) =>
   `${STAR_HISTORY_BASE_URL}/${repo.repo}?theme=${getStarHistoryTheme(theme)}`
 
 const loadStarHistory = (repo, theme = currentTheme.value) => {
-  if (!repo) return
+  if (!repo || !starHistoryReady.value) return
 
   const stateKey = getStarHistoryStateKey(repo, theme)
   const currentState = starHistoryStates.value[stateKey]?.status
@@ -216,6 +219,7 @@ const loadStarHistory = (repo, theme = currentTheme.value) => {
 }
 
 const selectStarRepo = repo => {
+  starHistoryReady.value = true
   activeStarRepoId.value = repo.id
   loadStarHistory(repo)
 }
@@ -253,10 +257,22 @@ onMounted(() => {
   window.addEventListener('hashchange', alignHashTarget)
   window.setTimeout(alignHashTarget, 120)
 
-  loadStarHistory(STAR_HISTORY_REPOS[0])
+  if ('IntersectionObserver' in window && starSection.value) {
+    starSectionObserver = new IntersectionObserver(entries => {
+      if (!entries.some(entry => entry.isIntersecting)) return
+      starHistoryReady.value = true
+      loadStarHistory(activeStarRepo.value)
+      starSectionObserver.disconnect()
+    }, { rootMargin: '300px 0px' })
+    starSectionObserver.observe(starSection.value)
+  } else {
+    starHistoryReady.value = true
+    loadStarHistory(activeStarRepo.value)
+  }
 })
 
 onBeforeUnmount(() => {
+  starSectionObserver?.disconnect()
   document.removeEventListener('keydown', onMobileNavKeydown)
   window.removeEventListener('hashchange', alignHashTarget)
 })
@@ -619,7 +635,7 @@ const closeEggRoom = () => {
     </section>
 
     <!-- Star History -->
-    <section id="stats" class="section section-alt">
+    <section id="stats" ref="starSection" class="section section-alt">
       <div class="container">
         <div class="section-header">
           <h2 class="section-title">{{ t.stats.title }}</h2>
@@ -842,7 +858,7 @@ const closeEggRoom = () => {
               <div class="sponsor-featured-badge">TOP SPONSOR</div>
               <div class="sponsor-featured-body">
                 <div class="sponsor-featured-header">
-                  <img v-if="s.logo" :src="s.logo" :alt="s.name" class="sponsor-featured-logo" />
+                  <img v-if="s.logo" :src="s.logo" :alt="s.name" class="sponsor-featured-logo" loading="lazy" decoding="async" />
                   <span class="sponsor-featured-name">{{ s.name }}</span>
                 </div>
                 <span v-if="s.description" class="sponsor-featured-desc">{{ s.description }}</span>
@@ -875,7 +891,7 @@ const closeEggRoom = () => {
                 @click="handleEggClick($event, s)"
               >
                 <span class="egg-avatar-wrap">
-                  <img :src="s.avatar" :alt="s.name" class="sponsor-avatar sponsor-avatar--gold" />
+                  <img :src="s.avatar" :alt="s.name" class="sponsor-avatar sponsor-avatar--gold" loading="lazy" decoding="async" />
                   <span
                     v-for="ripple in getEggRipples(s)"
                     :key="ripple.id"
@@ -902,7 +918,7 @@ const closeEggRoom = () => {
                 :rel="s.url ? 'noopener' : undefined"
                 :title="s.name"
               >
-                <img v-if="s.avatar" :src="s.avatar" :alt="s.name" class="sponsor-avatar sponsor-avatar--gold" />
+                <img v-if="s.avatar" :src="s.avatar" :alt="s.name" class="sponsor-avatar sponsor-avatar--gold" loading="lazy" decoding="async" />
                 <span v-else class="sponsor-avatar-placeholder">{{ s.name.charAt(0) }}</span>
                 <span class="sponsor-avatar-name">{{ s.name }}</span>
               </component>
@@ -939,7 +955,7 @@ const closeEggRoom = () => {
               :rel="s.url ? 'noopener' : undefined"
               :title="s.name"
             >
-              <img v-if="s.avatar" :src="s.avatar" :alt="s.name" class="sponsor-avatar" />
+              <img v-if="s.avatar" :src="s.avatar" :alt="s.name" class="sponsor-avatar" loading="lazy" decoding="async" />
               <span v-else class="sponsor-avatar-placeholder">{{ s.name.charAt(0) }}</span>
               <span class="sponsor-avatar-name">{{ s.name }}</span>
             </component>
@@ -995,7 +1011,7 @@ const closeEggRoom = () => {
           <p>{{ t.footer.copyright }}</p>
           <div class="beian-row">
             <span class="beian-item">
-              <img src="/police-badge.webp" :alt="t.footer.policeBadgeAlt" class="beian-badge" />
+              <img src="/police-badge.webp" :alt="t.footer.policeBadgeAlt" class="beian-badge" loading="lazy" decoding="async" />
               <span>{{ t.footer.policePlaceholder }}</span>
             </span>
             <a :href="t.footer.icpLink" class="beian-item" target="_blank" rel="noopener">

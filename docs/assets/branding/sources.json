@@ -3,6 +3,7 @@
   "images": [
     {
       "file": "sunshine-girl.png",
+      "delivery": { "file": "sunshine-girl.webp", "encoding": "lossless WebP", "sha256": "608435fcfb3101429bffa7a8542da35cd3676341d554728d90658fca9c9cdbb2" },
       "kind": "artwork",
       "description": "Original Sunshine mascot, reused without redrawing or recoloring.",
       "source": "https://github.com/AlkaidLab/foundation-sunshine/blob/d5f42a7433e62608731da6900c867519429a014f/src_assets/common/assets/web/public/images/logo-sunshine-256.png",

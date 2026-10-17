@@ -1,0 +1,21 @@
+/* Styles used by the documentation layout. Blog cards, login pages, comments,
+   wallpaper and theme-editor styles are not needed by this site. */
+@import 'vitepress-theme-teek/theme-chalk/tk-base.css';
+@import 'vitepress-theme-teek/theme-chalk/tk-layout.css';
+@import 'vitepress-theme-teek/theme-chalk/tk-nav.css';
+@import 'vitepress-theme-teek/theme-chalk/tk-nav-search-button.css';
+@import 'vitepress-theme-teek/theme-chalk/tk-nav-switch-button.css';
+@import 'vitepress-theme-teek/theme-chalk/tk-nav-translation.css';
+@import 'vitepress-theme-teek/theme-chalk/tk-sidebar.css';
+@import 'vitepress-theme-teek/theme-chalk/tk-sidebar-trigger.css';
+@import 'vitepress-theme-teek/theme-chalk/tk-article-code-block.css';
+@import 'vitepress-theme-teek/theme-chalk/tk-article-heading-highlight.css';
+@import 'vitepress-theme-teek/theme-chalk/tk-article-page-style.css';
+@import 'vitepress-theme-teek/theme-chalk/tk-footer-info.css';
+@import 'vitepress-theme-teek/theme-chalk/tk-right-bottom-button.css';
+@import 'vitepress-theme-teek/theme-chalk/tk-container.css';
+@import 'vitepress-theme-teek/theme-chalk/tk-container-var.css';
+@import 'vitepress-theme-teek/theme-chalk/tk-container-icon.css';
+@import 'vitepress-theme-teek/theme-chalk/tk-blockquote.css';
+@import 'vitepress-theme-teek/theme-chalk/tk-table.css';
+@import 'vitepress-theme-teek/theme-chalk/tk-scrollbar.css';

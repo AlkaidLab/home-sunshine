@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { withBase } from 'vitepress'
 import { useDocsI18n } from '../i18n.js'
 import DocIcon from './DocIcon.vue'
-import sunshineGirl from '../../../assets/branding/sunshine-girl.png'
+import sunshineGirl from '../../../assets/branding/sunshine-girl.webp'
 
 const { copy, docPath, languageSuffix } = useDocsI18n()
 const home = computed(() => copy.value.home)

@@ -22,7 +22,7 @@ Android Moonlight V+ 面向手机、平板和兼容的电视设备。先完成�
 
 <figure class="manual-figure manual-figure-portrait">
   <ScreenshotFocus :source-width="1080" :regions="[[32, 298, 1008, 180], [32, 950, 1008, 150], [32, 1148, 1008, 225]]">
-  <img src="../assets/manual/android-video-settings.png" alt="Android Moonlight V+ 实机串流质量页的分辨率、帧率与码率三个重点区域" width="1080" height="2340" loading="lazy" />
+  <img src="../assets/manual/android-video-settings.webp" alt="Android Moonlight V+ 实机串流质量页的分辨率、帧率与码率三个重点区域" width="1080" height="2340" loading="lazy" decoding="async" />
   </ScreenshotFocus>
   <figcaption>串流质量设置（魅族 17，Android V+ 12.12.13.beta.6）。点击可看原图；正式版和其他平台的入口可能不同。</figcaption>
 </figure>

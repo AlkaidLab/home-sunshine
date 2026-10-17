@@ -33,7 +33,7 @@ For the first test, use a physical monitor. For a headless host, install and sel
 
 <figure class="manual-figure">
   <ScreenshotFocus :source-width="1280" :regions="[[210, 190, 855, 280]]">
-    <img src="../../assets/manual/sunshine-setup-gpu.png" alt="Foundation Sunshine GPU selection step with the adapter set to Automatic and a Next button; interface shown in Chinese" width="1280" height="800" loading="lazy" />
+    <img src="../../assets/manual/sunshine-setup-gpu.webp" alt="Foundation Sunshine GPU selection step with the adapter set to Automatic and a Next button; interface shown in Chinese" width="1280" height="800" loading="lazy" decoding="async" />
   </ScreenshotFocus>
   <figcaption>GPU selection example (Foundation Sunshine 2026.1015.51059, replayed interface state). Start with Automatic. Open the image to see the full wizard; its interface is in Chinese.</figcaption>
 </figure>
@@ -55,7 +55,7 @@ Use the [client selection guide (中文)](../../clients/index.md) to choose a cl
 
 <figure class="manual-figure manual-figure-compact">
   <ScreenshotFocus :source-width="1108" :regions="[[315, 0, 480, 220]]">
-    <img src="../../assets/manual/sunshine-pin.png" alt="Sunshine host pairing form with empty PIN and device-name fields and a Send button; interface shown in Chinese" width="1108" height="319" loading="lazy" />
+    <img src="../../assets/manual/sunshine-pin.webp" alt="Sunshine host pairing form with empty PIN and device-name fields and a Send button; interface shown in Chinese" width="1108" height="319" loading="lazy" decoding="async" />
   </ScreenshotFocus>
   <figcaption>Host pairing form (Foundation Sunshine 2026.1015.51059), also used by the desktop control panel. Enter the current PIN from Moonlight. Pair only devices you trust: a paired client can control your host.</figcaption>
 </figure>

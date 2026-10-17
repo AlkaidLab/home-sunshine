@@ -1,15 +1,19 @@
 <script setup>
 import { computed } from 'vue'
 import { useData, withBase } from 'vitepress'
-import Teek, { en } from 'vitepress-theme-teek'
+import TeekLayout from 'vitepress-theme-teek/es/components/theme/layout/src/index.vue2.mjs'
+import { TeekConfigProvider } from 'vitepress-theme-teek/es/components/theme/config-provider/index.mjs'
+import en from 'vitepress-theme-teek/es/locale/lang/en.mjs'
 import { manualNavigation, englishManualNavigation } from '../manual-nav.js'
 import { useDocsI18n } from './i18n.js'
 import DocIcon from './components/DocIcon.vue'
 import logo from '../../../public/favicon.webp'
-import sunshineGirl from '../../assets/branding/sunshine-girl.png'
+import sunshineGirl from '../../assets/branding/sunshine-girl.webp'
 
 const { page } = useData()
-const { Layout } = Teek
+// Keep Teek's layout and interactions, without registering unused blog pages
+// and demo components from its all-in-one theme entry.
+const Layout = TeekConfigProvider(TeekLayout)
 const { copy, locale, docPath, languageSuffix } = useDocsI18n()
 const section = computed(() =>
   (locale.value === 'en' ? englishManualNavigation : manualNavigation).find((group) =>
@@ -53,6 +57,8 @@ const sectionName = computed(
           alt=""
           width="40"
           height="40"
+          loading="lazy"
+          decoding="async"
         /><strong>{{ copy.help }}</strong
         ><span>{{ copy.helpDetail }}</span
         ><span class="help-link"

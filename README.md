@@ -87,7 +87,9 @@ Markdown 源文件保存在 `docs/`，文档首页为 `docs/index.md`。已有�
 
 新增文档时，添加 Markdown 文件并在开头设置 `description`，正文使用一个一级标题。使用手册的导航维护在 `docs/.vitepress/manual-nav.js`，技术文章导航位于 `docs/.vitepress/config.js`。搜索索引和文档 sitemap 在构建时自动生成；中文搜索使用逐字与相邻双字索引，英文按单词匹配，构建端与浏览器使用同一规则。文档主题和官网共享浅色 / 巧克力深色偏好。
 
-导航与站点配置位于 `docs/.vitepress/config.js`，样式位于 `docs/.vitepress/theme/style.css`。主题入口继承 Teek，`Layout.vue` 定制品牌、双语面包屑和阅读辅助入口，`components/DocsHome.vue` 渲染文档首页。仅使用 Teek 的运行时布局和样式，不启用其自动侧栏、永久链接及文章扫描插件，导航仍由手册配置维护。文档保持 `.html` URL，部署时直接提供 `dist/` 中的静态文件，确保 `/docs/` 使用自己的 `index.html`，无需将文档请求回退到官网首页。根目录的 `robots.txt` 会同时声明官网和文档的 sitemap。
+导航与站点配置位于 `docs/.vitepress/config.js`，样式位于 `docs/.vitepress/theme/style.css`。主题入口继承 VitePress 的无字体基础主题，`Layout.vue` 按需引入 Teek 布局与配置提供器，定制品牌、双语面包屑和阅读辅助入口；`components/DocsHome.vue` 渲染文档首页。`teek.css` 和 `teek-common.scss` 只引入文档需要的布局、代码块、图片预览等样式，不注册博客页面或演示组件。字体统一使用 Plus Jakarta，避免重复下载 Inter。不启用 Teek 的自动侧栏、永久链接及文章扫描插件，导航仍由手册配置维护。文档保持 `.html` URL，部署时直接提供 `dist/` 中的静态文件，确保 `/docs/` 使用自己的 `index.html`，无需将文档请求回退到官网首页。根目录的 `robots.txt` 会同时声明官网和文档的 sitemap。
+
+性能维护：Star 图表在接近对应区块时才请求，下载 metadata 仍只在点击获取应用后解析；不要在页面挂载或切换设备时预取。文档截图保留原始文件与来源记录，页面使用无损 WebP 派生图；更新图片时须同步更新派生图及 `sources.json` 中的哈希。搜索弹窗与索引继续按需加载。
 
 ### 文档双语约定
 

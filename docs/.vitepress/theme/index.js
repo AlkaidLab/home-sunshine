@@ -1,12 +1,13 @@
-import Teek from 'vitepress-theme-teek'
+import DefaultTheme from 'vitepress/theme-without-fonts'
 import { useData } from 'vitepress'
 import { defineAsyncComponent, watch } from 'vue'
 import Layout from './Layout.vue'
-import 'vitepress-theme-teek/theme-chalk/index.css'
+import './teek.css'
+import './teek-common.scss'
 import './style.css'
 
 export default {
-  extends: Teek,
+  extends: DefaultTheme,
   Layout,
   enhanceApp({ app }) {
     app.component(

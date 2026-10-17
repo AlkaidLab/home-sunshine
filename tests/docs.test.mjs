@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
 import { readFile, readdir } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { resolve } from 'node:path'
@@ -27,6 +28,33 @@ const pagePath = page => `/docs/${page.replace(/(^|\/)index\.html$/, '$1')}`
 const htmlByPage = new Map(await Promise.all(pages.map(async page =>
   [page, await readFile(resolve(docsDir, page), 'utf8')],
 )))
+
+test('docs do not load the unused Inter font', async () => {
+  for (const [page, html] of htmlByPage) {
+    assert.ok(!html.includes('inter-roman'), page)
+    assert.ok(!html.includes('inter-italic'), page)
+  }
+  const assets = await readdir(resolve(docsDir, 'assets'))
+  assert.ok(!assets.some(file => /^inter-.*\.woff2$/.test(file)))
+  assert.match(htmlByPage.get('index.html'), /sunshine-girl\.[^"/]+\.webp/)
+})
+
+test('lossless delivery images retain their original captures and recorded provenance', async () => {
+  for (const group of ['manual', 'branding']) {
+    const directory = resolve(rootDir, 'docs/assets', group)
+    const sources = JSON.parse(await readFile(resolve(directory, 'sources.json'), 'utf8'))
+    for (const image of sources.images) {
+      const original = await readFile(resolve(directory, image.file))
+      assert.equal(createHash('sha256').update(original).digest('hex'), image.sha256, image.file)
+      if (!image.delivery) continue
+      const delivery = await readFile(resolve(directory, image.delivery.file))
+      assert.equal(image.delivery.encoding, 'lossless WebP')
+      assert.equal(createHash('sha256').update(delivery).digest('hex'), image.delivery.sha256, image.delivery.file)
+      assert.equal(delivery.toString('ascii', 8, 12), 'WEBP')
+      assert.ok(delivery.length < original.length, image.delivery.file)
+    }
+  }
+})
 
 test('document theme bootstrap defaults to light and respects saved preferences', () => {
   const html = htmlByPage.get('index.html')
