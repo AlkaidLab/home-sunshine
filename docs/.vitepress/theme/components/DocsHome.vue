@@ -28,6 +28,7 @@ const topicPaths = [
 ]
 const topics = computed(() => home.value.topics.map((label, index) => [label, topicPaths[index]]))
 const articlePaths = [
+  '/haptics-dev-journal-zh.html',
   '/dolby-vision-dev-journal-zh.html',
   '/razer-haptics-sdk-announcement-zh.html',
 ]

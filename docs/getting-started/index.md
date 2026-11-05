@@ -14,7 +14,7 @@ description: 从安装 Foundation Sunshine 和 Moonlight 到 PIN 配对、连接
 
 想先了解基地版与配套客户端能做什么，可查看[功能与平台支持](./features.md)。先完成本页的基础串流，再选择需要的增强功能。
 
-<SunshineTip title="太阳娘的隐藏手势：三指唤出键盘">
+<SunshineTip title="薇薇的隐藏手势：三指唤出键盘">
   <p>先在记事本里测试触控与键盘，再进游戏配置布局。完整操作见<a href="../clients/crown.html#gestures">触控手势与本地键盘</a>。</p>
 </SunshineTip>
 
@@ -64,7 +64,7 @@ description: 从安装 Foundation Sunshine 和 Moonlight 到 PIN 配对、连接
   <figcaption>主机端 PIN 配对表单（Foundation Sunshine 2026.1015.51059）。桌面控制面板的“客户端配对”使用同一表单。输入 Moonlight 当前显示的 PIN；配对后，该客户端将获得控制主机的权限，请只为自己信任的设备配对。</figcaption>
 </figure>
 
-<SunshineTip title="太阳娘的进阶入口：给不同设备分别校准 HDR">
+<SunshineTip title="薇薇的进阶入口：给不同设备分别校准 HDR">
   <p>手机与电视分别调好自己的参数，换屏后再验证。完成普通串流后，可按<a href="../server/hdr.html#per-device">分设备 HDR 亮度教程</a>操作。</p>
 </SunshineTip>
 

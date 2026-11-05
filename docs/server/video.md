@@ -25,7 +25,7 @@ description: 按两端能力选择 H.264、HEVC 和 AV1，配置捕获方式、H
   <figcaption>服务端“串流设置 → 音频/视频”（Foundation Sunshine 2026.1015.51059）。“最大比特率”为 0 时采用客户端请求值；分辨率、帧率和目标码率请在客户端设置。</figcaption>
 </figure>
 
-<SunshineTip title="太阳娘的遥控技巧：串流里调用超级指令">
+<SunshineTip title="薇薇的遥控技巧：串流里调用超级指令">
   <p>固定的主机操作可以做成菜单按钮；先用一个简单测试确认启动应用与命令配置对应。见<a href="./automation.html#super-commands">超级指令完整教程</a>。</p>
 </SunshineTip>
 
