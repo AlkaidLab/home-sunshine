@@ -1,0 +1,40 @@
+{
+  "scope": "AI-generated editorial concept illustrations for the haptics development journal; not screenshots, device endorsements, or measured waveforms.",
+  "generator": "Built-in image_gen",
+  "created": "2026-11-05",
+  "images": [
+    {
+      "file": "streaming-play-styles.png",
+      "delivery": {
+        "file": "streaming-play-styles.webp",
+        "encoding": "WebP quality 86",
+        "sha256": "eea15c79ab08a18f17821aeb0e05d2b771244aa38150dadbdd27db4c211789cc"
+      },
+      "kind": "generated concept illustration",
+      "prompt": "Use case: illustration-story. Asset type: wide editorial illustration for a Chinese game-streaming development journal. Primary request: illustrate the freedom of playing a PC game away from the desk using different handheld setups. A cohesive panoramic composition with three softly blended vignettes: relaxing on a sofa playing on a smartphone with subtle on-screen touch buttons; traveling light with a phone held in a compact telescopic game controller near a small day bag; a tablet on a living-room side table with a separate white-and-black game controller beside it. Screens show the same original stylized mountain exploration game, no existing game characters or logos. Small restrained tactile ripples near the hands suggest feedback. Style: refined hand-painted editorial illustration, soft grain, calm contemporary technology magazine, warm natural lighting, muted cream, dusty teal and sage with warm amber accents. Human hands anatomically natural. Landscape aspect ratio around 2:1, generous breathing room, clear large silhouettes, coherent scene rather than boxed panels. No words, letters, logos, branding, watermarks, UI labels, or exaggerated neon. This is a conceptual illustration, not a product screenshot.",
+      "sha256": "4ed8b23901a4f3a0c398d4ab62b3d0934ec1830323c75afe5c48dda55fba6544",
+      "width": 1774,
+      "height": 887
+    },
+    {
+      "generator": "Built-in image_gen",
+      "created": "2026-11-05",
+      "file": "rainfall-and-rhythm.png",
+      "delivery": {
+        "file": "rainfall-and-rhythm.webp",
+        "encoding": "WebP quality 86",
+        "sha256": "6798b0d26037b4f6886495da5b17567f57b7e4a53a564bf9996b89eb19a61b80"
+      },
+      "reference": {
+        "kind": "Earlier generated climbing illustration, retained in the original generation output",
+        "sha256": "1eb31589a3543526f06a39b72a8063221db6538141adcb315874db08c4272af9",
+        "prompt": "Use case: illustration-story. Asset type: second wide editorial conceptual illustration within a Chinese game-streaming haptics journal, about rhythm, subtle strength and silence. A close intimate view of two natural human hands holding a smartphone horizontally, playing an original mountain climbing adventure. The tiny unbranded explorer on screen is reaching toward a rocky ledge. Below and around the device, tasteful painterly marks express touch: several small distinct amber brush dashes with generous unpainted gaps, one slightly stronger rounded stroke and a soft fading teal stroke. These marks are a poetic visual metaphor for short pulses, varied intensity and quiet intervals, NOT a technical waveform or measurement. Include a simple unobtrusive gamepad resting near the phone to suggest companion devices, with no brands. Style: refined hand-painted magazine editorial illustration with delicate pencil contours and subtle paper texture, warm cream background, muted sage and dusty teal, restrained amber highlights. Landscape 2:1, sparse balanced composition, clear negative space, soft natural light. No words, letters, labels, arrows, charts, neon, brand logos, watermarks or fake app UI. Anatomically credible hands. This image should support thoughtful design prose rather than look like an advertising poster."
+      },
+      "prompt": "Use case: precise-object-edit. Edit target: the referenced existing hand-painted editorial illustration for a Chinese game-streaming haptics journal. Preserve the wide 2:1 composition, natural hands holding a horizontal smartphone, paper texture, subdued cream/sage/teal palette, delicate watercolor rendering, game controller upper right, and generous visual breathing room. Change the game scene on the phone from a climber on a sunny rock face to a tranquil original adventure-game scene during gentle rainfall: a small traveler standing on a wet mossy stone path, soft mist, delicate visible raindrops and small puddle ripples, green foliage, quiet atmospheric depth. The rain must be legible inside the phone screen, not a storm and not outside the real phone. Replace the large heavy orange brush stroke below the phone with several fine spaced amber/teal stippled touches of subtly varied sizes and a delicate fading stroke, suggesting light rain, tactile rhythm and quiet gaps. Keep these marks abstract and restrained, not a scientific waveform. No words, labels, arrows, logos, watermarks, fake metrics or game branding. Preserve the phone and anatomy of both hands. This is an editorial concept illustration, not a screenshot.",
+      "kind": "generated concept illustration",
+      "width": 1774,
+      "height": 887,
+      "sha256": "cb5cb772aea2b4bcc2d15a375cdf8e853d7d0c4e48798655775f06c951b18fa8"
+    }
+  ]
+}

@@ -21,6 +21,7 @@ export const showcaseContent = {
     read: '了解更多',
     items: [
       { category: '功能演示', title: '音频触觉体验', description: '打开交互演示，探索声音与振动之间的联系。', url: '/audio-haptics-demo.html' },
+      { category: '开发手记', title: '振动：让反馈有轻重，也有分寸', description: '聊聊我们怎样理解触觉的节奏、层次与留白，以及手机和手柄的分工。', url: '/docs/haptics-dev-journal-zh.html' },
       { category: '开发手记', title: '杜比视界：从元数据到原生输出', description: '记录联想“无极”平板黑屏的排查，以及 Profile 8.1 与 8.4 的实机验证。', url: '/docs/dolby-vision-dev-journal-zh.html' },
       { category: '研发进展 · 2026.07.23', title: '手柄支持与自研触觉 SDK', description: '了解触觉 SDK 的技术方向与设备支持计划。', url: '/docs/razer-haptics-sdk-announcement-zh.html' },
       { category: '版本动态', title: 'Sunshine 更新日志', description: '查看新版本的功能变化、修复内容和发行说明。', url: 'https://github.com/AlkaidLab/foundation-sunshine/releases' },
@@ -48,6 +49,7 @@ export const showcaseContent = {
     read: 'Learn more',
     items: [
       { category: 'Interactive demo', title: 'Audio haptics', description: 'Explore the connection between sound and vibration with an interactive demo.', url: '/audio-haptics-demo.html' },
+      { category: 'Dev journal', title: 'Haptics: finding the right balance', description: 'Our thoughts on rhythm, subtlety, quiet intervals and phone-controller coordination. Article in Chinese.', url: '/docs/haptics-dev-journal-zh.html' },
       { category: 'Dev journal', title: 'Dolby Vision: from metadata to native output', description: 'Tracing a Lenovo tablet black screen and validating native Profile 8.1 and 8.4 output. Article in Chinese.', url: '/docs/dolby-vision-dev-journal-zh.html' },
       { category: 'Development · 2026.07.23', title: 'Controller support & our haptics SDK', description: 'Read about our technical direction and device support plans. Article in Chinese.', url: '/docs/razer-haptics-sdk-announcement-zh.html' },
       { category: 'Releases', title: 'Sunshine release notes', description: 'Discover features, fixes and release notes for new versions.', url: 'https://github.com/AlkaidLab/foundation-sunshine/releases' },

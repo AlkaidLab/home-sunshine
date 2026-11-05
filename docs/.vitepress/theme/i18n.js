@@ -68,6 +68,11 @@ export const messages = {
       topics: ['功能与平台支持', '虚拟显示器', 'HDR 与校准', '外网访问', '连接与配对'],
       articles: [
         [
+          '开发手记 · 触觉体验',
+          '振动：让反馈有轻重，也有分寸',
+          '聊聊触觉的节奏、层次与留白，以及我们对手机和手柄分工的想法。',
+        ],
+        [
           '开发手记 · 显示与画质',
           '杜比视界：从元数据到原生输出',
           '沿着真实的适配过程，了解原生输出与设备黑屏的排查思路。',
@@ -155,6 +160,11 @@ export const messages = {
         'Connection & pairing',
       ],
       articles: [
+        [
+          'Dev journal · Haptics',
+          'Haptics: finding the right balance',
+          'Our thoughts on rhythm, subtlety, quiet intervals and phone-controller coordination. Article in Chinese.',
+        ],
         [
           'Dev journal · Video',
           'Dolby Vision: from metadata to native output',

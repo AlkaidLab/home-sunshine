@@ -41,6 +41,7 @@ export default defineConfig({
           {
             text: 'Articles (中文)',
             items: [
+              { text: 'Haptics: finding the right balance', link: '/haptics-dev-journal-zh' },
               { text: 'Dolby Vision dev journal', link: '/dolby-vision-dev-journal-zh' },
               { text: 'Controllers & haptics SDK', link: '/razer-haptics-sdk-announcement-zh' },
             ],
@@ -185,7 +186,10 @@ export default defineConfig({
       ...manualNavigation,
       {
         text: '开发手记',
-        items: [{ text: '杜比视界：从元数据到原生输出', link: '/dolby-vision-dev-journal-zh' }],
+        items: [
+          { text: '振动：让反馈有轻重，也有分寸', link: '/haptics-dev-journal-zh' },
+          { text: '杜比视界：从元数据到原生输出', link: '/dolby-vision-dev-journal-zh' },
+        ],
       },
       {
         text: '技术公告',
