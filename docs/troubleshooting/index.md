@@ -4,7 +4,7 @@ description: 从找不到主机、PIN 失败、503、黑屏、卡顿、无声音
 
 # 按症状查找问题
 
-<SunshineTip title="太阳娘的手柄暗号：快速切换性能统计">
+<SunshineTip title="薇薇的手柄暗号：快速切换性能统计">
   <p>先在客户端测试按键映射，再使用游戏内快捷操作。组合键、操作轮盘和适用条件见<a href="../clients/controllers.html#shortcuts">手柄快捷操作</a>。</p>
 </SunshineTip>
 
