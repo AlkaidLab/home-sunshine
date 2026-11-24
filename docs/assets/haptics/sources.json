@@ -1,5 +1,6 @@
 {
   "scope": "AI-generated editorial concept illustrations for the haptics development journal; not screenshots, device endorsements, or measured waveforms.",
+  "note": "Original PNG outputs were removed from the repository on 2026-11-24 because they are unreferenced; the sha256 hashes and prompts below remain the provenance record. Shipped assets are the webp deliveries.",
   "generator": "Built-in image_gen",
   "created": "2026-11-05",
   "images": [
